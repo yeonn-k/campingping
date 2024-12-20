@@ -5,17 +5,21 @@ interface inputProps {
   hasError?: boolean;
   errorMessage?: string;
   type?: string;
+  width?: string;
 }
 
 const Input = forwardRef<HTMLInputElement, inputProps>(
-  ({ placeholder, type, hasError, errorMessage, ...rest }, ref) => {
+  (
+    { width = 'w-full', placeholder, type, hasError, errorMessage, ...rest },
+    ref
+  ) => {
     return (
       <div>
         <input
           ref={ref}
           placeholder={placeholder}
           type={type}
-          className="w-full h-[40px] p-2.5 border focus:border-Green placeholder:text-LightGray rounded outline-none"
+          className={`${width} h-[40px] p-2.5 border focus:border-Green placeholder:text-LightGray rounded outline-none`}
           {...rest}
         />
         {hasError && errorMessage && (
