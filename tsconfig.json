@@ -17,12 +17,13 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@utils/*": ["./src/utils/*"],
-      "@icons/*": ["./src/assets/icons/*"],
-      "@images/*": ["./src/assets/images/*"],
+      "@icons/*": ["public/icons/*"],
+      "@images/*": ["public/images/*"],
       "@types/*": ["./src/assets/types/*"],
       "@hooks/*": ["./src/hooks/*"]
     }
