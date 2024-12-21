@@ -3,12 +3,12 @@ import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
 
 interface CardProps {
-  itemId?: string;
-  liked?: boolean;
-  imgSrc?: string;
-  name?: string;
-  address?: string;
-  description?: string;
+  itemId: string;
+  liked: boolean;
+  imgSrc: string;
+  name: string;
+  address: string;
+  description: string;
 }
 
 const Card = ({
