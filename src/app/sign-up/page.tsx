@@ -1,5 +1,7 @@
+import Card from '@/components/Card/Card';
+
 const SignUp = () => {
-  return;
+  return <Card />;
 };
 
 export default SignUp;
