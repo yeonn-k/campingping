@@ -16,7 +16,7 @@ const Button = ({
   children,
   width = 'w-24',
   height = 'h-10',
-  bgcolor = 'Green',
+  bgcolor = 'bg-Green',
   fontsize = 'content',
   onClick,
 }: ButtonProps) => {
@@ -34,7 +34,7 @@ const Button = ({
 
   return (
     <button
-      className={`${width} ${height} bg-${bgcolor} text-${fontsize} text-white rounded cursor-pointer disabled:cursor-not-allowed`}
+      className={`${width} ${height} ${bgcolor} text-${fontsize} text-white rounded cursor-pointer disabled:cursor-not-allowed`}
       onClick={handleClick}
       disabled={isLoading}
     >

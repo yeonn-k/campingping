@@ -38,6 +38,7 @@ const config: Config = {
         DarkGray: '#919191',
         black: '#000000',
         white: '#ffffff',
+        kakaoYellow: '#FBE300',
       },
     },
   },
