@@ -1,12 +1,12 @@
 import Image from 'next/image';
-import cloudGreen from '../../assets/icons/weather/cloud_green.svg';
-import sunGreen from '../../assets/icons/weather/sun_green.svg';
-import rainGreen from '../../assets/icons/weather/rain_green.svg';
-import snowGreen from '../../assets/icons/weather/snow_green.svg';
-import cloudGray from '../../assets/icons/weather/cloud_gray.svg';
-import sunGray from '../../assets/icons/weather/sun_gray.svg';
-import rainGray from '../../assets/icons/weather/rain_gray.svg';
-import snowGray from '../../assets/icons/weather/snow_gray.svg';
+import cloudGreen from '../../../public/icons/weather/cloud_green.svg';
+import sunGreen from '../../../public/icons/weather/sun_green.svg';
+import rainGreen from '../../../public/icons/weather/rain_green.svg';
+import snowGreen from '../../../public/icons/weather/snow_green.svg';
+import cloudGray from '../../../public/icons/weather/cloud_gray.svg';
+import sunGray from '../../../public/icons/weather/sun_gray.svg';
+import rainGray from '../../../public/icons/weather/rain_gray.svg';
+import snowGray from '../../../public/icons/weather/snow_gray.svg';
 
 const WeatherIcon = ({
   condition,
