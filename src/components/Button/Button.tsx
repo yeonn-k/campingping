@@ -1,4 +1,7 @@
-import { ButtonHTMLAttributes, Children, ReactNode } from 'react';
+'use client';
+
+import { ButtonHTMLAttributes, ReactNode, useState } from 'react';
+import LoadingSpinner from './LoadingSpinner';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -6,7 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   height?: string;
   bgcolor?: string;
   fontsize?: string;
-  onClick?: () => void;
+  onClick: () => void;
 }
 
 const Button = ({
@@ -17,12 +20,25 @@ const Button = ({
   fontsize = 'content',
   onClick,
 }: ButtonProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+
+    try {
+      await onClick();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <button
-      className={`${width} ${height} bg-${bgcolor} text-${fontsize} text-white rounded cursor-pointer`}
-      onClick={onClick}
+      className={`${width} ${height} bg-${bgcolor} text-${fontsize} text-white rounded cursor-pointer disabled:cursor-not-allowed`}
+      onClick={handleClick}
+      disabled={isLoading}
     >
-      {children}
+      {isLoading ? <LoadingSpinner /> : children}
     </button>
   );
 };
