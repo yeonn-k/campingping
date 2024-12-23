@@ -1,42 +1,28 @@
 import Image from 'next/image';
-import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface NavItem {
   name: string;
   iconName: string;
   url?: string;
 }
+const navItems: NavItem[] = [
+  { name: '검색', iconName: 'search', url: '/list' },
+  { name: '지도', iconName: 'map', url: '/map' },
+  { name: '오픈챗', iconName: 'chat', url: '/community' },
+  { name: '마이페이지', iconName: 'user', url: '/my-page' },
+  { name: '로그아웃', iconName: 'logout' },
+  { name: '로그인', iconName: 'login', url: '/log-in' },
+];
 
 const Nav = () => {
-  const [selectedNavName, setSelectedNavName] = useState<string>('');
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
-  const navItems: NavItem[] = [
-    { name: '검색', iconName: 'search', url: '/list' },
-    { name: '지도', iconName: 'map', url: '/map' },
-    { name: '오픈챗', iconName: 'chat', url: '/community' },
-    { name: '마이페이지', iconName: 'user', url: '/my-page' },
-    isLoggedIn
-      ? { name: '로그아웃', iconName: 'logout' }
-      : { name: '로그인', iconName: 'login', url: '/log-in' },
-  ];
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleNavClick = (navItem: NavItem) => {
-    setSelectedNavName(navItem.name);
-
-    if (navItem.name === '로그아웃') {
-      // Handle logout logic
-      setIsLoggedIn(false);
-      console.log('Logged out');
-    } else if (navItem.name === '로그인') {
-      // Handle login navigation
-      setIsLoggedIn(true);
-      console.log('Logged in');
+    if (navItem.url) {
+      router.push(navItem.url);
     }
-  };
-
-  const getIconPath = (iconName: string, isActive: boolean): string => {
-    return `/icons/nav/${iconName}_${isActive ? 'green' : 'gray'}.png`;
   };
 
   return (
@@ -45,21 +31,16 @@ const Nav = () => {
         <div
           key={navItem.name}
           onClick={() => handleNavClick(navItem)}
-          className={`flex flex-col min-w-max items-center justify-center cursor-pointer p-2 rounded-lg transition`}
+          className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
         >
           <Image
-            src={getIconPath(
-              navItem.iconName,
-              selectedNavName === navItem.name
-            )}
+            src={`/icons/nav/${navItem.iconName}_${pathname === navItem.url ? 'green' : 'gray'}.png`}
             alt={navItem.name}
             width={24}
             height={24}
           />
           <span
-            className={`text-[12px] ${
-              selectedNavName === navItem.name ? 'text-Green' : 'text-Gray'
-            }`}
+            className={`text-[10px] ${pathname === navItem.url ? 'text-Green' : 'text-Gray'}`}
           >
             {navItem.name}
           </span>

@@ -90,7 +90,7 @@ const Category = ({ onCategorySelected }: CategoryProps) => {
   };
 
   return (
-    <div>
+    <div className="w-[390px]">
       <div
         ref={scrollRef}
         className="flex overflow-x-auto whitespace-nowrap scroll-smooth p-4"
