@@ -34,8 +34,9 @@ const Button = ({
 
   return (
     <button
-      className={`${width} ${height} bg-${bgcolor} text-${fontsize} text-white rounded cursor-pointer`}
+      className={`${width} ${height} bg-${bgcolor} text-${fontsize} text-white rounded cursor-pointer disabled:cursor-not-allowed`}
       onClick={handleClick}
+      disabled={isLoading}
     >
       {isLoading ? <LoadingSpinner /> : children}
     </button>
