@@ -45,7 +45,6 @@ interface ProcessedWeatherData {
 const processWeatherData = (data: WeatherItem[]): ProcessedWeatherData[] => {
   const groupedByDate: Record<string, WeatherItem[]> = {};
 
-  // 날짜별로 데이터 그룹화
   data.forEach((item) => {
     if (!groupedByDate[item.fcstDate]) {
       groupedByDate[item.fcstDate] = [];
@@ -53,7 +52,6 @@ const processWeatherData = (data: WeatherItem[]): ProcessedWeatherData[] => {
     groupedByDate[item.fcstDate].push(item);
   });
 
-  // 각 날짜별 데이터 처리
   const processedData = Object.entries(groupedByDate).map(([date, items]) => {
     const dayData = {
       date,
@@ -63,7 +61,6 @@ const processWeatherData = (data: WeatherItem[]): ProcessedWeatherData[] => {
       precipitation: '없음',
     };
 
-    // 해당 날짜의 모든 데이터 순회
     items.forEach((item) => {
       switch (item.category) {
         case 'TMN':
@@ -84,7 +81,6 @@ const processWeatherData = (data: WeatherItem[]): ProcessedWeatherData[] => {
     return dayData;
   });
 
-  // 날짜순으로 정렬하고 앞의 4일만 반환
   return processedData
     .sort((a, b) => parseInt(a.date) - parseInt(b.date))
     .slice(0, 4);

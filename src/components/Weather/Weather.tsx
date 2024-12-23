@@ -2,7 +2,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { fetchWeatherData } from '../../utils/fetchWeatherData';
-import { getCurrentLocation } from '../../utils/location'; // 위치 관련 함수 import
+import { getCurrentLocation } from '../../utils/location';
 import WeatherIcon from './WeatherIcon';
 
 const Weather = () => {
@@ -10,7 +10,6 @@ const Weather = () => {
   const [currentLocation, setCurrentLocation] = useState({ lat: 0, lon: 0 });
   const [error, setError] = useState<string | null>(null);
 
-  // 현재 위치 가져오기
   useEffect(() => {
     getCurrentLocation()
       .then((location) => {
@@ -24,12 +23,10 @@ const Weather = () => {
       });
   }, []);
 
-  // 날씨 데이터 가져오기
   useEffect(() => {
     if (currentLocation.lat && currentLocation.lon) {
       fetchWeatherData(currentLocation.lat, currentLocation.lon)
         .then((data) => {
-          console.log('날씨 데이터:', data); // 데이터 확인
           const filteredData = filterWeatherData(data);
           setWeatherData(filteredData);
         })
@@ -72,30 +69,26 @@ const Weather = () => {
 
 export default Weather;
 
-// 날짜 포맷팅
 const formatDate = (date: string) => {
   const month = date.slice(4, 6);
   const day = date.slice(6, 8);
   return `${month}/${day}`;
 };
 
-// 데이터 필터링 및 정렬
 const filterWeatherData = (data: any[]) => {
   const today = new Date();
-  const formattedToday = formatDateAsKey(today); // 현재 날짜 포맷
+  const formattedToday = formatDateAsKey(today);
 
-  // 현재 날짜 이후의 데이터만 필터링
   const filteredData = data
     .filter((item: any) => {
       const itemDate = item.date;
       return itemDate >= formattedToday;
     })
-    .slice(0, 4); // 4일치 데이터만 추출
+    .slice(0, 4);
 
   return filteredData;
 };
 
-// 날짜 키 포맷팅
 const formatDateAsKey = (date: Date) => {
   const year = date.getFullYear().toString();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
