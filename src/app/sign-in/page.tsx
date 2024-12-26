@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 import LogoWhite from '@images/campingping_white.svg';
 import RegisterBg from '@images/registerBg.jpg';
@@ -11,9 +11,14 @@ import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 import Input from '@/components/Input/Input';
 import Button from '@/components/Button/Button';
 
+interface FormData {
+  email: string;
+  password: string;
+}
+
 const SignIn = () => {
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data: any) => {
+  const { register, handleSubmit } = useForm<FormData>();
+  const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
   };
 
