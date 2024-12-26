@@ -233,7 +233,6 @@ const List = () => {
     }
   }, [selectedCategory]);
 
-  console.log(campingData);
   useEffect(() => {
     fetchCampingData();
   }, [fetchCampingData]);
@@ -243,28 +242,29 @@ const List = () => {
   }, []);
 
   return (
-    <div className="flex flex-colw-[390px] ">
+    <div className="flex flex-col w-[390px] ">
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />
-
-      <div className="w-[390px]">
-        {campingData !== null ? (
-          campingData?.map((camp) => (
-            <Card
-              key={camp.id}
-              itemId={camp.contentId}
-              liked={false}
-              imgSrc={camp.images?.url || ''}
-              name={camp.factDivNm}
-              address={`${camp.addr1} ${camp.addr2}` || ''}
-              description={camp.lineIntro || ''}
-            />
-          ))
-        ) : (
-          <p>검색 결과가 없습니다</p>
-        )}
+      <div className="flex justify-center h-[700px] p-4">
+        <div className="space-y-8 overflow-y-auto scroll-smooth">
+          {campingData !== null ? (
+            campingData?.map((camp) => (
+              <Card
+                key={camp.id}
+                itemId={camp.contentId}
+                liked={false}
+                imgSrc={camp.images?.url || ''}
+                name={camp.factDivNm}
+                address={`${camp.addr1} ${camp.addr2}` || ''}
+                description={camp.lineIntro || ''}
+              />
+            ))
+          ) : (
+            <p>검색 결과가 없습니다</p>
+          )}
+        </div>
       </div>
 
       <Nav />

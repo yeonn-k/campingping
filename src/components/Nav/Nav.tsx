@@ -26,7 +26,7 @@ const Nav = () => {
   };
 
   return (
-    <div className="flex justify-around absolute bottom-0 left-0 w-[390px]">
+    <div className="flex justify-around absolute bottom-0 left-0 w-[390px] z-[zNav]">
       {navItems.map((navItem) => (
         <div
           key={navItem.name}
