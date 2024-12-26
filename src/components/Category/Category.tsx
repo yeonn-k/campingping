@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useRef } from 'react';
 
 interface Category {
@@ -8,6 +7,7 @@ interface Category {
 }
 
 interface CategoryProps {
+  selectedCategory: string;
   onCategorySelected: (selectedCategoryName: string) => void;
 }
 
@@ -30,20 +30,14 @@ const categories: Category[] = [
   { name: '반려동물', iconName: 'pet' },
 ];
 
-const Category = ({ onCategorySelected }: CategoryProps) => {
-  // const [selectedCategoryName, setSelectedCategoryName] = useState<string>('');
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedCategory = searchParams.get('category') || '전체';
-
+const Category = ({
+  selectedCategory,
+  onCategorySelected: handleCategoryClick,
+}: CategoryProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
-
-  const handleCategoryClick = (categoryName: string) => {
-    router.push(`/list?category=${categoryName}`);
-  };
 
   const getIconPath = (iconName: string, isActive: boolean): string => {
     return `/icons/category/${iconName}_${isActive ? 'green' : 'gray'}.png`;
