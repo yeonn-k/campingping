@@ -1,9 +1,14 @@
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useRef } from 'react';
 
 interface Category {
   name: string;
   iconName: string;
+}
+
+interface CategoryProps {
+  onCategorySelected: (selectedCategoryName: string) => void;
 }
 
 const categories: Category[] = [
@@ -25,26 +30,24 @@ const categories: Category[] = [
   { name: '반려동물', iconName: 'pet' },
 ];
 
-interface CategoryProps {
-  onCategorySelected: (selectedCategoryName: string) => void;
-}
-
 const Category = ({ onCategorySelected }: CategoryProps) => {
-  const [selectedCategoryName, setSelectedCategoryName] = useState<string>('');
+  // const [selectedCategoryName, setSelectedCategoryName] = useState<string>('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedCategory = searchParams.get('category') || '전체';
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
   const handleCategoryClick = (categoryName: string) => {
-    setSelectedCategoryName(categoryName);
+    router.push(`/list?category=${categoryName}`);
   };
 
-  useEffect(() => {
-    if (selectedCategoryName) {
-      onCategorySelected(selectedCategoryName);
-    }
-  }, [onCategorySelected, selectedCategoryName]);
+  const getIconPath = (iconName: string, isActive: boolean): string => {
+    return `/icons/category/${iconName}_${isActive ? 'green' : 'gray'}.png`;
+  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     isDragging.current = true;
@@ -85,10 +88,6 @@ const Category = ({ onCategorySelected }: CategoryProps) => {
     isDragging.current = false;
   };
 
-  const getIconPath = (iconName: string, isActive: boolean): string => {
-    return `/icons/category/${iconName}_${isActive ? 'green' : 'gray'}.png`;
-  };
-
   return (
     <div className="w-[390px]">
       <div
@@ -111,7 +110,7 @@ const Category = ({ onCategorySelected }: CategoryProps) => {
             <Image
               src={getIconPath(
                 category.iconName,
-                selectedCategoryName === category.name
+                selectedCategory === category.name
               )}
               alt={category.name}
               width={24}
@@ -119,9 +118,7 @@ const Category = ({ onCategorySelected }: CategoryProps) => {
             />
             <span
               className={`text-[12px] ${
-                selectedCategoryName === category.name
-                  ? 'text-Green'
-                  : 'text-Gray'
+                selectedCategory === category.name ? 'text-Green' : 'text-Gray'
               }`}
             >
               {category.name}
