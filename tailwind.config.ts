@@ -8,7 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      boxShadow: { shadowCustom: '1px 4px 15px rgba(0,0,0,0.15)' },
+      boxShadow: {
+        shadowCustom: '1px 4px 15px rgba(0,0,0,0.15)',
+        iconShadow: '1px 2px 9px rgba(0,0,0,0.15)',
+      },
       width: {
         '10.5/12': '87.5%',
       },
