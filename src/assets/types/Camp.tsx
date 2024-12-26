@@ -2,12 +2,12 @@ type NullableString = string | null;
 
 interface CampLocation {
   type: NullableString;
-  coordinates: [number, number] | null;
+  coordinates: [number, number];
 }
 
 interface CampImage {
   id: number;
-  url: NullableString;
+  url: string;
 }
 
 interface Camp {
@@ -43,8 +43,8 @@ interface Camp {
   eqpmnLendCl: NullableString;
   animalCmgCl: NullableString;
   contentId: string;
-  location: CampLocation;
-  images: CampImage[];
+  location: CampLocation | null;
+  images: CampImage | null;
 }
 
 export default Camp;
