@@ -11,6 +11,7 @@ import Button from '@/components/Button/Button';
 import axios from 'axios';
 import { BASE_URL } from '@confing/config';
 import { toast } from 'react-toastify';
+import { use, useEffect } from 'react';
 
 interface FormData {
   email: string;
@@ -25,6 +26,8 @@ const SignUp = () => {
     register,
     handleSubmit,
     watch,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -62,6 +65,24 @@ const SignUp = () => {
     }
   };
 
+  const checkPassword = () => {
+    const password = watch('password');
+    const passwordCheck = watch('passwordCheck');
+
+    if (passwordCheck && password !== passwordCheck) {
+      setError('passwordCheck', {
+        type: 'manual',
+        message: '비밀번호가 일치하지 않습니다.',
+      });
+    } else {
+      clearErrors('passwordCheck');
+    }
+  };
+
+  useEffect(() => {
+    checkPassword();
+  }, [watch('password')]);
+
   const onSubmit = async (data: FormData) => {
     const user = {
       email: data.email,
@@ -70,15 +91,15 @@ const SignUp = () => {
     };
 
     if (user.email && user.password && user.nickname) {
-      try {
-        const res = await axios.post(`${BASE_URL}/auth/register`, {
-          email: user.email,
-          password: user.password,
-          nickname: user.nickname,
-        });
-      } catch (error) {
-        console.error(error);
-      }
+      // try {
+      //   const res = await axios.post(`${BASE_URL}/auth/register`, {
+      //     email: user.email,
+      //     password: user.password,
+      //     nickname: user.nickname,
+      //   });
+      // } catch (error) {
+      //   console.error(error);
+      // }
     }
   };
 
@@ -152,8 +173,7 @@ const SignUp = () => {
                 required: '비밀번호를 입력해주세요',
                 pattern: {
                   value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
-                  message:
-                    '비밀번호는 영문과 숫자, 특수 문자를 조합하여 8자리 이상이어야 합니다.',
+                  message: '영문, 숫자, 특수문자 포함 8자리 이상이어야 합니다.',
                 },
               })}
               hasError={!!errors.password}
@@ -167,7 +187,11 @@ const SignUp = () => {
               type="password"
               {...register('passwordCheck', {
                 required: '비밀번호를 확인해주세요',
+                validate: (v: string) =>
+                  v === watch('password') || '비밀번호가 일치하지 않습니다.',
               })}
+              hasError={!!errors.passwordCheck}
+              errorMessage={errors.passwordCheck?.message}
             />
           </div>
           <div className={`w-10/12 ${errors.nickname ? 'mb-2' : 'mb-6'}`}>
