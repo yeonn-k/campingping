@@ -4,6 +4,7 @@ import {
   //requestInterceptor,
   successInterceptor,
 } from './interceptors';
+import { BASE_URL } from '@/config/config';
 
 const axiosRequestConfig: AxiosRequestConfig = {
   baseURL: BASE_URL,
@@ -14,7 +15,7 @@ const axiosRequestConfig: AxiosRequestConfig = {
   },
 };
 
-const api: AxiosInstance = axios.create(axiosRequestConfig);
+export const api: AxiosInstance = axios.create(axiosRequestConfig);
 
 //api.interceptors.request.use(requestInterceptor);
 api.interceptors.response.use(successInterceptor, errorInterceptor);

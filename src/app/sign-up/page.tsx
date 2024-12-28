@@ -1,18 +1,18 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 import Input from '@/components/Input/Input';
+import Button from '@/components/Button/Button';
+
+import { api } from '@utils/axios';
 
 import RegisterBg from '@images/registerBg.jpg';
 import LogoWhite from '@images/campingping_white.svg';
-import Button from '@/components/Button/Button';
-import axios from 'axios';
-import { BASE_URL } from '@confing/config';
-import { toast } from 'react-toastify';
-import { useEffect } from 'react';
-import router from 'next/router';
 
 interface FormData {
   email: string;
@@ -23,6 +23,7 @@ interface FormData {
 }
 
 const SignUp = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -37,7 +38,7 @@ const SignUp = () => {
       const email = watch('email');
       if (!email) return;
 
-      const res = await axios.post(`${BASE_URL}/auth/send-verification`, {
+      const res = await api.post(`/auth/send-verification`, {
         email,
       });
       if (res.status === 200) {
@@ -54,7 +55,7 @@ const SignUp = () => {
       const verification = watch('verification');
       if (!email || !verification) return;
 
-      const res = await axios.post(`${BASE_URL}/auth/verify-code`, {
+      const res = await api.post(`/auth/verify-code`, {
         email,
         code: verification,
       });
@@ -93,14 +94,14 @@ const SignUp = () => {
 
     if (user.email && user.password && user.nickname) {
       try {
-        const res = await axios.post(`${BASE_URL}/auth/register`, {
+        const res = await api.post(`/auth/register`, {
           email: user.email,
           password: user.password,
           nickname: user.nickname,
         });
 
         if (res.status === 201) {
-          router.push('/sing-in');
+          router.push('/sign-in');
         } else toast.error('회원가입 중 문제가 발생했습니다.');
       } catch (error) {
         console.error(error);
@@ -148,7 +149,7 @@ const SignUp = () => {
                 hasError={!!errors.email}
                 errorMessage={errors.email?.message}
               />
-              <Button width="w-[96px]" onClick={sendVerification}>
+              <Button width="w-[96px]" onClick={sendVerification} type="button">
                 인증코드
               </Button>
             </div>
@@ -165,7 +166,11 @@ const SignUp = () => {
                 hasError={!!errors.verification}
                 errorMessage={errors.verification?.message}
               />
-              <Button width="w-[96px]" onClick={checkVerification}>
+              <Button
+                width="w-[96px]"
+                onClick={checkVerification}
+                type="button"
+              >
                 인증하기
               </Button>
             </div>
