@@ -105,7 +105,7 @@ const SignUp = () => {
           className="w-full flex flex-col items-center mb-3 gap-1"
         >
           <h1 className="text-title">회원가입</h1>
-          <div className="mb-6 w-10/12">
+          <div className={`w-10/12 ${errors.email ? 'mb-2' : 'mb-6'}`}>
             이메일
             <div className="flex gap-3">
               <Input
@@ -126,7 +126,7 @@ const SignUp = () => {
               </Button>
             </div>
           </div>
-          <div className="mb-6 w-10/12">
+          <div className={`w-10/12 ${errors.verification ? 'mb-2' : 'mb-6'}`}>
             이메일 인증 코드 입력
             <div className="flex gap-3">
               <Input
@@ -143,7 +143,7 @@ const SignUp = () => {
               </Button>
             </div>
           </div>
-          <div className="mb-6 w-10/12">
+          <div className={`w-10/12 ${errors.password ? 'mb-2' : 'mb-6'}`}>
             비밀번호
             <Input
               placeholder="비밀번호를 입력해주세요"
@@ -160,7 +160,7 @@ const SignUp = () => {
               errorMessage={errors.password?.message}
             />
           </div>
-          <div className="mb-6 w-10/12">
+          <div className={`w-10/12 ${errors.passwordCheck ? 'mb-2' : 'mb-6'}`}>
             비밀번호 확인
             <Input
               placeholder="비밀번호를 확인해주세요"
@@ -170,7 +170,7 @@ const SignUp = () => {
               })}
             />
           </div>
-          <div className="mb-6 w-10/12 ">
+          <div className={`w-10/12 ${errors.nickname ? 'mb-2' : 'mb-6'}`}>
             닉네임
             <Input
               placeholder="닉네임을 입력해주세요"
