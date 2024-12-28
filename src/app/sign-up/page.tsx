@@ -11,7 +11,8 @@ import Button from '@/components/Button/Button';
 import axios from 'axios';
 import { BASE_URL } from '@confing/config';
 import { toast } from 'react-toastify';
-import { use, useEffect } from 'react';
+import { useEffect } from 'react';
+import router from 'next/router';
 
 interface FormData {
   email: string;
@@ -91,15 +92,20 @@ const SignUp = () => {
     };
 
     if (user.email && user.password && user.nickname) {
-      // try {
-      //   const res = await axios.post(`${BASE_URL}/auth/register`, {
-      //     email: user.email,
-      //     password: user.password,
-      //     nickname: user.nickname,
-      //   });
-      // } catch (error) {
-      //   console.error(error);
-      // }
+      try {
+        const res = await axios.post(`${BASE_URL}/auth/register`, {
+          email: user.email,
+          password: user.password,
+          nickname: user.nickname,
+        });
+
+        if (res.status === 201) {
+          router.push('/sing-in');
+        } else toast.error('회원가입 중 문제가 발생했습니다.');
+      } catch (error) {
+        console.error(error);
+        toast.error('회원가입 중 문제가 발생했습니다.');
+      }
     }
   };
 
