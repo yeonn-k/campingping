@@ -4,20 +4,12 @@ import Image from 'next/image';
 import logoText from '@images/campingping_orange.svg';
 import symbolImg from '@images/campingping.png';
 import { useEffect, useState } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const DesktopUi = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile, isMounting } = useIsMobile();
 
-  const checkDevice = () => {
-    if (/Mobi/i.test(window.navigator.userAgent)) {
-      setIsMobile(true);
-    }
-  };
-
-  useEffect(() => {
-    checkDevice();
-  }, []);
-
+  if (isMounting) return null;
   if (isMobile) return null;
   else
     return (
