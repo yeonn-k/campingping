@@ -9,9 +9,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   height?: string;
   bgcolor?: string;
   fontsize?: string;
-  isLoading: boolean;
-  disabled: boolean;
-  onClick: () => Promise<void>;
+  isLoading?: boolean;
+  disabled?: boolean;
+  onClick?: () => Promise<void>;
 }
 
 const Button = ({

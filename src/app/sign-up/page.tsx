@@ -8,6 +8,9 @@ import Input from '@/components/Input/Input';
 import RegisterBg from '@images/registerBg.jpg';
 import LogoWhite from '@images/campingping_white.svg';
 import Button from '@/components/Button/Button';
+import axios from 'axios';
+import { BASE_URL } from '@/config/config';
+import { toast } from 'react-toastify';
 
 interface FormData {
   email: string;
@@ -21,11 +24,37 @@ const SignUp = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const sendVerification = async () => {
+    try {
+      const email = watch('email');
+      if (!email) {
+        toast.error('이메일을 입력해주세요');
+        return;
+      }
+
+      const res = await axios.post(`${BASE_URL}/auth/send-verification`, {
+        email,
+      });
+      if (res.status === 200) {
+        toast.success('인증번호가 발송되었습니다');
+      }
+    } catch (error) {
+      toast.error('인증번호 발송이 실패했습니다');
+    }
+  };
+
+  const onSubmit = async (data: FormData) => {
+    const user = {
+      email: data.email,
+      password: data.password,
+      nickname: data.nickname,
+    };
+
+    console.log(user);
   };
 
   return (
@@ -59,7 +88,7 @@ const SignUp = () => {
                 type="email"
                 {...register('email')}
               />
-              <Button width="w-[96px]" onClick={() => {}}>
+              <Button width="w-[96px]" onClick={sendVerification}>
                 인증코드
               </Button>
             </div>
@@ -69,19 +98,17 @@ const SignUp = () => {
             <div className="flex gap-3">
               <Input
                 placeholder="인증 코드를 입력해주세요"
-                type="email"
+                type="string"
                 {...register('verification')}
               />
-              <Button width="w-[96px]" onClick={() => {}}>
-                인증하기
-              </Button>
+              <Button width="w-[96px]">인증하기</Button>
             </div>
           </div>
           <div className="mb-6 w-10/12">
             비밀번호
             <Input
               placeholder="비밀번호를 입력해주세요"
-              type="email"
+              type="password"
               {...register('password')}
             />
           </div>
@@ -89,7 +116,7 @@ const SignUp = () => {
             비밀번호 확인
             <Input
               placeholder="비밀번호를 확인해주세요"
-              type="email"
+              type="password"
               {...register('passwordCheck')}
             />
           </div>
@@ -98,17 +125,13 @@ const SignUp = () => {
             <div className="flex gap-3">
               <Input
                 placeholder="닉네임을 입력해주세요"
-                type="email"
+                type="text"
                 {...register('nickname')}
               />
-              <Button width="w-[96px]" onClick={() => {}}>
-                중복확인
-              </Button>
+              <Button width="w-[96px]">중복확인</Button>
             </div>
           </div>
-          <Button width={'w-10/12'} onClick={() => {}}>
-            가입하기
-          </Button>
+          <Button width={'w-10/12'}>가입하기</Button>
         </form>
       </div>
     </div>
