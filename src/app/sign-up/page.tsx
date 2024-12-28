@@ -9,7 +9,7 @@ import RegisterBg from '@images/registerBg.jpg';
 import LogoWhite from '@images/campingping_white.svg';
 import Button from '@/components/Button/Button';
 import axios from 'axios';
-import { BASE_URL } from '@/config/config';
+import { BASE_URL } from '@confing/config';
 import { toast } from 'react-toastify';
 
 interface FormData {
