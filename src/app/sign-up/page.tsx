@@ -31,10 +31,7 @@ const SignUp = () => {
   const sendVerification = async () => {
     try {
       const email = watch('email');
-      if (!email) {
-        toast.error('이메일을 입력해주세요');
-        return;
-      }
+      if (!email) return;
 
       const res = await axios.post(`${BASE_URL}/auth/send-verification`, {
         email,
@@ -43,7 +40,25 @@ const SignUp = () => {
         toast.success('인증번호가 발송되었습니다');
       }
     } catch (error) {
-      toast.error('인증번호 발송이 실패했습니다');
+      console.error(error);
+    }
+  };
+
+  const checkVerification = async () => {
+    try {
+      const email = watch('email');
+      const verification = watch('verification');
+      if (!email || !verification) return;
+
+      const res = await axios.post(`${BASE_URL}/auth/verify-code`, {
+        email,
+        code: verification,
+      });
+      if (res.status === 201) {
+        toast.success('이메일 인증이 완료되었습니다.');
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -54,7 +69,17 @@ const SignUp = () => {
       nickname: data.nickname,
     };
 
-    console.log(user);
+    if (user.email && user.password && user.nickname) {
+      try {
+        const res = await axios.post(`${BASE_URL}/auth/register`, {
+          email: user.email,
+          password: user.password,
+          nickname: user.nickname,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   return (
@@ -86,7 +111,15 @@ const SignUp = () => {
               <Input
                 placeholder="이메일을 입력해주세요"
                 type="email"
-                {...register('email')}
+                {...register('email', {
+                  required: '이메일을 입력해주세요',
+                  pattern: {
+                    value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+                    message: '유효한 이메일을 입력해주세요',
+                  },
+                })}
+                hasError={!!errors.email}
+                errorMessage={errors.email?.message}
               />
               <Button width="w-[96px]" onClick={sendVerification}>
                 인증코드
@@ -99,9 +132,15 @@ const SignUp = () => {
               <Input
                 placeholder="인증 코드를 입력해주세요"
                 type="string"
-                {...register('verification')}
+                {...register('verification', {
+                  required: '인증 코드를 입력해주세요',
+                })}
+                hasError={!!errors.verification}
+                errorMessage={errors.verification?.message}
               />
-              <Button width="w-[96px]">인증하기</Button>
+              <Button width="w-[96px]" onClick={checkVerification}>
+                인증하기
+              </Button>
             </div>
           </div>
           <div className="mb-6 w-10/12">
@@ -109,7 +148,16 @@ const SignUp = () => {
             <Input
               placeholder="비밀번호를 입력해주세요"
               type="password"
-              {...register('password')}
+              {...register('password', {
+                required: '비밀번호를 입력해주세요',
+                pattern: {
+                  value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
+                  message:
+                    '비밀번호는 영문과 숫자, 특수 문자를 조합하여 8자리 이상이어야 합니다.',
+                },
+              })}
+              hasError={!!errors.password}
+              errorMessage={errors.password?.message}
             />
           </div>
           <div className="mb-6 w-10/12">
@@ -117,19 +165,22 @@ const SignUp = () => {
             <Input
               placeholder="비밀번호를 확인해주세요"
               type="password"
-              {...register('passwordCheck')}
+              {...register('passwordCheck', {
+                required: '비밀번호를 확인해주세요',
+              })}
             />
           </div>
           <div className="mb-6 w-10/12 ">
             닉네임
-            <div className="flex gap-3">
-              <Input
-                placeholder="닉네임을 입력해주세요"
-                type="text"
-                {...register('nickname')}
-              />
-              <Button width="w-[96px]">중복확인</Button>
-            </div>
+            <Input
+              placeholder="닉네임을 입력해주세요"
+              type="text"
+              {...register('nickname', {
+                required: '닉네임을 입력해주세요',
+              })}
+              hasError={!!errors.nickname}
+              errorMessage={errors.nickname?.message}
+            />
           </div>
           <Button width={'w-10/12'}>가입하기</Button>
         </form>
