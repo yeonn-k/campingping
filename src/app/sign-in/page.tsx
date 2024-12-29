@@ -10,6 +10,8 @@ import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 
 import Input from '@/components/Input/Input';
 import Button from '@/components/Button/Button';
+import { api } from '@/utils/axios';
+import { useRouter } from 'next/navigation';
 
 interface FormData {
   email: string;
@@ -17,11 +19,28 @@ interface FormData {
 }
 
 const SignIn = () => {
-  const { register, handleSubmit, watch } = useForm<FormData>();
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(data);
+  const router = useRouter();
+  const { register, handleSubmit } = useForm<FormData>();
+  const onSubmit = async (data: FormData) => {
+    const { email, password } = data;
+
+    if (email && password) {
+      try {
+        const res = await api.post('/auth/login', {
+          email,
+          password,
+        });
+
+        if (res.status === 200) {
+          router.push('/list');
+        }
+      } catch (error) {}
+    }
   };
 
+  const moveToSignUp = () => {
+    router.push('/sign-up');
+  };
   return (
     <div className="relative flex justify-center items-center w-full">
       <Image
@@ -67,9 +86,7 @@ const SignIn = () => {
               {...register('password')}
             />
           </div>
-          <Button width={'w-10/12'} onClick={() => {}}>
-            로그인
-          </Button>
+          <Button width={'w-10/12'}>로그인</Button>
         </form>
         <Button width={'w-10/12'} bgcolor={'bg-kakaoYellow'} onClick={() => {}}>
           <div className="flex justify-center">
@@ -77,7 +94,9 @@ const SignIn = () => {
             <span className="ml-1">카카오 로그인</span>
           </div>
         </Button>
-        <button className="mt-2">회원가입</button>
+        <button className="mt-2" onClick={moveToSignUp}>
+          회원가입
+        </button>
       </div>
     </div>
   );
