@@ -12,6 +12,7 @@ import Input from '@/components/Input/Input';
 import Button from '@/components/Button/Button';
 import { api } from '@/utils/axios';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 interface FormData {
   email: string;
@@ -33,8 +34,12 @@ const SignIn = () => {
 
         if (res.status === 200) {
           router.push('/list');
+        } else {
+          toast.error('이메일 또는 비밀번호가 잘못되었습니다.');
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -88,7 +93,7 @@ const SignIn = () => {
           </div>
           <Button width={'w-10/12'}>로그인</Button>
         </form>
-        <Button width={'w-10/12'} bgcolor={'bg-kakaoYellow'} onClick={() => {}}>
+        <Button width={'w-10/12'} bgcolor={'bg-kakaoYellow'}>
           <div className="flex justify-center">
             <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
             <span className="ml-1">카카오 로그인</span>
