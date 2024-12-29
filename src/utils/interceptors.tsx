@@ -1,22 +1,13 @@
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { cookies } from 'next/headers';
-import { useRouter } from 'next/navigation';
 
 export interface ConsoleError {
   status: number;
   data: unknown;
 }
 
-export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
-  const cookieStore = cookies();
-  const token = cookieStore.get('accessToken')?.value;
+// export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
 
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  return config;
-};
+// };
 
 export const successInterceptor = (response: AxiosResponse) => {
   return response;

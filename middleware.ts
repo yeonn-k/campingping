@@ -9,11 +9,6 @@ export default function middleware(request: NextRequest) {
 
   const isPublicPathRequest = PUBLIC_PATH.includes(url.pathname);
   const hasAccessToken = cookies.has('accessToken');
-  const hasRefreshToken = cookies.has('refreshToken');
-
-  if (!hasAccessToken && hasRefreshToken) {
-    // return NextResponse.rewrite(new URL(''))
-  }
 
   if (!hasAccessToken && !isPublicPathRequest) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
