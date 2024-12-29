@@ -6,7 +6,7 @@ export interface ConsoleError {
 }
 
 // export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
-
+//   return config;
 // };
 
 export const successInterceptor = (response: AxiosResponse) => {

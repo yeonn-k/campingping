@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import LogoWhite from '@images/campingping_white.svg';
 import RegisterBg from '@images/registerBg.jpg';
