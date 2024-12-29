@@ -86,18 +86,14 @@ const SignUp = () => {
   }, [watch('password')]);
 
   const onSubmit = async (data: FormData) => {
-    const user = {
-      email: data.email,
-      password: data.password,
-      nickname: data.nickname,
-    };
+    const { email, password, nickname } = data;
 
-    if (user.email && user.password && user.nickname) {
+    if (email && password && nickname) {
       try {
         const res = await api.post(`/auth/register`, {
-          email: user.email,
-          password: user.password,
-          nickname: user.nickname,
+          email,
+          password,
+          nickname,
         });
 
         if (res.status === 201) {

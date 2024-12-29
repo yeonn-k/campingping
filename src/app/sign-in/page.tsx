@@ -17,7 +17,7 @@ interface FormData {
 }
 
 const SignIn = () => {
-  const { register, handleSubmit } = useForm<FormData>();
+  const { register, handleSubmit, watch } = useForm<FormData>();
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
   };
