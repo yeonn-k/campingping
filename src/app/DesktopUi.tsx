@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import logoText from '@images/campingping_orange.svg';
 import symbolImg from '@images/campingping.png';
-import { useEffect, useState } from 'react';
+
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 const DesktopUi = () => {

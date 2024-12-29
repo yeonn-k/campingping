@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // These styles apply to every route in the application
 import './globals.css';
@@ -17,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <ToastContainer position="top-center" draggable />
         <div className="flex h-screen justify-center items-center">
           <DesktopUi />
           <div className="w-full md:max-w-[450px] h-full flex justify-center overflow-auto">

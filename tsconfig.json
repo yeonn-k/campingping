@@ -25,7 +25,8 @@
       "@icons/*": ["public/icons/*"],
       "@images/*": ["public/images/*"],
       "@types/*": ["./src/assets/types/*"],
-      "@hooks/*": ["./src/hooks/*"]
+      "@hooks/*": ["./src/hooks/*"],
+      "@confing/*": ["./src/config/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
