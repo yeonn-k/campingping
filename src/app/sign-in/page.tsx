@@ -13,6 +13,8 @@ import Button from '@/components/Button/Button';
 import { api } from '@/utils/axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 interface FormData {
   email: string;
@@ -40,6 +42,17 @@ const SignIn = () => {
       } catch (error) {
         console.error(error);
       }
+    }
+  };
+
+  const kakaoSignIn = async () => {
+    try {
+      const res = await api.get('/auth/kakao-login');
+      if (res.status === 200) {
+        router.push('/list');
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -93,7 +106,11 @@ const SignIn = () => {
           </div>
           <Button width={'w-10/12'}>로그인</Button>
         </form>
-        <Button width={'w-10/12'} bgcolor={'bg-kakaoYellow'}>
+        <Button
+          width={'w-10/12'}
+          bgcolor={'bg-kakaoYellow'}
+          onClick={kakaoSignIn}
+        >
           <div className="flex justify-center">
             <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
             <span className="ml-1">카카오 로그인</span>
