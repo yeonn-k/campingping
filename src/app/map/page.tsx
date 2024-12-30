@@ -1,5 +1,12 @@
+'use client';
+import { MapListWrap } from './component/MapListWrap';
+
 const Map = () => {
-  return;
+  return (
+    <div className="relative w-full">
+      <MapListWrap />
+    </div>
+  );
 };
 
 export default Map;

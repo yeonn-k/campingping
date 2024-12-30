@@ -8,9 +8,14 @@ import { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <SearchBar />
-      <Category />
+      <Category
+        selectedCategory={''}
+        onCategorySelected={function (selectedCategoryName: string): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
       <Weather />
       {children}
       <Nav />
