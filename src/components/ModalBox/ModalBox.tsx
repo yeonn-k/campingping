@@ -6,7 +6,12 @@ import { createPortal } from 'react-dom';
 const ModalBox = ({ children }: { children: ReactNode }) => {
   const modalRoot = document.getElementById('modal-root');
 
-  if (!modalRoot) return null;
+  if (!modalRoot) {
+    const rootElement = document.createElement('div');
+    rootElement.id = 'modal-root';
+    document.body.appendChild(rootElement);
+    return createPortal(<div className="modal">{children}</div>, rootElement);
+  }
 
   return createPortal(<div className="modal">{children}</div>, modalRoot);
 };
