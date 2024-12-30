@@ -28,7 +28,7 @@ const Nav = () => {
   };
 
   return (
-    <div className="flex w-full z-zNav justify-center sticky bottom-0 left-0 z-zNav">
+    <div className="flex w-full  z-zNav justify-center sticky bottom-0 left-0 z-zNav">
       <div className="flex w-full justify-around">
         {navItems.map((navItem) => (
           <div

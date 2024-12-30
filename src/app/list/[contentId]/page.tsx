@@ -3,6 +3,7 @@
 import { CampInfo } from '@/assets/types/Camp';
 import Carousel from '@/components/Carousel/Carousel';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
+import { useGlobalStore } from '@/stores/globalState';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -11,11 +12,49 @@ interface Facility {
   iconName: string;
 }
 
-const KAKAO_MAP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY as string;
+const KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
 const ListDetail = ({ params }: { params: { contentId: string } }) => {
   const { contentId } = params;
   const [campData, setCampData] = useState<CampInfo | null>(null);
+  const { mapScriptLoaded } = useGlobalStore();
+
+  useEffect(() => {
+    if (mapScriptLoaded && campData) {
+      window.kakao.maps.load(() => {
+        if (campData.location) {
+          const { coordinates } = campData.location;
+
+          if (coordinates) {
+            const container = document.getElementById('map') as HTMLElement;
+            const options = {
+              center: new window.kakao.maps.LatLng(
+                coordinates[1],
+                coordinates[0]
+              ),
+              level: 3,
+            };
+
+            const map = new window.kakao.maps.Map(container, options);
+
+            const markerPosition = new window.kakao.maps.LatLng(
+              coordinates[1],
+              coordinates[0]
+            );
+            const marker = new window.kakao.maps.Marker({
+              position: markerPosition,
+            });
+            marker.setMap(map);
+          } else {
+            console.error('');
+          }
+        } else {
+          console.error('No location data available for this camp');
+        }
+        // });
+      });
+    }
+  }, [campData, mapScriptLoaded]);
 
   useEffect(() => {
     const fetchDataAndCreateMap = async () => {
@@ -30,46 +69,25 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
 
         const fetchData = await response.json();
         const camp = fetchData.data;
+
         setCampData(camp);
-
-        const script = document.createElement('script');
-        script.text = 'text/javascript';
-        script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_KEY}`;
-        script.async = true;
-
-        script.onload = () => {
-          if (fetchData.location?.coordinates) {
-            const { coordinates } = fetchData.location;
-
-            const container = document.getElementById('map') as HTMLElement;
-            const options = {
-              center: new window.kakao.maps.LatLng(
-                coordinates[1],
-                coordinates[0]
-              ),
-              level: 3,
-            };
-            const map = new window.kakao.Map(container, options);
-
-            const markerPosition = new window.kakao.maps.LatLng(
-              coordinates[1],
-              coordinates[0]
-            );
-            const marker = new window.kakao.maps.Marker({
-              position: markerPosition,
-            });
-            marker.setMap(map);
-          }
-        };
-
-        document.body.appendChild(script);
       } catch (error) {
-        console.error('Error:', error);
+        console.error(error);
       }
     };
 
     fetchDataAndCreateMap();
+
+    return () => {
+      const script = document.querySelector(
+        `script[src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_APP_KEY}"]`
+      );
+      if (script) {
+        script.remove();
+      }
+    };
   }, [contentId]);
+
   const facilityIcons: Facility[] = [
     { name: '전기', iconName: 'electricity' },
     { name: '무선인터넷', iconName: 'wifi' },
@@ -153,7 +171,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
       <div className="space-y-4 mb-4">
         <p>캠핑장 사진</p>
         {campData.images && (
-          <div className="flex">
+          <div className="flex flex-col grow p-2">
             <Carousel images={campData.images} />
           </div>
         )}
