@@ -11,12 +11,12 @@ const config: Config = {
       boxShadow: {
         shadowCustom: '1px 4px 15px rgba(0,0,0,0.15)',
         iconShadow: '1px 2px 9px rgba(0,0,0,0.15)',
-        mapListShadow: '1px -5px 14px rgba(0,0,0,0.15)',
+        mapListShadow: '1px -5px 14px rgba(0,0,0,0.25)',
       },
       width: {
         '10.5/12': '87.5%',
       },
-      zindex: {
+      zIndex: {
         zCard: '1',
         zSearchBar: '1',
         zFAB: '12',

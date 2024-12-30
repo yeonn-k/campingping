@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // These styles apply to every route in the application
 import './globals.css';
 import DesktopUi from './DesktopUi';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Campingping',
@@ -19,6 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Script
+          strategy="beforeInteractive"
+          src={`http://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY}&autoload=false`}
+        />
         <ToastContainer position="top-center" draggable />
         <div className="flex h-screen justify-center items-center">
           <DesktopUi />
