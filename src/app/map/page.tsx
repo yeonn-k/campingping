@@ -1,22 +1,26 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import { MapListWrap } from './component/MapListWrap';
+import { useLocationStore } from '@/stores/locationState';
 
 const Map = () => {
-  let latitude = 33.450701;
-  let longitude = 126.570667;
+  const { lat, lon, updateLocation } = useLocationStore();
+
+  useEffect(() => {
+    updateLocation();
+  }, []);
 
   const mapRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     window.kakao.maps.load(() => {
       const options = {
-        center: new window.kakao.maps.LatLng(latitude, longitude),
+        center: new window.kakao.maps.LatLng(lat, lon),
         level: 3,
       };
 
       const map = new window.kakao.maps.Map(mapRef.current, options);
     });
-  }, []);
+  }, [lat, lon]);
 
   return (
     <div className="relative w-full h-full">
