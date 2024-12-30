@@ -15,7 +15,7 @@ const config: Config = {
       width: {
         '10.5/12': '87.5%',
       },
-      zIndex: {
+      zindex: {
         zCard: '1',
         zSearchBar: '1',
         zFAB: '12',

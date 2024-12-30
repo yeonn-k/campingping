@@ -1,6 +1,7 @@
 'use client';
 
 import { CampInfo } from '@/assets/types/Camp';
+import Carousel from '@/components/Carousel/Carousel';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -20,18 +21,19 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
     const fetchDataAndCreateMap = async () => {
       try {
         const response = await fetch(
-          `https://kdt-react-node-1-team03.elicecoding.com:3000/campings/lists/${contentId}`
+          `http://kdt-react-node-1-team03.elicecoding.com:3000/campings/lists/${contentId}`
         );
 
         if (!response.ok) {
           throw new Error('Error on fetching camp data');
         }
 
-        const fetchData: CampInfo = await response.json();
-        console.log(fetchData);
-        setCampData(fetchData);
+        const fetchData = await response.json();
+        const camp = fetchData.data;
+        setCampData(camp);
 
         const script = document.createElement('script');
+        script.text = 'text/javascript';
         script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_KEY}`;
         script.async = true;
 
@@ -47,8 +49,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
               ),
               level: 3,
             };
-
-            const map = new window.kakao.maps.Map(container, options);
+            const map = new window.kakao.Map(container, options);
 
             const markerPosition = new window.kakao.maps.LatLng(
               coordinates[1],
@@ -69,20 +70,19 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
 
     fetchDataAndCreateMap();
   }, [contentId]);
-
   const facilityIcons: Facility[] = [
     { name: '전기', iconName: 'electricity' },
     { name: '무선인터넷', iconName: 'wifi' },
     { name: '장작판매', iconName: 'firewood' },
-    { name: '온수', iconName: 'hot water' },
+    { name: '온수', iconName: 'hot-water' },
     { name: '트렘폴린', iconName: 'trampoline' },
     { name: '물놀이장', iconName: 'pool' },
     { name: '놀이터', iconName: 'playground' },
     { name: '산책로', iconName: 'trail' },
     { name: '운동장', iconName: 'playfield' },
-    { name: '운동시설', iconName: 'exercise facilities' },
+    { name: '운동시설', iconName: 'exercise-facilities' },
     { name: '마트.편의점', iconName: 'market' },
-    { name: '덤프스테이션', iconName: 'dump station' },
+    { name: '덤프스테이션', iconName: 'dump-station' },
   ];
 
   if (!campData) {
@@ -92,32 +92,35 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   const facilities = !!campData.sbrsCl ? campData.sbrsCl.split(',') : null;
 
   return (
-    <div className="flex flex-col grow p-2">
-      {campData.images ? (
-        <Image
-          className=""
-          src={campData.images[0]?.url}
-          alt={`${campData.factDivNm} 사진`}
-          width={380}
-          height={220}
-        />
-      ) : (
-        <DefaultImg type="camp" className="" width={350} height={200} />
+    <div className="flex flex-col grow p-2 ">
+      <div className="space-y-4 mb-4">
+        {campData.images ? (
+          <Image
+            className="rounded-[5px]"
+            src={campData.images[0]?.url}
+            alt={`${campData.factDivNm} 사진`}
+            width={380}
+            height={220}
+          />
+        ) : (
+          <DefaultImg type="camp" className="" width={350} height={200} />
+        )}
+
+        <h2 className="text-subTitle">{campData.factDivNm}</h2>
+        <p className="text-description text-Gray">
+          {campData.doNm} {campData.signguNm}
+        </p>
+      </div>
+      <hr className="mb-4" />
+
+      {campData.intro && (
+        <div className="space-y-4 mb-4">
+          <p className="text-content">캠핑장 소개</p>
+          <p className="text-description text-Gray">{campData.intro}</p>
+        </div>
       )}
 
-      <h2>{campData.factDivNm}</h2>
-      <p>
-        {campData.doNm} {campData.signguNm}
-      </p>
-
-      <hr />
-
-      <div>
-        <p>캠핑장 소개</p>
-        <p>{campData.intro}</p>
-      </div>
-
-      <div>
+      <div className="space-y-4 mb-4">
         <p>시설정보</p>
         <div className="flex">
           {facilities &&
@@ -132,34 +135,69 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
                 >
                   {matchedFacility && (
                     <Image
-                      src={`/facility/${matchedFacility.iconName}.png`}
+                      src={`/icons/facility/${matchedFacility.iconName}.png`}
                       alt={matchedFacility.iconName}
                       width={24}
                       height={24}
                     />
                   )}
-                  <span className="text-[10px]">{matchedFacility?.name}</span>
+                  <span className="text-[10px] text-Gray">
+                    {matchedFacility?.name}
+                  </span>
                 </div>
               );
             })}
         </div>
       </div>
 
-      <div>
+      <div className="space-y-4 mb-4">
         <p>캠핑장 사진</p>
-        <div>{/* Add image carousol here */}</div>
+        <div>
+          {campData.images && (
+            <Carousel
+              slides={campData.images.map((image) => (
+                <Image
+                  key={image.id}
+                  layout="fill"
+                  src={image.url}
+                  className="object-cover rounded-[5px]"
+                  alt="Image"
+                />
+              ))}
+              options={{
+                align: 'start',
+                loop: true,
+                skipSnaps: false,
+                inViewThreshold: 0.7,
+              }}
+            />
+          )}
+        </div>
       </div>
 
-      <div>
-        <div>
-          <Image src="/location.png" alt="location" width={24} height={24} />
+      <div className="space-y-2 mb-4">
+        <p>위치</p>
+        <div className="flex">
+          <Image
+            className="flex"
+            src="/icons/location.png"
+            alt="location"
+            width={24}
+            height={24}
+          />
           <span>
             {campData.addr1}
             {!!campData.addr2 && ` / ${campData.addr2}`}
           </span>
         </div>
-        <div>
-          <Image src="/icons/phone.png" alt="phone" width={24} height={24} />
+        <div className="flex space-x-1">
+          <Image
+            className="flex"
+            src="/icons/phone.png"
+            alt="phone"
+            width={24}
+            height={24}
+          />
           <span>{campData.tel}</span>
         </div>
 
