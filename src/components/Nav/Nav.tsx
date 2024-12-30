@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 
@@ -26,64 +28,66 @@ const Nav = () => {
   };
 
   return (
-    <div className="flex justify-around absolute bottom-0 left-0 w-[390px] z-[zNav]">
-      {navItems.map((navItem) => (
-        <div
-          key={navItem.name}
-          onClick={() => handleNavClick(navItem)}
-          className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
-        >
-          <Image
-            src={`/icons/nav/${navItem.iconName}_${pathname === navItem.url ? 'green' : 'gray'}.png`}
-            alt={navItem.name}
-            width={24}
-            height={24}
-          />
-          <span
-            className={`text-[10px] ${pathname === navItem.url ? 'text-Green' : 'text-Gray'}`}
+    <div className="flex w-full z-zNav justify-center sticky bottom-0 left-0 z-zNav">
+      <div className="flex w-full justify-around">
+        {navItems.map((navItem) => (
+          <div
+            key={navItem.name}
+            onClick={() => handleNavClick(navItem)}
+            className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
           >
-            {navItem.name}
-          </span>
-        </div>
-      ))}
+            <Image
+              src={`/icons/nav/${navItem.iconName}_${pathname === navItem.url ? 'green' : 'gray'}.png`}
+              alt={navItem.name}
+              width={24}
+              height={24}
+            />
+            <span
+              className={`text-[10px] ${pathname === navItem.url ? 'text-Green' : 'text-Gray'}`}
+            >
+              {navItem.name}
+            </span>
+          </div>
+        ))}
 
-      {user ? (
-        <div
-          key="logout"
-          onClick={() => {
-            router.push('/sign-out');
-          }}
-          className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
-        >
-          <Image
-            src={`/icons/nav/logout_gray.png`}
-            alt="로그아웃"
-            width={24}
-            height={24}
-          />
-          <span className="text-[10px] text-Gray">로그아웃</span>
-        </div>
-      ) : (
-        <div
-          key="login"
-          onClick={() => {
-            router.push('/sign-in');
-          }}
-          className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
-        >
-          <Image
-            src={`/icons/nav/login_${pathname === '/login' ? 'green' : 'gray'}.png`}
-            alt="로그인"
-            width={24}
-            height={24}
-          />
-          <span
-            className={`text-[10px] ${pathname === '/login' ? 'text-Green' : 'text-Gray'}`}
+        {user ? (
+          <div
+            key="logout"
+            onClick={() => {
+              router.push('/sign-out');
+            }}
+            className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
           >
-            로그인
-          </span>
-        </div>
-      )}
+            <Image
+              src={`/icons/nav/logout_gray.png`}
+              alt="로그아웃"
+              width={24}
+              height={24}
+            />
+            <span className="text-[10px] text-Gray">로그아웃</span>
+          </div>
+        ) : (
+          <div
+            key="login"
+            onClick={() => {
+              router.push('/sign-in');
+            }}
+            className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
+          >
+            <Image
+              src={`/icons/nav/login_${pathname === '/login' ? 'green' : 'gray'}.png`}
+              alt="로그인"
+              width={24}
+              height={24}
+            />
+            <span
+              className={`text-[10px] ${pathname === '/login' ? 'text-Green' : 'text-Gray'}`}
+            >
+              로그인
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
