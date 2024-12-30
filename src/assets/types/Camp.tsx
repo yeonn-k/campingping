@@ -5,7 +5,7 @@ interface CampLocation {
   coordinates: [number, number];
 }
 
-interface CampImage {
+export interface CampImage {
   id: number;
   url: string;
 }

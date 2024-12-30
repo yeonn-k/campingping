@@ -152,27 +152,11 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
 
       <div className="space-y-4 mb-4">
         <p>캠핑장 사진</p>
-        <div>
-          {campData.images && (
-            <Carousel
-              slides={campData.images.map((image) => (
-                <Image
-                  key={image.id}
-                  layout="fill"
-                  src={image.url}
-                  className="object-cover rounded-[5px]"
-                  alt="Image"
-                />
-              ))}
-              options={{
-                align: 'start',
-                loop: true,
-                skipSnaps: false,
-                inViewThreshold: 0.7,
-              }}
-            />
-          )}
-        </div>
+        {campData.images && (
+          <div className="flex">
+            <Carousel images={campData.images} />
+          </div>
+        )}
       </div>
 
       <div className="space-y-2 mb-4">

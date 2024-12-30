@@ -1,41 +1,37 @@
 'use client';
+import React from 'react';
+import Slider from 'react-slick';
+import Image from 'next/image';
+import { CampImage } from '@/assets/types/Camp';
 
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-import useEmblaCarousel, { EmblaOptionsType } from 'embla-carousel-react';
+interface CarouselProps {
+  images: CampImage[];
+}
 
-type CarouselProps = {
-  options?: EmblaOptionsType;
-  slides: ReactNode[];
-};
-
-const Carousel = ({ options, slides }: CarouselProps) => {
-  const [emblaRef, embla] = useEmblaCarousel(options);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-
-  const onSelect = useCallback(() => {
-    if (!embla) return;
-    setSelectedIndex(embla.selectedScrollSnap());
-  }, [embla]);
-
-  useEffect(() => {
-    if (!embla) return;
-    onSelect();
-    setScrollSnaps(embla.scrollSnapList());
-    embla.on('select', onSelect);
-  }, [embla, onSelect]);
-
+const Carousel: React.FC<CarouselProps> = ({ images }) => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
   return (
-    <div className="w-full relative rounded-md">
-      <div className="overflow-hidden relative rounded-md" ref={emblaRef}>
-        <div className="flex h-44">
-          {slides.map((slide, index) => (
-            <div className="w-full relative mx-1" key={index}>
-              {slide}
+    <div className="slider-container w-full">
+      {images && (
+        <Slider {...settings}>
+          {images.map((image) => (
+            <div key={image.id}>
+              <Image
+                src={image.url}
+                width={300}
+                height={200}
+                alt="Camp Image"
+              />
             </div>
           ))}
-        </div>
-      </div>
+        </Slider>
+      )}
     </div>
   );
 };
