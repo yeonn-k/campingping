@@ -23,16 +23,16 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
   };
 
   return (
-    <div className="slider-container w-[350px] rounded-[5px]">
+    <div className="slider-container w-full rounded-[5px]">
       {images && (
         <Slider {...settings}>
           {images.map((image) => (
             <Image
-              className="rounded-[5px]"
+              className="rounded-[5px] justify-items-stretch"
               key={image.id}
               src={image.url}
               width={350}
-              height={250}
+              height={350}
               alt="Camp Image"
             />
           ))}
