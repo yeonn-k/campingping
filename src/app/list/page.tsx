@@ -39,7 +39,8 @@ const List = () => {
           throw new Error('Failed to fetch data');
         }
         const data = await response.json();
-        return data;
+        const camps = data.data.result;
+        return camps;
       } catch (error) {
         console.error(error); // You can replace this with a logging function if needed
       }

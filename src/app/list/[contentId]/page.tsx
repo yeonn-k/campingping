@@ -1,6 +1,6 @@
 'use client';
 
-import Camp, { CampImage } from '@/assets/types/Camp';
+import { CampInfo } from '@/assets/types/Camp';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -8,13 +8,6 @@ import { useEffect, useState } from 'react';
 interface Facility {
   name: string;
   iconName: string;
-}
-
-interface CampInfo extends Camp {
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: boolean;
-  images: CampImage[] | null;
 }
 
 const KAKAO_MAP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY as string;

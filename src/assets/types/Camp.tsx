@@ -5,12 +5,12 @@ interface CampLocation {
   coordinates: [number, number];
 }
 
-export interface CampImage {
+interface CampImage {
   id: number;
   url: string;
 }
 
-interface Camp {
+interface CampBase {
   id: number;
   lineIntro: NullableString;
   intro: NullableString;
@@ -43,8 +43,16 @@ interface Camp {
   eqpmnLendCl: NullableString;
   animalCmgCl: NullableString;
   contentId: string;
+}
+
+export default interface Camp extends CampBase {
   location: CampLocation | null;
   images: CampImage | null;
 }
 
-export default Camp;
+export interface CampInfo extends CampBase {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: boolean;
+  images: CampImage[] | null;
+}
