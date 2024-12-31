@@ -1,4 +1,5 @@
 'use client';
+import { createPost } from '@utils/communitiesService';
 
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
@@ -18,23 +19,44 @@ const WriteModal = ({
     content: string;
   }) => void;
 }) => {
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const title = (document.querySelector('#title') as HTMLInputElement).value;
-    const date = (document.querySelector('#date') as HTMLTextAreaElement).value;
+    const date = (document.querySelector('#date') as HTMLInputElement).value;
     const state = (document.querySelector('#location') as HTMLInputElement)
       .value;
-    const people = (document.querySelector('#people') as HTMLTextAreaElement)
+    const people = (document.querySelector('#people') as HTMLInputElement)
       .value;
-    const content = (document.querySelector('#content') as HTMLInputElement)
+    const content = (document.querySelector('#content') as HTMLTextAreaElement)
       .value;
 
     if (title && date && state && people && content) {
-      const newPost = { title, date, state, people, content };
-      onPostSubmit(newPost);
-      onClose(); // 작성 완료 후 모달 닫기
+      try {
+        // 현재 위치 가져오기
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const newPost = {
+              title,
+              date,
+              state,
+              people,
+              content,
+              latitude: position.coords.latitude, // 위도
+              longitude: position.coords.longitude, // 경도
+            };
+
+            const createdPost = await createPost(newPost); // API 호출
+            onPostSubmit(createdPost); // 부모 컴포넌트로 전달
+            onClose();
+          },
+          (error) => {
+            console.error('위치 정보를 가져오는 데 실패했습니다.', error);
+          }
+        );
+      } catch (error) {
+        console.error('게시글 작성 실패:', error);
+      }
     }
   };
-
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
     textarea.style.height = 'auto'; // 높이를 초기화
@@ -52,19 +74,19 @@ const WriteModal = ({
         </div>
         <div className="mb-4 flex items-center space-x-2 ">
           <span className="w-16 text-left">제목</span>
-          <Input id="title" />
+          <Input id="title" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2 ">
           <span className="w-16 text-left">일정</span>
-          <Input id="date" />
+          <Input id="date" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2">
           <span className="w-16 text-left">장소</span>
-          <Input id="location" />
+          <Input id="location" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2">
           <span className="w-16 text-left">인원</span>
-          <Input id="people" />
+          <Input id="people" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2 ">
           <span className="w-16 text-left mb-2">기타</span>

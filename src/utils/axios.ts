@@ -20,3 +20,5 @@ export const api: AxiosInstance = axios.create(axiosRequestConfig);
 
 api.interceptors.request.use(requestInterceptor);
 api.interceptors.response.use(successInterceptor, errorInterceptor);
+
+export { axios };

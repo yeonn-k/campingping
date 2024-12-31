@@ -10,8 +10,9 @@ import Nav from '@/components/Nav/Nav';
 import chevron from '@icons/chevron_gray.svg';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
-import logo from '@images/campingping.png';
-import logo1 from '@images/Campingping_orange.svg';
+import logo1 from '@images/campingping_orange.svg';
+import { useEffect } from 'react';
+import { getPosts } from '@utils/communitiesService';
 
 const CommunityPage = () => {
   const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>('myPosts');
@@ -49,11 +50,22 @@ const CommunityPage = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await getPosts(); // API 호출
+        setMyPosts(data);
+      } catch (error) {
+        console.error('게시글 조회 실패:', error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white overflow-y-auto w-full">
-      <div className="flex justify-center mt- gap-1">
-        <Image src={logo} alt="첫 번째 이미지" width={50} height={100} />
+      <div className="flex justify-center mt-4 gap-1">
         <Image src={logo1} alt="두 번째 이미지" width={100} height={100} />
       </div>
 
