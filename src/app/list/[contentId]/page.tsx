@@ -5,6 +5,7 @@ import Carousel from '@/components/Carousel/Carousel';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
 import { BASE_URL } from '@/config/config';
 import { useGlobalStore } from '@/stores/globalState';
+import axios from 'axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -52,7 +53,6 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
         } else {
           console.error('No location data available for this camp');
         }
-        // });
       });
     }
   }, [campData, mapScriptLoaded]);
@@ -60,15 +60,15 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   useEffect(() => {
     const fetchDataAndCreateMap = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/campings/lists/${contentId}`);
+        const response = await axios.get(
+          `${BASE_URL}/campings/lists/${contentId}`
+        );
 
-        if (!response.ok) {
+        const camp = response.data.data;
+
+        if (!response) {
           throw new Error('Error on fetching camp data');
         }
-
-        const fetchData = await response.json();
-        const camp = fetchData.data;
-
         setCampData(camp);
       } catch (error) {
         console.error(error);

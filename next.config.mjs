@@ -7,7 +7,8 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://kdt-react-node-1-team03.elicecoding.com/api/',
+        destination:
+          'https://kdt-react-node-1-team03.elicecoding.com/api/:path*',
       },
     ];
   },
