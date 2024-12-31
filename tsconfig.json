@@ -12,6 +12,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./build", // 컴파일된 파일이 저장될 디렉토리
+    "rootDir": "./src", // 소스 파일이 위치한 디렉토리
     "plugins": [
       {
         "name": "next"
@@ -30,11 +33,13 @@
     }
   },
   "include": [
+    "src/**/*",
     "next-env.d.ts",
     "**/*.ts",
     "src/**/*.d.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": ["src/@types/index.d.ts"]
 }

@@ -43,10 +43,10 @@ interface CampBase {
   eqpmnLendCl: NullableString;
   animalCmgCl: NullableString;
   contentId: string;
+  location: CampLocation | null;
 }
 
 export default interface Camp extends CampBase {
-  location: CampLocation | null;
   images: CampImage | null;
 }
 

@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
-
 import Camp from '@/assets/types/Camp';
 
 const List = () => {
@@ -42,7 +41,8 @@ const List = () => {
         const camps = data.data.result;
         return camps;
       } catch (error) {
-        console.error(error); // You can replace this with a logging function if needed
+        console.log(error);
+        // toast.error(error.me.);
       }
     },
     [selectedCategory]
@@ -91,7 +91,7 @@ const List = () => {
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(handleObserver, {
-      rootMargin: '20px',
+      rootMargin: '70px',
     });
 
     if (loadMoreRef.current) {
@@ -115,8 +115,8 @@ const List = () => {
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />
-      <div className="flex justify-center h-[700px] p-4">
-        <div className="space-y-8 overflow-y-auto scroll-smooth">
+      <div className="flex align-center p-4">
+        <div className="flex flex-col items-center space-y-8 scroll-smooth mx-*">
           {campingData?.length ? (
             campingData.map((camp) => (
               <Card
