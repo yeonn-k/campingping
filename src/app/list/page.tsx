@@ -31,8 +31,8 @@ const List = () => {
       try {
         const apiUrl =
           selectedCategory === '전체'
-            ? `http://kdt-react-node-1-team03.elicecoding.com:3000/campings/lists?limit=10&cursor=${page}`
-            : `http://kdt-react-node-1-team03.elicecoding.com:3000/campings/lists?limit=10&cursor=${page}&category=${selectedCategory}`;
+            ? `${process.env.NEXT_PUBLIC_BASE_URL}lists?limit=10&cursor=${page}`
+            : `${process.env.NEXT_PUBLIC_BASE_URL}lists?limit=10&cursor=${page}&category=${selectedCategory}`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error('Failed to fetch data');
@@ -42,7 +42,6 @@ const List = () => {
         return camps;
       } catch (error) {
         console.log(error);
-        // toast.error(error.me.);
       }
     },
     [selectedCategory]

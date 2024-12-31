@@ -60,7 +60,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
     const fetchDataAndCreateMap = async () => {
       try {
         const response = await fetch(
-          `http://kdt-react-node-1-team03.elicecoding.com:3000/campings/lists/${contentId}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}lists/${contentId}`
         );
 
         if (!response.ok) {
