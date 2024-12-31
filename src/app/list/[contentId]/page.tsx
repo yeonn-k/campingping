@@ -3,6 +3,7 @@
 import { CampInfo } from '@/assets/types/Camp';
 import Carousel from '@/components/Carousel/Carousel';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
+import { BASE_URL } from '@/config/config';
 import { useGlobalStore } from '@/stores/globalState';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -59,9 +60,10 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   useEffect(() => {
     const fetchDataAndCreateMap = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}lists/${contentId}`
-        );
+        // const response = await fetch(
+        //   `${process.env.NEXT_PUBLIC_BASE_URL}lists/${contentId}`
+        // );
+        const response = await fetch(`${BASE_URL}/campings/lists/${contentId}`);
 
         if (!response.ok) {
           throw new Error('Error on fetching camp data');

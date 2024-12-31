@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
 import Camp from '@/assets/types/Camp';
+import { BASE_URL } from '@/config/config';
 
 const List = () => {
   const searchParams = useSearchParams();
@@ -31,8 +32,10 @@ const List = () => {
       try {
         const apiUrl =
           selectedCategory === '전체'
-            ? `${process.env.NEXT_PUBLIC_BASE_URL}lists?limit=10&cursor=${page}`
-            : `${process.env.NEXT_PUBLIC_BASE_URL}lists?limit=10&cursor=${page}&category=${selectedCategory}`;
+            ? // ? `${process.env.NEXT_PUBLIC_BASE_URL}lists?limit=10&cursor=${page}`
+              // : `${process.env.NEXT_PUBLIC_BASE_URL}lists?limit=10&cursor=${page}&category=${selectedCategory}`;
+              `${BASE_URL}/campings/lists?limit=10&cursor=${page}`
+            : `${BASE_URL}/campings/lists?limit=10&cursor=${page}&category=${selectedCategory}`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
           throw new Error('Failed to fetch data');
