@@ -11,7 +11,7 @@ import chevron from '@icons/chevron_gray.svg';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
 import logo from '@images/campingping.png';
-import logo1 from '@images/Campingping_orange.svg';
+import logo1 from '@images/campingping_orange.svg';
 
 const CommunityPage = () => {
   const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>('myPosts');
