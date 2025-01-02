@@ -26,14 +26,11 @@ const Map = () => {
     }
   };
 
-  console.log(campList);
-
   useEffect(() => {
     if (lat && lon) {
       getNearByCampings();
     }
 
-    console.log(campList);
     if (!mapRef.current) return;
 
     window.kakao?.maps.load(() => {
