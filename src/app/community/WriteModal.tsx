@@ -13,35 +13,43 @@ const WriteModal = ({
   onClose: () => void;
   onPostSubmit: (post: {
     title: string;
-    date: string;
+    location: string;
+    startDate: Date;
+    endDate: Date;
     state: string;
-    people: string;
+    people: number;
     content: string;
+    lat: number;
+    lon: number;
   }) => void;
 }) => {
   const handleSubmit = async () => {
     const title = (document.querySelector('#title') as HTMLInputElement).value;
-    const date = (document.querySelector('#date') as HTMLInputElement).value;
-    const state = (document.querySelector('#location') as HTMLInputElement)
+    const startDate = (document.querySelector('#startDate') as HTMLInputElement)
+      .value;
+    const endDate = (document.querySelector('#endDate') as HTMLInputElement)
+      .value;
+    const location = (document.querySelector('#location') as HTMLInputElement)
       .value;
     const people = (document.querySelector('#people') as HTMLInputElement)
       .value;
     const content = (document.querySelector('#content') as HTMLTextAreaElement)
       .value;
 
-    if (title && date && state && people && content) {
+    if (title && startDate && endDate && location && people && content) {
       try {
         // 현재 위치 가져오기
         navigator.geolocation.getCurrentPosition(
           async (position) => {
             const newPost = {
               title,
-              date,
-              state,
+              startDate,
+              endDate,
+              location,
               people,
               content,
-              latitude: position.coords.latitude, // 위도
-              longitude: position.coords.longitude, // 경도
+              lat: position.coords.latitude, // 위도
+              lon: position.coords.longitude, // 경도
             };
 
             const createdPost = await createPost(newPost); // API 호출
@@ -59,8 +67,8 @@ const WriteModal = ({
   };
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
-    textarea.style.height = 'auto'; // 높이를 초기화
-    textarea.style.height = `${textarea.scrollHeight}px`; // 입력 내용에 맞게 높이 조정
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
   return (
@@ -77,8 +85,12 @@ const WriteModal = ({
           <Input id="title" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2 ">
-          <span className="w-16 text-left">일정</span>
-          <Input id="date" placeholder={''} />
+          <span className="w-16 text-left">시작일</span>
+          <Input type="datetime-local" id="startDate" placeholder={''} />
+        </div>
+        <div className="mb-4 flex items-center space-x-2 ">
+          <span className="w-16 text-left">종료일</span>
+          <Input type="datetime-local" id="endDate" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2">
           <span className="w-16 text-left">장소</span>
