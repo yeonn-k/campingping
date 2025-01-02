@@ -26,11 +26,14 @@ const Map = () => {
     }
   };
 
+  console.log(campList);
+
   useEffect(() => {
     if (lat && lon) {
       getNearByCampings();
     }
 
+    console.log(campList);
     if (!mapRef.current) return;
 
     window.kakao?.maps.load(() => {
@@ -49,9 +52,16 @@ const Map = () => {
 
   return (
     <div className="relative w-full h-full">
-      <div ref={mapRef} className="w-full h-full">
-        <MapListWrap campList={campList} />
-      </div>
+      {lat && lon ? (
+        <div ref={mapRef} className="w-full h-full">
+          <MapListWrap campList={campList} />
+        </div>
+      ) : (
+        <div className="h-5/6 flex flex-col justify-center items-center">
+          <p>위치를 기반으로 하는 페이지 입니다.</p>
+          <p>위치 권한을 확인해주세요</p>
+        </div>
+      )}
     </div>
   );
 };
