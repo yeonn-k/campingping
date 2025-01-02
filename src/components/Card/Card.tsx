@@ -9,7 +9,7 @@ interface CardProps {
   imgSrc: string | null;
   name: string;
   address: string;
-  description: string;
+  description: string | null;
 }
 
 const Card = ({

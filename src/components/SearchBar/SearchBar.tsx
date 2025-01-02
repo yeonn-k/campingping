@@ -7,7 +7,7 @@ const SearchBar = () => {
   return (
     <Link
       href="/search"
-      className="w-full h-10 mt-2 flex justify-center items-center"
+      className="w-full h-15 mt-2 flex justify-center items-center"
     >
       <div className="w-9/12 h-10 mt-5 rounded-full shadow-shadowCustom flex justify-center items-center text-Gray">
         <Image src={Magnifier} alt="돋보기" width={18} height={18} />
