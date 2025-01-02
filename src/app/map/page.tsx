@@ -15,7 +15,7 @@ const Map = () => {
   useEffect(() => {
     if (!mapRef.current) return;
 
-    window.kakao.maps.load(() => {
+    window.kakao?.maps.load(() => {
       const options = {
         center: new window.kakao.maps.LatLng(lat, lon),
         level: 3,

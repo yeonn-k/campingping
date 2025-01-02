@@ -1,5 +1,5 @@
 import { useGlobalStore } from '@/stores/globalState';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 interface Props {
   dependencies: unknown[];
@@ -9,9 +9,11 @@ interface Props {
 export const useKakaoMap = ({ dependencies, onLoad }: Props) => {
   const { mapScriptLoaded } = useGlobalStore();
 
+  const memoizedDependencies = useMemo(() => dependencies, [dependencies]);
+
   useEffect(() => {
     if (mapScriptLoaded) {
       window.kakao.maps.load(onLoad);
     }
-  }, [JSON.stringify(dependencies), mapScriptLoaded, onLoad]);
+  }, [memoizedDependencies, mapScriptLoaded, onLoad]);
 };
