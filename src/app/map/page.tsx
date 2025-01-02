@@ -6,46 +6,87 @@ import { api } from '@/utils/axios';
 
 import { CampMap } from '@/assets/types/CampMap';
 
+import useLocation from '@/hooks/useLocation';
+
 const Map = () => {
-  const { lat, lon, updateLocation } = useLocationStore();
-  const [campList, setCampList] = useState<CampMap[]>([]);
+  const limit = 10;
+  const [offset, setOffset] = useState(0);
+
+  const { userLat, userLon, updateLocation } = useLocationStore();
+  const [lat, setLat] = useState<number | null>(userLat);
+  const [lon, setLon] = useState<number | null>(userLon);
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [kakaoMap, setKakaoMap] = useState<unknown | null>(null);
 
+  const [campList, setCampList] = useState<CampMap[]>([]);
+
+  const region =
+    typeof window !== 'undefined' ? sessionStorage.getItem('region') : null;
+  const location = useLocation(region);
+
+  console.log(lat, lon);
   useEffect(() => {
     updateLocation();
   }, []);
 
   const getNearByCampings = async () => {
     try {
-      const res = await api.get(`/campings/map?lat=${lat}&lon=${lon}`);
-      setCampList(res.data.data);
+      const res = await api.get(
+        `/campings/map?lat=${userLat}&lon=${userLon}&limit=${limit}&offset=${offset}`
+      );
+      setCampList((prev) => [...prev, ...res.data.data]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCampingsByDoNm = async () => {
+    try {
+      const res = await api.get(
+        `campings/lists?region=${region}&limit=${limit}&cursor=${offset}`
+      );
+      setCampList((prev) => [...prev, ...res.data.data.result]);
+      // sessionStorage.clear();
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    if (lat && lon) {
-      getNearByCampings();
-    }
-
     if (!mapRef.current) return;
 
-    window.kakao?.maps.load(() => {
-      const options = {
-        center: new window.kakao.maps.LatLng(lat, lon),
-        level: 7,
-      };
+    if (lat !== null && lon !== null) {
+      window.kakao?.maps.load(() => {
+        const options = {
+          center: new window.kakao.maps.LatLng(lat, lon),
+          level: 7,
+        };
 
-      const map = new window.kakao.maps.Map(mapRef.current, options);
-      map.setZoomable(false);
-      map.setDraggable(false);
+        const map = new window.kakao.maps.Map(mapRef.current, options);
+        map.setZoomable(false);
+        map.setDraggable(false);
 
-      setKakaoMap(map);
-    });
-  }, [lat, lon]);
+        setKakaoMap(map);
+      });
+
+      if (region) {
+        getCampingsByDoNm();
+      } else {
+        getNearByCampings();
+      }
+    }
+  }, [lat, lon, region, offset]);
+
+  useEffect(() => {
+    if (region && location) {
+      setLat(location.regionLat);
+      setLon(location.regionLon);
+    } else if (userLat && userLon) {
+      setLat(userLat);
+      setLon(userLon);
+    }
+  }, [region, location, userLat, userLon]);
 
   return (
     <div className="relative w-full h-full">

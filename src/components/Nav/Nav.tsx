@@ -25,6 +25,9 @@ const Nav = () => {
     if (navItem.url) {
       router.push(navItem.url);
     }
+    if (navItem.url === '/map') {
+      sessionStorage.clear();
+    }
   };
 
   return (

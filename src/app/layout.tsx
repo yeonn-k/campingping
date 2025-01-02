@@ -19,6 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const { setMapScriptLoaded } = useGlobalStore();
+
   return (
     <html lang="en">
       <body>
