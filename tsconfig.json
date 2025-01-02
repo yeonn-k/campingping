@@ -24,7 +24,7 @@
       "@utils/*": ["./src/utils/*"],
       "@icons/*": ["./public/icons/*"],
       "@images/*": ["./public/images/*"],
-      "@types/*": ["./src/assets/types/*"],
+      "@types/*": ["src/types/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@confing/*": ["./src/config/*"]
     },

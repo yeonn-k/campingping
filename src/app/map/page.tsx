@@ -4,7 +4,7 @@ import { MapListWrap } from './component/MapListWrap';
 import { useLocationStore } from '@/stores/locationState';
 import { api } from '@/utils/axios';
 
-import { CampMap } from '@/assets/types/CampMap';
+import { CampMap } from '@/types/CampMap';
 
 import useLocation from '@/hooks/useLocation';
 import Category from '@/components/Category/Category';
