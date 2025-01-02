@@ -40,22 +40,27 @@ export const MapListWrap = ({ campList }: MapProps) => {
           onClick={handleList}
         />
       )}
-
-      {campList.map((camp) => {
-        return (
-          <div className="w-full flex justify-center">
-            <Card
-              key={camp.id}
-              itemId={camp.contentId}
-              name={camp.factDivNm}
-              liked={camp.favorite}
-              imgSrc={camp.imageUrl}
-              address={camp.addr1}
-              description={camp.lineinto}
-            />
-          </div>
-        );
-      })}
+      {campList.length > 0 ? (
+        campList.map((camp) => {
+          return (
+            <div className="w-full flex justify-center">
+              <Card
+                key={camp.id}
+                itemId={camp.contentId}
+                name={camp.facltNm}
+                liked={camp.favorite}
+                imgSrc={camp.firstImageUrl}
+                address={camp.addr1}
+                description={camp.lineIntro}
+              />
+            </div>
+          );
+        })
+      ) : (
+        <div className="h-5/6 flex flex-col justify-center items-center">
+          <p>검색 결과가 없습니다.</p>
+        </div>
+      )}
     </div>
   );
 };

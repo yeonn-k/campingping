@@ -1,13 +1,29 @@
 'use client';
 
 import Image from 'next/image';
-import SearchBar from '@/components/SearchBar/SearchBar';
 
 import closeIcon from '@icons/close.svg';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import useRegionHandler from '@/hooks/useRegionHandler';
 
 const Search = () => {
-  const [selected, setSelected] = useState(false);
+  const router = useRouter();
+  const { selectedRegion, handleUserSelect } = useRegionHandler();
+
+  const closeSearch = () => {
+    history.back();
+  };
+
+  const handleSearch = async () => {
+    try {
+      if (selectedRegion) {
+        sessionStorage.setItem('region', selectedRegion);
+        router.push('/map');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const regions = [
     '서울특별시',
@@ -31,7 +47,10 @@ const Search = () => {
 
   return (
     <div className="relative w-full flex flex-col items-center">
-      <div className="absolute left-5 top-5 flex justify-center items-center w-9 h-9 shadow-iconShadow rounded-full">
+      <div
+        className="absolute left-5 top-5 flex justify-center items-center w-9 h-9 shadow-iconShadow rounded-full"
+        onClick={closeSearch}
+      >
         <Image src={closeIcon} width={10} height={10} alt="닫기 아이콘" />
       </div>
       <h1 className="mt-20 mb-7 text-title">지역으로 검색해보세요</h1>
@@ -42,6 +61,7 @@ const Search = () => {
             <div
               key={idx}
               className="flex justify-center items-center border border-LightGray w-36 h-12 rounded-full text-Gray"
+              onClick={handleUserSelect}
             >
               {region}
             </div>
@@ -49,7 +69,10 @@ const Search = () => {
         })}
       </div>
       <div className="bg-LightGray w-full h-[1px] mt-3" />
-      <button className="w-3/5 h-10 bg-Green rounded-full text-white mt-5">
+      <button
+        className="w-3/5 h-10 bg-Green rounded-full text-white mt-5"
+        onClick={handleSearch}
+      >
         확인
       </button>
     </div>
