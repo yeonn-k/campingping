@@ -1,9 +1,14 @@
+'use client';
+
 import Image from 'next/image';
 import SearchBar from '@/components/SearchBar/SearchBar';
 
 import closeIcon from '@icons/close.svg';
+import { useState } from 'react';
 
 const Search = () => {
+  const [selected, setSelected] = useState(false);
+
   const regions = [
     '서울특별시',
     '부산광역시',
@@ -23,6 +28,7 @@ const Search = () => {
     '경상남도',
     '제주특별자치도',
   ];
+
   return (
     <div className="relative w-full flex flex-col items-center">
       <div className="absolute left-5 top-5 flex justify-center items-center w-9 h-9 shadow-iconShadow rounded-full">
