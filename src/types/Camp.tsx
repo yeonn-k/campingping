@@ -2,7 +2,7 @@ type NullableString = string | null;
 
 interface CampLocation {
   type: NullableString;
-  coordinates: [number, number];
+  coordinates: [number, number] | null;
 }
 
 export interface CampImage {
@@ -10,23 +10,32 @@ export interface CampImage {
   url: string;
 }
 
-interface CampBase {
+export interface Camp extends CampLocation {
   id: number;
+  contentId: string;
+  firstImageUrl: NullableString;
+  facltNm: string;
+  addr1: NullableString;
+  addr2: NullableString;
+  doNm: NullableString;
+  signguNm: NullableString;
   lineIntro: NullableString;
   intro: NullableString;
+  favorite: boolean;
+}
+
+export interface CampDetail extends Camp {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: boolean;
   factDivNm: string;
   manageDivNm: NullableString;
   bizrno: NullableString;
   manageSttus: NullableString;
   hvofBgnde: NullableString;
   hvofEndde: NullableString;
-  featureNm: NullableString;
   induty: NullableString;
   lccl: NullableString;
-  doNm: NullableString;
-  signguNm: NullableString;
-  addr1: NullableString;
-  addr2: NullableString;
   tel: NullableString;
   homepage: NullableString;
   gplnInnerFclty: NullableString;
@@ -42,17 +51,6 @@ interface CampBase {
   themaEnvrnCl: NullableString;
   eqpmnLendCl: NullableString;
   animalCmgCl: NullableString;
-  contentId: string;
-  location: CampLocation | null;
-}
-
-export default interface Camp extends CampBase {
-  images: CampImage | null;
-}
-
-export interface CampInfo extends CampBase {
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: boolean;
   images: CampImage[] | null;
+  location: CampLocation | null;
 }
