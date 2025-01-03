@@ -1,6 +1,6 @@
 'use client';
 
-import { CampDetail } from '@/assets/types/Camp';
+import { CampDetail } from '@/types/Camp';
 import Carousel from '@/components/Carousel/Carousel';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
 import { BASE_URL } from '@/config/config';

@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 import chevron from '@icons/chevron_gray.svg';
 import { useState } from 'react';
-import { CampMap } from '@/assets/types/CampMap';
+import { CampMap } from '@/types/CampMap';
 
 interface MapProps {
   campList: CampMap[];
@@ -19,7 +19,7 @@ export const MapListWrap = ({ campList }: MapProps) => {
 
   return (
     <div
-      className={`bg-white absolute bottom-0 w-full ${isOpenList ? 'h-full overflow-auto' : 'h-32 pt-5 rounded-t-2xl overflow-hidden'} flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
+      className={`bg-white absolute bottom-0 w-full ${isOpenList ? 'h-full overflow-auto' : 'h-24 pt-5 rounded-t-2xl overflow-hidden'} flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
     >
       {isOpenList ? (
         <Image
@@ -40,14 +40,27 @@ export const MapListWrap = ({ campList }: MapProps) => {
           onClick={handleList}
         />
       )}
-
-      {campList.map((camp) => {
-        return (
-          <div className="flex justify-center">
-            <Card key={camp.id} name={camp.factDivNm} />
-          </div>
-        );
-      })}
+      {campList.length > 0 ? (
+        campList.map((camp) => {
+          return (
+            <div className="w-full flex justify-center">
+              <Card
+                key={camp.id}
+                itemId={camp.contentId}
+                name={camp.facltNm}
+                liked={camp.favorite}
+                imgSrc={camp.firstImageUrl}
+                address={camp.addr1}
+                description={camp.lineIntro}
+              />
+            </div>
+          );
+        })
+      ) : (
+        <div className="h-5/6 flex flex-col justify-center items-center">
+          <p>검색 결과가 없습니다.</p>
+        </div>
+      )}
     </div>
   );
 };

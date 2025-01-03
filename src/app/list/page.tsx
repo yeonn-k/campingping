@@ -4,10 +4,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
-import { Camp } from '@/assets/types/Camp';
+import { Camp } from '@/types/Camp';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import { api } from '@/utils/axios';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import LoadingSpinner from '@/components/Button/LoadingSpinner';
 
 const List = () => {
   const router = useRouter();
@@ -15,7 +16,7 @@ const List = () => {
 
   const [campingData, setCampingData] = useState<Camp[] | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const { nextCursorRef, currentCursor, LIMIT } = useInfiniteScroll({
     loadMoreElementRef: loadMoreRef,
   });
@@ -49,6 +50,7 @@ const List = () => {
   }, [LIMIT, currentCursor, selectedCategory]);
 
   useEffect(() => {
+    setIsLoading(true);
     fetchCampingData().then(({ camps, nextCursor }) => {
       nextCursorRef.current = nextCursor;
       setCampingData((previous) => {
@@ -57,9 +59,11 @@ const List = () => {
         const results = camps.filter(
           (camp) => !listOfPreviousContentId.includes(camp.contentId)
         );
+
         return [...(previous || []), ...results];
       });
     });
+    setIsLoading(false);
   }, [fetchCampingData, nextCursorRef]);
 
   const handleCategorySelected = useCallback(
@@ -97,8 +101,9 @@ const List = () => {
       </div>
       <div
         ref={loadMoreRef}
-        style={{ background: 'red', height: '50px' }}
-      ></div>
+        style={{ height: '20px', backgroundColor: 'red' }}
+      />
+      {isLoading && <LoadingSpinner />}
     </div>
   );
 };

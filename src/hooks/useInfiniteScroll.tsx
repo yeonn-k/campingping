@@ -17,7 +17,7 @@ const useInfiniteScroll = ({
   const nextCursorRef = useRef(1);
 
   const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
-    console.log({ entries });
+    // console.log({ entries });
     const target = entries[0];
     if (target.isIntersecting) {
       // red div is visible
@@ -29,7 +29,9 @@ const useInfiniteScroll = ({
   }, []);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, { threshold: 0 });
+    const observer = new IntersectionObserver(handleObserver, {
+      rootMargin: '20px',
+    });
 
     if (loadMoreElementRef.current) {
       observer.observe(loadMoreElementRef.current);
