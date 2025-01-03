@@ -4,21 +4,22 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
-import Camp from '@/assets/types/Camp';
-import { BASE_URL } from '@/config/config';
-import axios from 'axios';
+import { Camp } from '@/assets/types/Camp';
+import SearchBar from '@/components/SearchBar/SearchBar';
+import { api } from '@/utils/axios';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 
 const List = () => {
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get('category') || '전체'
-  );
   const [campingData, setCampingData] = useState<Camp[] | null>(null);
-  const [page, setPage] = useState(1);
-  const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  const { nextCursorRef, currentCursor, LIMIT } = useInfiniteScroll({
+    loadMoreElementRef: loadMoreRef,
+  });
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -28,101 +29,63 @@ const List = () => {
     [searchParams]
   );
 
-  const fetchCampingData = useCallback(
-    async (page: number) => {
-      try {
-        const apiUrl =
-          selectedCategory === '전체'
-            ? `${BASE_URL}/campings/lists?limit=10&cursor=${page}`
-            : `${BASE_URL}/campings/lists?limit=10&cursor=${page}&category=${selectedCategory}`;
+  const selectedCategory = searchParams.get('category');
 
-        const response = await axios.get(apiUrl);
-        const camps = response.data.data.result;
-        return camps;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [selectedCategory]
-  );
-
-  const loadMore = async () => {
-    const newPage = page + 1;
-    const newData = await fetchCampingData(newPage);
-    setCampingData((prevData) => [...(prevData || []), ...newData]);
-    setPage(newPage);
+  const setSelectedCategoryValue = (categoryValue: string) => {
+    router.push(`/list?${createQueryString('category', categoryValue)}`);
   };
 
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const target = entries[0];
-      if (target.isIntersecting) {
-        loadMore();
-      }
-    },
-    [page]
-  );
-
-  useEffect(() => {
-    if (selectedCategory === '전체') {
-      router.push(`/list`);
-    } else {
-      router.push(`/list?${createQueryString('category', selectedCategory)}`);
+  const fetchCampingData = useCallback(async () => {
+    try {
+      const apiUrl = `/campings/lists?limit=${LIMIT}&cursor=${currentCursor}${selectedCategory ? `&category=${selectedCategory}` : ''}`;
+      const response = await api.get(apiUrl);
+      const camps = response.data.data.result;
+      const nextCursor = response.data.data.nextCursor;
+      return { camps, nextCursor };
+    } catch (error) {
+      console.error(error);
+      return { camps: [], nextCursor: 0 };
     }
-  }, [createQueryString, router, selectedCategory]);
+  }, [LIMIT, currentCursor, selectedCategory]);
 
   useEffect(() => {
-    if (selectedCategory === '전체') {
-      router.push(`/list`);
-    } else {
-      router.push(`/list?${createQueryString('category', selectedCategory)}`);
-    }
-  }, [createQueryString, router, selectedCategory]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchCampingData(page);
-      setCampingData(data);
-    };
-    fetchData();
-  }, [fetchCampingData, page]);
-
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(handleObserver, {
-      rootMargin: '70px',
+    fetchCampingData().then(({ camps, nextCursor }) => {
+      nextCursorRef.current = nextCursor;
+      setCampingData((previous) => {
+        const listOfPreviousContentId =
+          previous?.map((previousCamp) => previousCamp.contentId) || [];
+        const results = camps.filter(
+          (camp) => !listOfPreviousContentId.includes(camp.contentId)
+        );
+        return [...(previous || []), ...results];
+      });
     });
+  }, [fetchCampingData, nextCursorRef]);
 
-    if (loadMoreRef.current) {
-      observerRef.current.observe(loadMoreRef.current);
-    }
-
-    return () => {
-      if (loadMoreRef.current) {
-        observerRef.current?.unobserve(loadMoreRef.current);
-      }
-    };
-  }, [handleObserver]);
-
-  const handleCategorySelected = useCallback((categoryName: string) => {
-    setSelectedCategory(categoryName);
-  }, []);
+  const handleCategorySelected = useCallback(
+    (categoryValue: string) => {
+      setSelectedCategoryValue(categoryValue);
+    },
+    [setSelectedCategoryValue]
+  );
 
   return (
     <div className="flex flex-col grow">
+      <SearchBar />
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />
-      <div className="flex align-center p-4">
-        <div className="flex flex-col items-center space-y-8 scroll-smooth mx-*">
+      <div className="flex items-center align-center p-4">
+        <div className="flex flex-col items-center space-x-4 space-y-8 scroll-smooth mx-*">
           {campingData?.length ? (
             campingData.map((camp) => (
               <Card
                 key={camp.id}
                 itemId={camp.contentId}
                 liked={false}
-                imgSrc={camp.images?.url || ''}
-                name={camp.factDivNm}
+                imgSrc={camp.fistImgeUrl}
+                name={camp.facltNm}
                 address={`${camp.addr1} ${camp.addr2}` || ''}
                 description={camp.lineIntro || ''}
               />
@@ -132,6 +95,10 @@ const List = () => {
           )}
         </div>
       </div>
+      <div
+        ref={loadMoreRef}
+        style={{ background: 'red', height: '50px' }}
+      ></div>
     </div>
   );
 };

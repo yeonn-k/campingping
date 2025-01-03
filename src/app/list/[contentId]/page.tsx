@@ -1,11 +1,11 @@
 'use client';
 
-import { CampInfo } from '@/assets/types/Camp';
+import { CampDetail } from '@/assets/types/Camp';
 import Carousel from '@/components/Carousel/Carousel';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
 import { BASE_URL } from '@/config/config';
 import { useGlobalStore } from '@/stores/globalState';
-import axios from 'axios';
+import { api } from '@/utils/axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -14,11 +14,25 @@ interface Facility {
   iconName: string;
 }
 
+const facilityIcons: Facility[] = [
+  { name: '전기', iconName: 'electricity' },
+  { name: '무선인터넷', iconName: 'wifi' },
+  { name: '장작판매', iconName: 'firewood' },
+  { name: '온수', iconName: 'hot-water' },
+  { name: '트렘폴린', iconName: 'trampoline' },
+  { name: '물놀이장', iconName: 'pool' },
+  { name: '놀이터', iconName: 'playground' },
+  { name: '산책로', iconName: 'trail' },
+  { name: '운동장', iconName: 'playfield' },
+  { name: '운동시설', iconName: 'exercise-facilities' },
+  { name: '마트.편의점', iconName: 'market' },
+  { name: '덤프스테이션', iconName: 'dump-station' },
+];
 const KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
 const ListDetail = ({ params }: { params: { contentId: string } }) => {
   const { contentId } = params;
-  const [campData, setCampData] = useState<CampInfo | null>(null);
+  const [campData, setCampData] = useState<CampDetail | null>(null);
   const { mapScriptLoaded } = useGlobalStore();
 
   useEffect(() => {
@@ -60,7 +74,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   useEffect(() => {
     const fetchDataAndCreateMap = async () => {
       try {
-        const response = await axios.get(
+        const response = await api.get(
           `${BASE_URL}/campings/lists/${contentId}`
         );
 
@@ -86,21 +100,6 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
       }
     };
   }, [contentId]);
-
-  const facilityIcons: Facility[] = [
-    { name: '전기', iconName: 'electricity' },
-    { name: '무선인터넷', iconName: 'wifi' },
-    { name: '장작판매', iconName: 'firewood' },
-    { name: '온수', iconName: 'hot-water' },
-    { name: '트렘폴린', iconName: 'trampoline' },
-    { name: '물놀이장', iconName: 'pool' },
-    { name: '놀이터', iconName: 'playground' },
-    { name: '산책로', iconName: 'trail' },
-    { name: '운동장', iconName: 'playfield' },
-    { name: '운동시설', iconName: 'exercise-facilities' },
-    { name: '마트.편의점', iconName: 'market' },
-    { name: '덤프스테이션', iconName: 'dump-station' },
-  ];
 
   if (!campData) {
     return <p>Loading...</p>;

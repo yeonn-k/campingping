@@ -3,6 +3,7 @@ import { useRef } from 'react';
 
 interface Category {
   name: string;
+  value: string;
   iconName: string;
 }
 
@@ -11,23 +12,23 @@ interface CategoryProps {
   onCategorySelected: (selectedCategoryName: string) => void;
 }
 
-const categories: Category[] = [
-  { name: '전체', iconName: 'all' },
-  { name: '일반야영장', iconName: 'tent' },
-  { name: '자동차야영장', iconName: 'car' },
-  { name: '카라반', iconName: 'caravan' },
-  { name: '글램핑', iconName: 'glamping' },
-  { name: '캠프닉', iconName: 'campnick' },
-  { name: '산', iconName: 'mountain' },
-  { name: '숲', iconName: 'forest' },
-  { name: '계곡', iconName: 'valley' },
-  { name: '바다', iconName: 'sea' },
-  { name: '해변', iconName: 'beach' },
-  { name: '섬', iconName: 'island' },
-  { name: '강', iconName: 'river' },
-  { name: '호수', iconName: 'lake' },
-  { name: '도시', iconName: 'city' },
-  { name: '반려동물', iconName: 'pet' },
+export const categories: Category[] = [
+  { name: '전체', value: '', iconName: 'all' },
+  { name: '일반야영장', value: '일반야영장', iconName: 'tent' },
+  { name: '자동차야영장', value: '자동차야영장', iconName: 'car' },
+  { name: '카라반', value: '카라반', iconName: 'caravan' },
+  { name: '글램핑', value: '글램핑', iconName: 'glamping' },
+  { name: '캠프닉', value: '캠프닉', iconName: 'campnick' },
+  { name: '산', value: '산', iconName: 'mountain' },
+  { name: '숲', value: '숲', iconName: 'forest' },
+  { name: '계곡', value: '계곡', iconName: 'valley' },
+  { name: '바다', value: '바다', iconName: 'sea' },
+  { name: '해변', value: '해변', iconName: 'beach' },
+  { name: '섬', value: '섬', iconName: 'island' },
+  { name: '강', value: '강', iconName: 'river' },
+  { name: '호수', value: '호수', iconName: 'lake' },
+  { name: '도시', value: '도시', iconName: 'city' },
+  { name: '반려동물', value: '반려동물', iconName: 'pet' },
 ];
 
 const Category = ({
@@ -86,7 +87,7 @@ const Category = ({
     <div className="w-[390px]">
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto whitespace-nowrap scroll-smooth p-4"
+        className="flex overflow-x-auto whitespace-nowrap scroll-smooth p-2"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -98,7 +99,7 @@ const Category = ({
         {categories.map((category) => (
           <div
             key={category.name}
-            onClick={() => handleCategoryClick(category.name)}
+            onClick={() => handleCategoryClick(category.value)}
             className={`flex flex-col min-w-max items-center justify-center cursor-pointer p-2 rounded-lg transition`}
           >
             <Image
