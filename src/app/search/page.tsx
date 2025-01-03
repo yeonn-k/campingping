@@ -28,7 +28,8 @@ const regions = [
 
 const Search = () => {
   const router = useRouter();
-  const { selectedRegion, handleUserSelect } = useRegionHandler();
+  const { selectedRegion, handleUserSelect, coloredRegion, setColoredRegion } =
+    useRegionHandler();
 
   const closeSearch = () => {
     history.back();
@@ -39,6 +40,9 @@ const Search = () => {
       if (selectedRegion) {
         sessionStorage.setItem('region', selectedRegion);
         router.push('/map');
+      }
+      if (!selectedRegion) {
+        history.back();
       }
     } catch (error) {
       console.error(error);
@@ -60,8 +64,10 @@ const Search = () => {
           return (
             <div
               key={region}
-              className="flex justify-center items-center border border-LightGray w-36 h-12 rounded-full text-Gray"
-              onClick={handleUserSelect}
+              className={`flex justify-center items-center border  w-36 h-12 rounded-full ${coloredRegion === region ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
+              onClick={(e) => {
+                handleUserSelect(e);
+              }}
             >
               {region}
             </div>

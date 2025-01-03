@@ -2,10 +2,16 @@ import { useState } from 'react';
 
 const useRegionHandler = () => {
   const [selectedRegion, setSelectedRegion] = useState('');
+  const [coloredRegion, setColoredRegion] = useState('');
 
   const handleUserSelect = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target instanceof HTMLDivElement) {
       const value = e.target.innerText;
+      if (value === coloredRegion) {
+        setSelectedRegion('');
+        setColoredRegion('');
+        return;
+      }
 
       if (value.includes('특별자치')) {
         setSelectedRegion(value.slice(0, 2) + value.slice(-1));
@@ -16,10 +22,12 @@ const useRegionHandler = () => {
       } else {
         setSelectedRegion(value);
       }
+
+      setColoredRegion(value);
     }
   };
 
-  return { selectedRegion, handleUserSelect };
+  return { selectedRegion, handleUserSelect, coloredRegion, setColoredRegion };
 };
 
 export default useRegionHandler;
