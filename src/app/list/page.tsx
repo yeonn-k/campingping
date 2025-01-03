@@ -32,9 +32,16 @@ const List = () => {
 
   const selectedCategory = searchParams.get('category') || '';
 
-  const setSelectedCategoryValue = (categoryValue: string) => {
+  const setSelectedCategory = (categoryValue: string) => {
     router.push(`/list?${createQueryString('category', categoryValue)}`);
   };
+
+  const handleCategorySelected = useCallback(
+    (categoryValue: string) => {
+      setSelectedCategory(categoryValue);
+    },
+    [setSelectedCategory]
+  );
 
   const fetchCampingData = useCallback(async () => {
     try {
@@ -48,6 +55,10 @@ const List = () => {
       return { camps: [], nextCursor: 0 };
     }
   }, [LIMIT, currentCursor, selectedCategory]);
+
+  useEffect(() => {
+    setCampingData([]);
+  }, [selectedCategory]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -66,13 +77,6 @@ const List = () => {
     setIsLoading(false);
   }, [fetchCampingData, nextCursorRef]);
 
-  const handleCategorySelected = useCallback(
-    (categoryValue: string) => {
-      setSelectedCategoryValue(categoryValue);
-    },
-    [setSelectedCategoryValue]
-  );
-  console.log(campingData);
   return (
     <div className="flex flex-col ">
       <SearchBar />

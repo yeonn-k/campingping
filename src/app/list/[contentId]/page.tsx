@@ -3,7 +3,6 @@
 import { CampDetail } from '@/types/Camp';
 import Carousel from '@/components/Carousel/Carousel';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
-import { BASE_URL } from '@/config/config';
 import { useGlobalStore } from '@/stores/globalState';
 import { api } from '@/utils/axios';
 import Image from 'next/image';
@@ -111,14 +110,19 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
         <div className="space-y-4 mb-4">
           {campData.images ? (
             <Image
-              className=" rounded-[5px] justify-items-stretch "
-              src={campData.images[0]?.url}
-              alt={`${campData.factDivNm} 사진`}
+              className="rounded-[5px] justify-items-stretch"
+              src={campData.firstImageUrl}
+              alt={`${campData.facltNm} 사진`}
               width={380}
               height={320}
             />
           ) : (
-            <DefaultImg type="camp" className="" width={350} height={200} />
+            <DefaultImg
+              type="camp"
+              className="rounded-[5px] justify-items-stretch"
+              width={380}
+              height={320}
+            />
           )}
 
           <h2 className="text-subTitle">{campData.factDivNm}</h2>
