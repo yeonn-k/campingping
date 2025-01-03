@@ -2,7 +2,7 @@ type NullableString = string | null;
 
 interface CampLocation {
   type: NullableString;
-  coordinates: [number, number];
+  coordinates: [number, number] | null;
 }
 
 export interface CampImage {
@@ -10,17 +10,18 @@ export interface CampImage {
   url: string;
 }
 
-export interface Camp {
+export interface Camp extends CampLocation {
   id: number;
   contentId: string;
-  fistImgeUrl: NullableString;
-  facltNm: NullableString;
+  firstImageUrl: NullableString;
+  facltNm: string;
   addr1: NullableString;
   addr2: NullableString;
   doNm: NullableString;
   signguNm: NullableString;
   lineIntro: NullableString;
   intro: NullableString;
+  favorite: boolean;
 }
 
 export interface CampDetail extends Camp {

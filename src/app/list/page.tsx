@@ -30,7 +30,7 @@ const List = () => {
     [searchParams]
   );
 
-  const selectedCategory = searchParams.get('category');
+  const selectedCategory = searchParams.get('category') || '';
 
   const setSelectedCategoryValue = (categoryValue: string) => {
     router.push(`/list?${createQueryString('category', categoryValue)}`);
@@ -56,11 +56,11 @@ const List = () => {
       setCampingData((previous) => {
         const listOfPreviousContentId =
           previous?.map((previousCamp) => previousCamp.contentId) || [];
-        const results = camps.filter(
-          (camp) => !listOfPreviousContentId.includes(camp.contentId)
+        const deDuplicatedResults = camps.filter(
+          (camp: Camp) => !listOfPreviousContentId.includes(camp.contentId)
         );
 
-        return [...(previous || []), ...results];
+        return [...(previous || []), ...deDuplicatedResults];
       });
     });
     setIsLoading(false);
@@ -72,38 +72,40 @@ const List = () => {
     },
     [setSelectedCategoryValue]
   );
-
+  console.log(campingData);
   return (
-    <div className="flex flex-col grow">
+    <div className="flex flex-col ">
       <SearchBar />
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />
-      <div className="flex items-center align-center p-4">
-        <div className="flex flex-col items-center space-x-4 space-y-8 scroll-smooth mx-*">
-          {campingData?.length ? (
-            campingData.map((camp) => (
-              <Card
-                key={camp.id}
-                itemId={camp.contentId}
-                liked={false}
-                imgSrc={camp.fistImgeUrl}
-                name={camp.facltNm}
-                address={`${camp.addr1} ${camp.addr2}` || ''}
-                description={camp.lineIntro || ''}
-              />
-            ))
-          ) : (
-            <p>검색 결과가 없습니다</p>
-          )}
-        </div>
+      <div className="flex flex-col space-y-8 scroll-smooth p-4 mx-*">
+        {campingData?.length ? (
+          campingData.map((camp) => (
+            <Card
+              key={camp.contentId}
+              itemId={camp.contentId}
+              liked={camp.favorite}
+              imgSrc={camp.firstImageUrl}
+              name={camp.facltNm ? camp.facltNm : ''}
+              address={
+                camp.addr1
+                  ? camp.addr2
+                    ? `${camp.addr1} ${camp.addr2}`
+                    : camp.addr1
+                  : ''
+              }
+              description={camp.lineIntro || ''}
+            />
+          ))
+        ) : (
+          <p>검색 결과가 없습니다</p>
+        )}
       </div>
-      <div
-        ref={loadMoreRef}
-        style={{ height: '20px', backgroundColor: 'red' }}
-      />
-      {isLoading && <LoadingSpinner />}
+      <div ref={loadMoreRef} className="h-[100px]">
+        {isLoading && <LoadingSpinner />}
+      </div>
     </div>
   );
 };
