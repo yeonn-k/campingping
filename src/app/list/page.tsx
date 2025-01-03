@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
-import Camp from '@/assets/types/Camp';
+import Camp from '@/types/Camp';
 import { BASE_URL } from '@/config/config';
 import axios from 'axios';
 

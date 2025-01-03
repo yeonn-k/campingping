@@ -3,13 +3,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 const useCategory = () => {
   const searchParams = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('전체');
 
   useEffect(() => {
     const category = searchParams.get('category');
-    if (category) {
-      setSelectedCategory(category);
-    }
+    setSelectedCategory(category || '전체');
   }, [searchParams]);
 
   const handleCategorySelected = useCallback((categoryName: string) => {

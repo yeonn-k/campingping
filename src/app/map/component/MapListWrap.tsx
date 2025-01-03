@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 import chevron from '@icons/chevron_gray.svg';
 import { useState } from 'react';
-import { CampMap } from '@/assets/types/CampMap';
+import { CampMap } from '@/types/CampMap';
 
 interface MapProps {
   campList: CampMap[];

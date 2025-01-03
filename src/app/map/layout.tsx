@@ -1,9 +1,7 @@
 'use client';
 
-import Category from '@/components/Category/Category';
 import Nav from '@/components/Nav/Nav';
 import SearchBar from '@/components/SearchBar/SearchBar';
-import Weather from '@/components/Weather/Weather';
 
 import { ReactNode } from 'react';
 

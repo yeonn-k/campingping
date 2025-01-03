@@ -4,7 +4,7 @@ import { MapListWrap } from './component/MapListWrap';
 import { useLocationStore } from '@/stores/locationState';
 import { api } from '@/utils/axios';
 
-import { CampMap } from '@/assets/types/CampMap';
+import { CampMap } from '@/types/CampMap';
 
 import useLocation from '@/hooks/useLocation';
 import Category from '@/components/Category/Category';
@@ -37,7 +37,7 @@ const Map = () => {
   const getNearByCampings = async () => {
     try {
       const res = await api.get(
-        `/campings/map?lat=${userLat}&lon=${userLon}&category=${selectedCategory}&limit=${limit}&offset=${offset}`
+        `/campings/map?lat=${userLat}&lon=${userLon}&limit=${limit}&offset=${offset}`
       );
       // setCampList((prev) => [...prev, ...res.data.data]);
       setCampList(res.data.data);
@@ -49,7 +49,7 @@ const Map = () => {
   const getCampingsByDoNm = async () => {
     try {
       const res = await api.get(
-        `campings/lists?region=${region}&category=${selectedCategory}&limit=${limit}&cursor=${offset}`
+        `campings/lists?region=${region}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${offset}`
       );
       // setCampList((prev) => [...prev, ...res.data.data.result]);
       setCampList(res.data.data.result);
