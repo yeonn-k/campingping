@@ -12,7 +12,7 @@ import useLocation from '@/hooks/useLocation';
 
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
-import markerImg from '@icons/marker.svg';
+
 import Overlay from './component/Overlay';
 
 const limit = 10;
@@ -139,7 +139,7 @@ const Map = () => {
       }
     }
   }, [lat, lon, region, selectedCategory]);
-  console.log(lat, lon);
+
   useEffect(() => {
     if (!kakaoMap || campList.length === 0) return;
     const positions = campList.map((camp) => ({
