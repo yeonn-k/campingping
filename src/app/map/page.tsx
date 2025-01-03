@@ -12,6 +12,7 @@ import useLocation from '@/hooks/useLocation';
 
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
+import markerImg from '@icons/marker.svg';
 
 const limit = 10;
 let region: string | null;
@@ -109,14 +110,21 @@ const Map = () => {
 
     if (lat !== null && lon !== null) {
       window.kakao?.maps.load(() => {
-        const options = {
-          center: new window.kakao.maps.LatLng(lat, lon),
-          level: 7,
-        };
+        const options = region
+          ? {
+              center: new window.kakao.maps.LatLng(lat, lon),
+              level: 10,
+            }
+          : {
+              center: new window.kakao.maps.LatLng(lat, lon),
+              level: 7,
+            };
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
-        map.setZoomable(false);
-        map.setDraggable(false);
+        if (!region) {
+          map.setZoomable(false);
+          map.setDraggable(false);
+        }
 
         setKakaoMap(map);
       });
@@ -128,6 +136,28 @@ const Map = () => {
       }
     }
   }, [lat, lon, region, selectedCategory]);
+
+  useEffect(() => {
+    if (!kakaoMap || campList.length === 0) return;
+
+    const positions = campList.map((camp) => ({
+      title: camp.facltNm,
+      latlng: new window.kakao.maps.LatLng(
+        camp.location.coordinates[1],
+        camp.location.coordinates[0]
+      ),
+    }));
+
+    positions.forEach((position) => {
+      const marker = new window.kakao.maps.Marker({
+        map: kakaoMap,
+        position: position.latlng,
+        title: position.title,
+      });
+
+      marker.setMap(kakaoMap);
+    });
+  });
 
   useEffect(() => {
     if (region && location) {
