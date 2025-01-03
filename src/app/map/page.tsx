@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import { CampMap } from '@/types/CampMap';
 
 import useLocation from '@/hooks/useLocation';
-import Category from '@/components/Category/Category';
+
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
 
@@ -17,9 +17,9 @@ const limit = 10;
 let region: string | null;
 
 const Map = () => {
-  const [offset, setOffset] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [nextCursor, setNextCursor] = useState(0);
 
   const NoSSRCategory = dynamic(
     () => import('../../components/Category/Category'),
@@ -61,12 +61,15 @@ const Map = () => {
     setIsLoading(true);
     try {
       const res = await api.get(
-        `campings/lists?region=${region}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${offset}`
+        `campings/lists?region=${region}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${nextCursor}`
       );
       const data = res.data.data.result;
 
-      if (data.length < limit) {
+      if (res.data.data.nextCursor === null) {
         setHasMore(false);
+      } else {
+        setHasMore(true);
+        setNextCursor(res.data.data.nextCursor);
       }
 
       setCampList((prev) => [...prev, ...data]);
@@ -75,7 +78,7 @@ const Map = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [offset, isLoading, selectedCategory, region, hasMore]);
+  }, [nextCursor, isLoading, selectedCategory, region, hasMore]);
 
   const lastItemRef = useCallback(
     (node: HTMLDivElement) => {
@@ -86,7 +89,6 @@ const Map = () => {
       observerRef.current = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            setOffset((prev) => prev + limit);
             if (region) {
             }
             getCampingsByDoNm();
