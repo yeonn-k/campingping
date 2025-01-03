@@ -12,9 +12,16 @@ export const createComment = async (
   communitiesId: string,
   commentData: any
 ) => {
+  const token = localStorage.getItem('token');
+
   const response = await api.post(
     `/communities/${communitiesId}/comments`,
-    commentData
+    commentData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
   return response.data;
 };
@@ -25,9 +32,15 @@ export const updateComment = async (
   commentId: string,
   commentData: any
 ) => {
+  const token = localStorage.getItem('token');
   const response = await api.patch(
     `/communities/${communitiesId}/comments/${commentId}`,
-    commentData
+    commentData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
   return response.data;
 };
@@ -37,8 +50,14 @@ export const deleteComment = async (
   communitiesId: string,
   commentId: string
 ) => {
+  const token = localStorage.getItem('token');
   const response = await api.delete(
-    `/communities/${communitiesId}/comments/${commentId}`
+    `/communities/${communitiesId}/comments/${commentId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
   return response.data;
 };

@@ -30,7 +30,7 @@ interface PostDetailModalProps {
 }
 
 interface Comment {
-  id: number; // 숫자형 고유 ID
+  id: string; // 문자열 타입
   content: string;
 }
 
@@ -40,6 +40,8 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState('');
 
   useEffect(() => {
     if (!post || !post.data || !post.data.id) {
@@ -71,54 +73,96 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
 
   const fetchComments = async (communityId: string) => {
     try {
-      const commentsData = await getComments(communityId);
-      setComments(commentsData);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  };
-
-  const handleCommentAction = async (
-    action: 'update' | 'delete',
-    commentId: number,
-    updatedContent?: string
-  ) => {
-    try {
-      let updatedComments = comments;
-      if (action === 'update' && updatedContent) {
-        const updatedComment = await updateComment(currentPost!.id, commentId, {
-          content: updatedContent,
-        });
-        updatedComments = comments.map((comment) =>
-          comment.id === commentId ? updatedComment : comment
-        );
-      } else if (action === 'delete') {
-        await deleteComment(currentPost!.id, commentId);
-        updatedComments = comments.filter(
-          (comment) => comment.id !== commentId
+      const response = await getComments(communityId); // API 호출
+      console.log('Fetched comments response:', response); // 반환값 디버깅
+      const commentsData = response?.data?.comments; // comments 배열 추출
+      if (!Array.isArray(commentsData)) {
+        throw new Error(
+          'getComments 함수가 올바른 배열을 반환하지 않았습니다.'
         );
       }
-      setComments(updatedComments);
+      setComments(commentsData); // 상태 업데이트
     } catch (error) {
-      console.error(`Error ${action} comment:`, error);
+      console.error('Error fetching comments:', error);
+      setComments([]); // 오류 발생 시 빈 배열로 초기화
     }
   };
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
 
-    const commentData: Comment = {
+    const commentData = {
       content: newComment.trim(),
     };
 
     try {
       const newCommentData = await createComment(currentPost!.id, commentData);
-      setComments([...comments, newCommentData]);
+      console.log('New comment created:', newCommentData);
+      if (!newCommentData || typeof newCommentData !== 'object') {
+        throw new Error(
+          'createComment 함수가 올바른 데이터를 반환하지 않았습니다.'
+        );
+      }
+      setComments((prevComments) => [...prevComments, newCommentData]); // 새 댓글 추가
       setNewComment('');
-      fetchComments(currentPost!.id); // 댓글 생성 후 다시 댓글을 가져오기
+      await fetchComments(currentPost!.id); // 최신 댓글 다시 가져오기
     } catch (error) {
       console.error('Error creating comment:', error);
     }
+  };
+
+  const handleCommentAction = async (
+    action: 'update' | 'delete',
+    commentId: string,
+    updatedContent?: string
+  ) => {
+    if (!currentPost) {
+      console.error('Current post is not defined');
+      return;
+    }
+
+    const communityId = currentPost.id;
+
+    try {
+      let updatedComments = comments;
+
+      if (action === 'update' && updatedContent) {
+        // 댓글 수정 요청
+        const response = await updateComment(communityId, commentId, {
+          content: updatedContent,
+        });
+        console.log('Comment updated:', response);
+        updatedComments = comments.map((comment) =>
+          comment.id === commentId
+            ? { ...comment, content: updatedContent }
+            : comment
+        );
+      } else if (action === 'delete') {
+        // 댓글 삭제 요청
+        await deleteComment(communityId, commentId);
+        console.log(`Comment ${commentId} deleted.`);
+        updatedComments = comments.filter(
+          (comment) => comment.id !== commentId
+        );
+      }
+
+      setComments(updatedComments); // 상태 업데이트
+      setEditingCommentId(null); // 수정 상태 초기화
+      setEditingContent(''); // 수정 내용 초기화
+    } catch (error) {
+      console.error(`Error ${action} comment:`, error);
+    }
+  };
+
+  const handleEditClick = (commentId: string, currentContent: string) => {
+    setEditingCommentId(commentId);
+    setEditingContent(currentContent);
+  };
+
+  const handleEditSubmit = () => {
+    if (!editingContent.trim()) return;
+
+    handleCommentAction('update', editingCommentId!, editingContent.trim());
   };
 
   return (
@@ -141,14 +185,15 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
 
         <hr className="my-2 border-t-1 border-LightGray w-full" />
 
-        <div className="mb-2">
+        <div className="p-2">
+          {/* 게시글 내용 */}
           {isLoading ? (
             <p>게시글을 불러오는 중입니다...</p>
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : currentPost ? (
             <>
-              <p className="text-darkGray ml-4 mt-4">
+              <p className="text-darkGray ml-4 mt-2">
                 시작일:{' '}
                 {currentPost.startDate
                   ? new Date(currentPost.startDate).toLocaleDateString()
@@ -171,12 +216,61 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
           ) : (
             <p>게시글이 없습니다.</p>
           )}
-        </div>
 
-        <div className="p-4">
-          {/* 댓글 */}
+          {/* 댓글 목록 */}
+          <div className="mt-4">
+            <div>댓글</div>
+            <hr className="my-2 border-t-1 border-LightGray w-full" />
+            {comments.length > 0
+              ? comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="flex justify-between items-center mb-2"
+                  >
+                    <p>{comment.content}</p>
+                    <div>
+                      {editingCommentId === comment.id ? (
+                        <>
+                          <input
+                            type="text"
+                            className="border rounded p-1 "
+                            value={editingContent}
+                            onChange={(e) => setEditingContent(e.target.value)}
+                          />
+                          <button
+                            className="ml-2 text-Green"
+                            onClick={handleEditSubmit}
+                          >
+                            완료
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="mr-2 text-Green"
+                            onClick={() =>
+                              handleEditClick(comment.id, comment.content)
+                            }
+                          >
+                            수정
+                          </button>
+                          <button
+                            className="text-red-500"
+                            onClick={() =>
+                              handleCommentAction('delete', comment.id)
+                            }
+                          >
+                            삭제
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))
+              : null}
+          </div>
           <textarea
-            className="w-full border p-2 rounded"
+            className="w-full border focus:border-Green rounded outline-none p-2 rounded mt-4"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="댓글을 입력하세요."
@@ -188,40 +282,6 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
             >
               등록
             </button>
-          </div>
-          <div className="mt-4">
-            {comments.length > 0
-              ? comments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="flex justify-between items-center mb-2"
-                  >
-                    <p>{comment.content}</p>
-                    <div>
-                      <button
-                        className="mr-2 text-blue-500"
-                        onClick={() =>
-                          handleCommentAction(
-                            'update',
-                            comment.id,
-                            prompt('수정:', comment.content) || comment.content
-                          )
-                        }
-                      >
-                        수정
-                      </button>
-                      <button
-                        className="text-red-500"
-                        onClick={() =>
-                          handleCommentAction('delete', comment.id)
-                        }
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  </div>
-                ))
-              : null}
           </div>
         </div>
       </div>

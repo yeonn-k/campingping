@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -11,7 +10,7 @@ import chevron from '@icons/chevron_green.svg';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
 import logo1 from '@images/campingping_orange.svg';
-import { getPosts } from '@utils/communitiesService';
+import { getPosts, getMyPosts } from '@utils/communitiesService';
 
 interface Post {
   data: any;
@@ -33,7 +32,31 @@ const CommunityPage = () => {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
 
-  const handleTabChange = (tab: 'myPosts' | 'allPosts') => setActiveTab(tab);
+  const handleTabChange = async (tab: 'myPosts' | 'allPosts') => {
+    setActiveTab(tab);
+
+    if (tab === 'myPosts') {
+      const data = await getMyPosts();
+      if (data) {
+        const postsWithDates = data.map((post: any) => ({
+          ...post,
+          startDate: new Date(post.startDate),
+          endDate: new Date(post.endDate),
+        }));
+        setMyPosts(postsWithDates);
+      }
+    } else if (tab === 'allPosts') {
+      const data = await getPosts();
+      if (data) {
+        const postsWithDates = data.map((post: any) => ({
+          ...post,
+          startDate: new Date(post.startDate),
+          endDate: new Date(post.endDate),
+        }));
+        setMyPosts(postsWithDates);
+      }
+    }
+  };
 
   const openWriteModal = () => setIsWriteModalOpen(true);
   const closeWriteModal = () => setIsWriteModalOpen(false);
@@ -56,8 +79,8 @@ const CommunityPage = () => {
   };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      const data = await getPosts();
+    const fetchInitialPosts = async () => {
+      const data = await getMyPosts(); // 초기에는 내 게시물로 설정
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
@@ -68,7 +91,7 @@ const CommunityPage = () => {
       }
     };
 
-    fetchPosts();
+    fetchInitialPosts();
   }, []);
 
   return (
