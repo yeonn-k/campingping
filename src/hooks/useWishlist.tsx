@@ -1,46 +1,45 @@
-import { Camp } from '@/assets/types/Camp';
 import useWishlistStore from '@/stores/wishlistState';
-import axios from 'axios';
+import { api } from '@/utils/axios';
+import { Camp } from '@/types/Camp';
 
 const useWishlist = () => {
-  const { wishlist, setWishlist } = useWishlistStore();
+  const { wishlist, setWishlist, addToWishlist, removeFromWishlist } =
+    useWishlistStore();
 
-  const fetchWishlist = async () => {
+  const getWishlist = async () => {
     try {
-      const fetchData = await axios.get('/favorite');
-      const wishlist: Camp[] = fetchData.data;
-      setWishlist(wishlist);
+      const response = await api.get('/favorite');
+      const fetchedWishlist: Camp[] = response.data;
+      setWishlist(fetchedWishlist);
     } catch (error) {
       console.error('Error fetching Wishlists:', error);
     }
   };
 
-  const postWishlist = async (camp: Camp) => {
+  const addOrRemoveWishlist = async ({
+    contentId,
+    status,
+  }: {
+    contentId: string;
+    status: boolean;
+  }) => {
     try {
-      const fetchData = await axios.post('/favorite');
-
-      const wishlist: Camp[] = fetchData.data;
-      setWishlist(wishlist);
+      await api.post('/favorite', { contentId, status });
+      if (status) {
+        const camp = wishlist.find((camp) => camp.contentId === contentId);
+        if (camp) addToWishlist(camp);
+      } else {
+        removeFromWishlist(contentId);
+      }
     } catch (error) {
-      console.error('Error fetching Wishlists:', error);
+      console.error('Error posting Wishlists:', error);
     }
   };
-
-  //   const deleteFavorite = (contentId: string) => {
-  //     try {
-  //       const fetchData = await axios.get('/favorite');
-  //       const wishlist: Camp[] = fetchData.data;
-  //       setWishlist(wishlist);
-  //     } catch (error) {
-  //       console.error('Error fetching Wishlists:', error);
-  //     }
-  //   };
 
   return {
     wishlist,
-    fetchWishlist,
-    postWishlist,
-    // deleteFavorite,
+    getWishlist,
+    addOrRemoveWishlist,
   };
 };
 
