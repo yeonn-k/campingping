@@ -9,7 +9,6 @@ import SearchBar from '@/components/SearchBar/SearchBar';
 import { api } from '@/utils/axios';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
-import { userStore } from '@/stores/userState';
 
 const List = () => {
   const router = useRouter();
@@ -36,9 +35,6 @@ const List = () => {
   const setSelectedCategoryValue = (categoryValue: string) => {
     router.push(`/list?${createQueryString('category', categoryValue)}`);
   };
-
-  const { userState } = userStore();
-  console.log(userState);
 
   const fetchCampingData = useCallback(async () => {
     try {
