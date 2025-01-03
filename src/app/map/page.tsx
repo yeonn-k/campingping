@@ -13,6 +13,7 @@ import useLocation from '@/hooks/useLocation';
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
 import markerImg from '@icons/marker.svg';
+import Overlay from './component/Overlay';
 
 const limit = 10;
 let region: string | null;
@@ -45,6 +46,8 @@ const Map = () => {
     updateLocation();
     region = sessionStorage.getItem('region') ?? null;
   }, []);
+
+  useEffect(() => {}, []);
 
   const getNearByCampings = async () => {
     try {
@@ -136,10 +139,9 @@ const Map = () => {
       }
     }
   }, [lat, lon, region, selectedCategory]);
-
+  console.log(lat, lon);
   useEffect(() => {
     if (!kakaoMap || campList.length === 0) return;
-
     const positions = campList.map((camp) => ({
       title: camp.facltNm,
       latlng: new window.kakao.maps.LatLng(
@@ -177,7 +179,7 @@ const Map = () => {
           onCategorySelected={handleCategorySelected}
         />
       )}
-
+      <Overlay />
       <Weather />
       <div className="relative w-full h-full">
         {lat && lon ? (
