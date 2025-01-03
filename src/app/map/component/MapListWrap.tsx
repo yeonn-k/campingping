@@ -9,9 +9,10 @@ import { CampMap } from '@/types/CampMap';
 
 interface MapProps {
   campList: CampMap[];
+  lastItemRef: (node: HTMLDivElement) => void;
 }
 
-export const MapListWrap = ({ campList }: MapProps) => {
+export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
   const [isOpenList, setIsOpenList] = useState(false);
   const handleList = () => {
     setIsOpenList((prev) => !prev);
@@ -41,7 +42,7 @@ export const MapListWrap = ({ campList }: MapProps) => {
         />
       )}
       {campList.length > 0 ? (
-        campList.map((camp) => {
+        campList.map((camp, idx) => {
           return (
             <div className="w-full flex justify-center">
               <Card
@@ -52,6 +53,7 @@ export const MapListWrap = ({ campList }: MapProps) => {
                 imgSrc={camp.firstImageUrl}
                 address={camp.addr1}
                 description={camp.lineIntro}
+                ref={idx === campList.length - 1 ? lastItemRef : null}
               />
             </div>
           );

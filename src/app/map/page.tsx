@@ -15,6 +15,7 @@ const Map = () => {
   const limit = 10;
   const [offset, setOffset] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const { handleCategorySelected, selectedCategory } = useCategory();
 
@@ -24,6 +25,7 @@ const Map = () => {
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [kakaoMap, setKakaoMap] = useState<unknown | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const [campList, setCampList] = useState<CampMap[]>([]);
 
@@ -47,17 +49,50 @@ const Map = () => {
     }
   };
 
-  const getCampingsByDoNm = async () => {
+  const getCampingsByDoNm = useCallback(async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
     try {
       const res = await api.get(
         `campings/lists?region=${region}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${offset}`
       );
-      // setCampList((prev) => [...prev, ...res.data.data.result]);
-      setCampList(res.data.data.result);
+      const data = res.data.data.result;
+
+      if (data.length < limit) {
+        setHasMore(false);
+      }
+
+      setCampList((prev) => [...prev, ...data]);
+      setOffset((prev) => prev + limit);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [offset, isLoading, selectedCategory, region, hasMore]);
+
+  const lastItemRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isLoading || !hasMore) return;
+
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            getCampingsByDoNm();
+          }
+        },
+        { threshold: 1.0 }
+      );
+
+      if (node) {
+        observerRef.current.observe(node);
+      }
+    },
+    [isLoading, hasMore, getCampingsByDoNm]
+  );
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -107,7 +142,7 @@ const Map = () => {
       <div className="relative w-full h-full">
         {lat && lon ? (
           <div ref={mapRef} className="w-full h-full">
-            <MapListWrap campList={campList} />
+            <MapListWrap campList={campList} lastItemRef={lastItemRef} />
           </div>
         ) : (
           <div className="h-5/6 flex flex-col justify-center items-center">
