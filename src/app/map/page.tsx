@@ -4,6 +4,8 @@ import { MapListWrap } from './component/MapListWrap';
 import { useLocationStore } from '@/stores/locationState';
 import { api } from '@/utils/axios';
 
+import dynamic from 'next/dynamic';
+
 import { CampMap } from '@/types/CampMap';
 
 import useLocation from '@/hooks/useLocation';
@@ -11,11 +13,18 @@ import Category from '@/components/Category/Category';
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
 
+const limit = 10;
+let region: string | null;
+
 const Map = () => {
-  const limit = 10;
   const [offset, setOffset] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
+  const NoSSRCategory = dynamic(
+    () => import('../../components/Category/Category'),
+    { ssr: false }
+  );
 
   const { handleCategorySelected, selectedCategory } = useCategory();
 
@@ -29,20 +38,19 @@ const Map = () => {
 
   const [campList, setCampList] = useState<CampMap[]>([]);
 
-  const region =
-    typeof window !== 'undefined' ? sessionStorage.getItem('region') : null;
   const location = useLocation(region);
 
   useEffect(() => {
     updateLocation();
+    region = sessionStorage.getItem('region') ?? null;
   }, []);
 
   const getNearByCampings = async () => {
     try {
       const res = await api.get(
-        `/campings/map?lat=${userLat}&lon=${userLon}&limit=${limit}&offset=${offset}`
+        `/campings/map?lat=${userLat}&lon=${userLon}&limit=${limit}&cursor=${offset}`
       );
-      // setCampList((prev) => [...prev, ...res.data.data]);
+
       setCampList(res.data.data);
     } catch (error) {
       console.error(error);
@@ -64,7 +72,6 @@ const Map = () => {
       }
 
       setCampList((prev) => [...prev, ...data]);
-      setOffset((prev) => prev + limit);
     } catch (error) {
       console.error(error);
     } finally {
@@ -81,10 +88,11 @@ const Map = () => {
       observerRef.current = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
+            setOffset((prev) => prev + limit);
             getCampingsByDoNm();
           }
         },
-        { threshold: 1.0 }
+        { threshold: 0.4 }
       );
 
       if (node) {
@@ -117,7 +125,7 @@ const Map = () => {
         getNearByCampings();
       }
     }
-  }, [lat, lon, region, offset, selectedCategory]);
+  }, [lat, lon, region, selectedCategory]);
 
   useEffect(() => {
     if (region && location) {
@@ -132,7 +140,7 @@ const Map = () => {
   return (
     <>
       {region && (
-        <Category
+        <NoSSRCategory
           selectedCategory={selectedCategory}
           onCategorySelected={handleCategorySelected}
         />

@@ -44,16 +44,19 @@ export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
       {campList.length > 0 ? (
         campList.map((camp, idx) => {
           return (
-            <div className="w-full flex justify-center">
+            <div
+              className="w-full flex justify-center"
+              key={camp.id}
+              ref={idx === campList.length - 1 ? lastItemRef : null}
+            >
               <Card
-                key={camp.id}
+                key={camp.contentId}
                 itemId={camp.contentId}
                 name={camp.facltNm}
                 liked={camp.favorite}
                 imgSrc={camp.firstImageUrl}
                 address={camp.addr1}
                 description={camp.lineIntro}
-                ref={idx === campList.length - 1 ? lastItemRef : null}
               />
             </div>
           );
