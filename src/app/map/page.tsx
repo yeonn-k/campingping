@@ -9,17 +9,18 @@ import dynamic from 'next/dynamic';
 import { CampMap } from '@/types/CampMap';
 
 import useLocation from '@/hooks/useLocation';
-import Category from '@/components/Category/Category';
+
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
+import markerImg from '@icons/marker.svg';
 
 const limit = 10;
 let region: string | null;
 
 const Map = () => {
-  const [offset, setOffset] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [nextCursor, setNextCursor] = useState(0);
 
   const NoSSRCategory = dynamic(
     () => import('../../components/Category/Category'),
@@ -61,12 +62,15 @@ const Map = () => {
     setIsLoading(true);
     try {
       const res = await api.get(
-        `campings/lists?region=${region}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${offset}`
+        `campings/lists?region=${region}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${nextCursor}`
       );
       const data = res.data.data.result;
 
-      if (data.length < limit) {
+      if (res.data.data.nextCursor === null) {
         setHasMore(false);
+      } else {
+        setHasMore(true);
+        setNextCursor(res.data.data.nextCursor);
       }
 
       setCampList((prev) => [...prev, ...data]);
@@ -75,7 +79,7 @@ const Map = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [offset, isLoading, selectedCategory, region, hasMore]);
+  }, [nextCursor, isLoading, selectedCategory, region, hasMore]);
 
   const lastItemRef = useCallback(
     (node: HTMLDivElement) => {
@@ -86,7 +90,6 @@ const Map = () => {
       observerRef.current = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            setOffset((prev) => prev + limit);
             if (region) {
             }
             getCampingsByDoNm();
@@ -107,14 +110,21 @@ const Map = () => {
 
     if (lat !== null && lon !== null) {
       window.kakao?.maps.load(() => {
-        const options = {
-          center: new window.kakao.maps.LatLng(lat, lon),
-          level: 7,
-        };
+        const options = region
+          ? {
+              center: new window.kakao.maps.LatLng(lat, lon),
+              level: 10,
+            }
+          : {
+              center: new window.kakao.maps.LatLng(lat, lon),
+              level: 7,
+            };
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
-        map.setZoomable(false);
-        map.setDraggable(false);
+        if (!region) {
+          map.setZoomable(false);
+          map.setDraggable(false);
+        }
 
         setKakaoMap(map);
       });
@@ -126,6 +136,28 @@ const Map = () => {
       }
     }
   }, [lat, lon, region, selectedCategory]);
+
+  useEffect(() => {
+    if (!kakaoMap || campList.length === 0) return;
+
+    const positions = campList.map((camp) => ({
+      title: camp.facltNm,
+      latlng: new window.kakao.maps.LatLng(
+        camp.location.coordinates[1],
+        camp.location.coordinates[0]
+      ),
+    }));
+
+    positions.forEach((position) => {
+      const marker = new window.kakao.maps.Marker({
+        map: kakaoMap,
+        position: position.latlng,
+        title: position.title,
+      });
+
+      marker.setMap(kakaoMap);
+    });
+  });
 
   useEffect(() => {
     if (region && location) {
