@@ -47,9 +47,7 @@ const Map = () => {
 
   const getNearByCampings = async () => {
     try {
-      const res = await api.get(
-        `/campings/map?lat=${userLat}&lon=${userLon}&limit=${limit}&cursor=${offset}`
-      );
+      const res = await api.get(`/campings/map?lat=${userLat}&lon=${userLon}`);
 
       setCampList(res.data.data);
     } catch (error) {
@@ -89,6 +87,8 @@ const Map = () => {
         ([entry]) => {
           if (entry.isIntersecting) {
             setOffset((prev) => prev + limit);
+            if (region) {
+            }
             getCampingsByDoNm();
           }
         },
