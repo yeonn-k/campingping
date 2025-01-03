@@ -14,6 +14,7 @@ import useCategory from '@/hooks/useCategory';
 const Map = () => {
   const limit = 10;
   const [offset, setOffset] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { handleCategorySelected, selectedCategory } = useCategory();
 
@@ -53,8 +54,6 @@ const Map = () => {
       );
       // setCampList((prev) => [...prev, ...res.data.data.result]);
       setCampList(res.data.data.result);
-
-      // sessionStorage.clear();
     } catch (error) {
       console.error(error);
     }

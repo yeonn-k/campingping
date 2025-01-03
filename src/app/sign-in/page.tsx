@@ -13,8 +13,6 @@ import Button from '@/components/Button/Button';
 import { api } from '@/utils/axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-import { useEffect } from 'react';
 
 interface FormData {
   email: string;
