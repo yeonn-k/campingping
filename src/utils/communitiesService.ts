@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 
 // Base URL 설정
@@ -6,10 +5,10 @@ const BASE_URL = 'https://kdt-react-node-1-team03.elicecoding.com/api';
 
 // 게시글 작성
 export const createPost = async (postData: {
-  id?: string; // id는 선택적
+  id?: string;
   title: string;
   location: string;
-  people: number; // 숫자로 수정
+  people: number;
   content: string;
   startDate: Date;
   endDate: Date;
@@ -17,13 +16,13 @@ export const createPost = async (postData: {
   lon: number;
 }) => {
   try {
-    // 스토리지에서 토큰 가져오기
-    const token = localStorage.getItem('token'); // authToken이라는 키로 저장된 토큰 가져오기
+    const token = localStorage.getItem('token'); // authToken 가져오기
     const formattedPostData = {
       ...postData,
     };
 
-    // 헤더에 토큰 추가
+    console.log('Create Post Data:', formattedPostData);
+
     const response = await axios.post(
       `${BASE_URL}/communities`,
       formattedPostData,
@@ -34,6 +33,8 @@ export const createPost = async (postData: {
       }
     );
 
+    console.log('Create Post Response:', response.data);
+
     return response.data;
   } catch (error) {
     console.error('Error while creating a post:', error);
@@ -41,28 +42,107 @@ export const createPost = async (postData: {
   }
 };
 
-// 모든 게시글 조회
-export const getPosts = async () => {
-  const response = await axios.get(
-    `${BASE_URL}/communities?lon=126.9292543&lat=37.6075865`
-  );
-  return response.data;
+export const getPosts = async (
+  lat: number = 37.607569,
+  lon: number = 126.9291033,
+  limit: number = 10,
+  cursor?: number,
+  radius: number = 1000 // 위치 반경 기본값 설정
+) => {
+  try {
+    const token = localStorage.getItem('token'); // 토큰 가져오기
+
+    if (!token) throw new Error('토큰이 없습니다.');
+
+    const response = await axios.get(`${BASE_URL}/communities`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Bearer 토큰 형식
+      },
+      params: {
+        lon: lon,
+        lat: lat,
+        limit: limit,
+        cursor: cursor,
+        radius: radius,
+      },
+    });
+
+    console.log('Get Posts Response:', response.data);
+
+    return response.data.result;
+  } catch (error) {
+    console.error('Error while fetching posts:', error);
+    throw error;
+  }
 };
 
 // 특정 게시글 조회
 export const getPostById = async (id: string) => {
   const response = await axios.get(`${BASE_URL}/communities/${id}`);
+  console.log('Get Post Response:', response.data);
   return response.data;
 };
 
 // 게시글 수정
 export const updatePost = async (id: string, postData: any) => {
-  const response = await axios.patch(`${BASE_URL}/communities/${id}`, postData);
-  return response.data;
+  try {
+    const token = localStorage.getItem('token'); // authToken 가져오기
+    const userId = localStorage.getItem('userId'); // 작성자 정보 가져오기 (수정 필요 시)
+
+    // 게시글 조회 및 작성자 확인
+    const postResponse = await axios.get(`${BASE_URL}/communities/${id}`);
+    const post = postResponse.data;
+
+    console.log('Update Post Data:', postData);
+
+    if (post.userId !== userId) {
+      throw new Error('권한이 없습니다.');
+    }
+
+    const response = await axios.patch(
+      `${BASE_URL}/communities/${id}`,
+      postData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Bearer 토큰 형식
+        },
+      }
+    );
+
+    console.log('Update Post Response:', response.data);
+
+    return response.data;
+  } catch (error) {
+    console.error('Error while updating a post:', error);
+    throw error;
+  }
 };
 
 // 게시글 삭제
 export const deletePost = async (id: string) => {
-  const response = await axios.delete(`${BASE_URL}/communities/${id}`);
-  return response.data;
+  try {
+    const token = localStorage.getItem('token'); // authToken 가져오기
+    const userId = localStorage.getItem('userId'); // 작성자 정보 가져오기 (수정 필요 시)
+
+    // 게시글 조회 및 작성자 확인
+    const postResponse = await axios.get(`${BASE_URL}/communities/${id}`);
+    const post = postResponse.data;
+
+    if (post.userId !== userId) {
+      throw new Error('권한이 없습니다.');
+    }
+
+    const response = await axios.delete(`${BASE_URL}/communities/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Bearer 토큰 형식
+      },
+    });
+
+    console.log('Delete Post Response:', response.data);
+
+    return response.data;
+  } catch (error) {
+    console.error('Error while deleting post:', error);
+    throw error;
+  }
 };

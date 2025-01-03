@@ -1,12 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import closeIcon from '@icons/close.svg';
-import { getPosts, createPost, getPostById } from '@utils/communitiesService';
+import { getPostById } from '@utils/communitiesService';
+import {
+  createComment,
+  updateComment,
+  deleteComment,
+  getComments,
+} from '@utils/commentService';
 
 interface Post {
+  data: any;
   id: string;
   title: string;
   location: string;
@@ -16,61 +22,102 @@ interface Post {
   endDate: Date | null;
   lat: number;
   lon: number;
-  user: {
-    email: string;
-    nickname: string;
-  };
 }
 
 interface PostDetailModalProps {
-  post: Post; // 정확히 Post 타입을 지정해야 함
+  post: Post;
   onClose: () => void;
 }
 
 interface Comment {
-  author: string;
+  id: number; // 숫자형 고유 ID
   content: string;
 }
 
 const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
-  const [myPosts, setMyPosts] = useState<Post[]>([]);
+  const [currentPost, setCurrentPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (!post || !post.data || !post.data.id) {
+      console.error('Post or Post ID is undefined');
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchPost = async () => {
       try {
-        const posts = await getPostById(post.id);
-        setMyPosts(posts);
+        const fetchedPost = await getPostById(post.data.id);
+        setCurrentPost(fetchedPost.data);
       } catch (error) {
-        console.error('Error loading posts:', error);
+        console.error('Error loading post:', error);
+        setError('게시글을 불러오는 중 문제가 발생했습니다.');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
+    fetchPost();
   }, [post]);
 
-  const handleCommentSubmit = () => {
+  useEffect(() => {
+    if (currentPost) {
+      fetchComments(currentPost.id);
+    }
+  }, [currentPost]);
+
+  const fetchComments = async (communityId: string) => {
+    try {
+      const commentsData = await getComments(communityId);
+      setComments(commentsData);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+  const handleCommentAction = async (
+    action: 'update' | 'delete',
+    commentId: number,
+    updatedContent?: string
+  ) => {
+    try {
+      let updatedComments = comments;
+      if (action === 'update' && updatedContent) {
+        const updatedComment = await updateComment(currentPost!.id, commentId, {
+          content: updatedContent,
+        });
+        updatedComments = comments.map((comment) =>
+          comment.id === commentId ? updatedComment : comment
+        );
+      } else if (action === 'delete') {
+        await deleteComment(currentPost!.id, commentId);
+        updatedComments = comments.filter(
+          (comment) => comment.id !== commentId
+        );
+      }
+      setComments(updatedComments);
+    } catch (error) {
+      console.error(`Error ${action} comment:`, error);
+    }
+  };
+
+  const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
 
     const commentData: Comment = {
-      author: 'User', // 실제 사용자 정보로 변경
       content: newComment.trim(),
     };
 
-    setComments((prev) => [...prev, commentData]);
-    setNewComment('');
-  };
-
-  const handleNewPostSubmit = async (newPost: Omit<Post, 'id'>) => {
     try {
-      const createdPost = await createPost(newPost);
-      setMyPosts((prevPosts) => [...prevPosts, createdPost]);
+      const newCommentData = await createComment(currentPost!.id, commentData);
+      setComments([...comments, newCommentData]);
+      setNewComment('');
+      fetchComments(currentPost!.id); // 댓글 생성 후 다시 댓글을 가져오기
     } catch (error) {
-      console.error('Error creating post:', error);
+      console.error('Error creating comment:', error);
     }
   };
 
@@ -88,45 +135,46 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
             />
           </button>
           <h3 className="text-subTitle text-center w-full mr-4 mt-4">
-            {post.title}
+            {post.data.title}
           </h3>
         </div>
 
         <hr className="my-2 border-t-1 border-LightGray w-full" />
 
         <div className="mb-2">
-          <p className="text-darkGray ml-4 mt-4">
-            시작일:{' '}
-            {post.startDate
-              ? new Date(post.startDate).toLocaleDateString()
-              : '미정'}
-          </p>
-          <p className="text-darkGray ml-4 mt-4">
-            종료일:{' '}
-            {post.endDate
-              ? new Date(post.endDate).toLocaleDateString()
-              : '미정'}
-          </p>
-          <p className="text-darkGray ml-4 mt-4">장소: {post.location}</p>
-          <p className="text-darkGray ml-4 mt-4">인원: {post.people}</p>
-          <p className="ml-4 mt-4">{post.content}</p>
+          {isLoading ? (
+            <p>게시글을 불러오는 중입니다...</p>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : currentPost ? (
+            <>
+              <p className="text-darkGray ml-4 mt-4">
+                시작일:{' '}
+                {currentPost.startDate
+                  ? new Date(currentPost.startDate).toLocaleDateString()
+                  : '미정'}
+              </p>
+              <p className="text-darkGray ml-4 mt-4">
+                종료일:{' '}
+                {currentPost.endDate
+                  ? new Date(currentPost.endDate).toLocaleDateString()
+                  : '미정'}
+              </p>
+              <p className="text-darkGray ml-4 mt-4">
+                장소: {currentPost.location}
+              </p>
+              <p className="text-darkGray ml-4 mt-4">
+                인원: {currentPost.people}
+              </p>
+              <p className="ml-4 mt-4">{currentPost.content}</p>
+            </>
+          ) : (
+            <p>게시글이 없습니다.</p>
+          )}
         </div>
 
         <div className="p-4">
-          <div className="mb-4">
-            {isLoading ? (
-              <p>게시글을 불러오는 중입니다...</p>
-            ) : myPosts.length > 0 ? (
-              myPosts.map((post) => (
-                <div key={post.id} className="border-b py-2">
-                  <strong>{post.title}</strong>: {post.content}
-                </div>
-              ))
-            ) : (
-              <p>게시글이 없습니다.</p>
-            )}
-          </div>
-
+          {/* 댓글 */}
           <textarea
             className="w-full border p-2 rounded"
             value={newComment}
@@ -141,26 +189,40 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
               등록
             </button>
           </div>
-
-          {/* 새로운 게시글 추가 */}
-          <button
-            className="mt-4 bg-Blue text-white p-2 w-32 rounded"
-            onClick={() =>
-              handleNewPostSubmit({
-                title: '새 게시글 제목',
-                location: '새 위치',
-                people: 1,
-                content: '새 게시글 내용',
-                startDate: new Date(),
-                endDate: new Date(new Date().setDate(new Date().getDate() + 5)),
-                lat: 0,
-                lon: 0,
-                user: { email: 'a98312421@gmail.com', nickname: 'aa' },
-              })
-            }
-          >
-            새 게시글 추가
-          </button>
+          <div className="mt-4">
+            {comments.length > 0
+              ? comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="flex justify-between items-center mb-2"
+                  >
+                    <p>{comment.content}</p>
+                    <div>
+                      <button
+                        className="mr-2 text-blue-500"
+                        onClick={() =>
+                          handleCommentAction(
+                            'update',
+                            comment.id,
+                            prompt('수정:', comment.content) || comment.content
+                          )
+                        }
+                      >
+                        수정
+                      </button>
+                      <button
+                        className="text-red-500"
+                        onClick={() =>
+                          handleCommentAction('delete', comment.id)
+                        }
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                ))
+              : null}
+          </div>
         </div>
       </div>
     </div>

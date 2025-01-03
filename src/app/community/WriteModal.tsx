@@ -21,6 +21,7 @@ const WriteModal = ({
     content: string;
     lat: number;
     lon: number;
+    data: any;
   }) => void;
 }) => {
   const handleSubmit = async () => {

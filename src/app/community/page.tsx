@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,13 +7,14 @@ import ModalBox from '@/components/ModalBox/ModalBox';
 import WriteModal from './WriteModal';
 import PostDetailModal from './PostDetailModal';
 import Nav from '@/components/Nav/Nav';
-import chevron from '@icons/chevron_gray.svg';
+import chevron from '@icons/chevron_green.svg';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
 import logo1 from '@images/campingping_orange.svg';
 import { getPosts } from '@utils/communitiesService';
 
 interface Post {
+  data: any;
   id?: string;
   title: string;
   location: string;
@@ -30,7 +32,6 @@ const CommunityPage = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
-  const [error, setError] = useState<string | null>(null);
 
   const handleTabChange = (tab: 'myPosts' | 'allPosts') => setActiveTab(tab);
 
@@ -50,24 +51,20 @@ const CommunityPage = () => {
     setMyPosts((prevPosts) => [newPost, ...prevPosts]);
   };
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
-      try {
-        const data = await getPosts();
-        if (Array.isArray(data)) {
-          const postsWithDates = data.map((post) => ({
-            ...post,
-            startDate: new Date(post.startDate),
-            endDate: new Date(post.endDate),
-          }));
-          setMyPosts(postsWithDates);
-        } else {
-          setError('API 응답 데이터가 올바르지 않습니다.');
-        }
-      } catch (error) {
-        setError('게시글을 불러오는 중 오류가 발생했습니다.');
+      const data = await getPosts();
+      if (data) {
+        const postsWithDates = data.map((post: any) => ({
+          ...post,
+          startDate: new Date(post.startDate),
+          endDate: new Date(post.endDate),
+        }));
+        setMyPosts(postsWithDates);
       }
     };
 
@@ -104,7 +101,9 @@ const CommunityPage = () => {
       </div>
 
       <div
-        className={`min-h-[calc(100vh-4rem)] ${myPosts.length === 0 ? 'flex items-center justify-center' : ''}`}
+        className={`min-h-[calc(100vh-4rem)] ${
+          myPosts.length === 0 ? 'flex items-center justify-center' : ''
+        }`}
       >
         {activeTab === 'myPosts' ? (
           myPosts.length > 0 ? (
@@ -115,17 +114,21 @@ const CommunityPage = () => {
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
                   onClick={() => openDetailModal(post)}
                 >
-                  <p className="ml-2 mt-2">{post.title}</p>
+                  <p className="ml-2 mt-2">{post.data.title}</p>
                   <hr className="my-2 border-t-1 border-Green" />
                   <p className="ml-2 mt-1">
-                    {new Date(post.startDate).toLocaleDateString()}
+                    {new Date(post.data.startDate).toLocaleDateString()}
+                    부터
                   </p>
+
                   <p className="ml-2 mt-1">
-                    {new Date(post.endDate).toLocaleDateString()}
+                    {new Date(post.data.endDate).toLocaleDateString()}
+                    까지
                   </p>
-                  <p className="ml-2 mt-1">{post.location}</p>
-                  <p className="ml-2 mt-1">{post.people}</p>
-                  <p className="ml-2 mt-1">{post.content}</p>
+
+                  <p className="ml-2 mt-1">{post.data.location}</p>
+                  <p className="ml-2 mt-1">{post.data.people}</p>
+                  <p className="ml-2 mt-1">{post.data.content}</p>
                 </div>
               ))}
             </div>
