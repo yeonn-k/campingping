@@ -74,9 +74,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   useEffect(() => {
     const fetchDataAndCreateMap = async () => {
       try {
-        const response = await api.get(
-          `${BASE_URL}/campings/lists/${contentId}`
-        );
+        const response = await api.get(`/campings/lists/${contentId}`);
 
         const camp = response.data.data;
 
