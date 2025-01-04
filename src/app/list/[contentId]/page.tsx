@@ -7,6 +7,7 @@ import { useGlobalStore } from '@/stores/globalState';
 import { api } from '@/utils/axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 
 interface Facility {
   name: string;
@@ -106,12 +107,23 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
 
   return (
     <div className="w-[390px] p-4">
+      {campData.location && campData.location.coordinates ? (
+        <WeatherWithLatLon
+          lat={campData.location.coordinates[1]}
+          lon={campData.location.coordinates[0]}
+        />
+      ) : (
+        <p className="text-red">
+          해당 캠핑장의 위치 정보가 존재하지 않아 날씨정보를 불러 올 수 없습니다
+        </p>
+      )}
       <div className="flex flex-col grow p-2 ">
         <div className="space-y-4 mb-4">
-          {campData.images ? (
+          {campData.firstImageUrl ? (
             <Image
               className="rounded-[5px] justify-items-stretch"
               src={campData.firstImageUrl}
+              // src={campData.images[0].url}
               alt={`${campData.facltNm} 사진`}
               width={380}
               height={320}
@@ -125,19 +137,21 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
             />
           )}
 
-          <h2 className="text-subTitle">{campData.factDivNm}</h2>
+          <h2 className="text-subTitle">{campData.facltNm}</h2>
           <p className="text-description text-Gray">
             {campData.doNm} {campData.signguNm}
           </p>
         </div>
         <hr className="mb-4" />
 
-        {campData.intro && (
-          <div className="space-y-4 mb-4">
-            <p className="text-content">캠핑장 소개</p>
-            <p className="text-description text-Gray">{campData.intro}</p>
-          </div>
-        )}
+        <div className="space-y-4 mb-4">
+          <p className="text-content">캠핑장 소개</p>
+          <p className="text-description text-Gray leading-description">
+            {campData.intro
+              ? campData.intro
+              : '캠핑장의 정보를 업데이트 중 입니다'}
+          </p>
+        </div>
 
         <div className="flex space-x-6 justify-center my-6">
           <span className="text-LightGray text-[6px]">●</span>
