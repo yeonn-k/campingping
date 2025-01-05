@@ -4,39 +4,15 @@ import Image from 'next/image';
 
 import closeIcon from '@icons/close.svg';
 import { useRouter, useSearchParams } from 'next/navigation';
-import useRegionHandler from '@/hooks/useRegionHandler';
 import { useEffect } from 'react';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
-
-const regions = [
-  { fullRegionName: '서울특별시', shortRegionName: '서울시' },
-  { fullRegionName: '부산광역시', shortRegionName: '부산시' },
-  { fullRegionName: '대구광역시', shortRegionName: '대구시' },
-  { fullRegionName: '인천광역시', shortRegionName: '인천시' },
-  { fullRegionName: '광주광역시', shortRegionName: '광주시' },
-  { fullRegionName: '대전광역시', shortRegionName: '대전시' },
-  { fullRegionName: '울산광역시', shortRegionName: '울산시' },
-  { fullRegionName: '세종특별자치시', shortRegionName: '세종시' },
-  { fullRegionName: '경기도', shortRegionName: '경기도' },
-  { fullRegionName: '강원도', shortRegionName: '강원도' },
-  { fullRegionName: '충청북도', shortRegionName: '충청북도' },
-  { fullRegionName: '충청남도', shortRegionName: '충청남도' },
-  { fullRegionName: '전라북도', shortRegionName: '전라북도' },
-  { fullRegionName: '전라남도', shortRegionName: '전라남도' },
-  { fullRegionName: '경상북도', shortRegionName: '경상북도' },
-  { fullRegionName: '경상남도', shortRegionName: '경상남도' },
-  { fullRegionName: '제주특별자치도', shortRegionName: '제주도' },
-];
+import { regionStore } from '@/stores/useRegionState';
+import { regions } from '@/utils/regions';
 
 const Search = () => {
   const router = useRouter();
-  const {
-    selectedRegion,
-    setSelectedRegion,
-    handleUserSelect,
-    coloredRegion,
-    setColoredRegion,
-  } = useRegionHandler();
+
+  const { regionState, coloredState, setRegionState } = regionStore();
 
   const searchParams = useSearchParams();
 
@@ -47,22 +23,17 @@ const Search = () => {
   const createQueryString = useCreateQueryString(searchParams);
 
   useEffect(() => {
-    const fullRegionName = regions.find(
-      (region) => region.shortRegionName === regionParam
-    )?.fullRegionName;
-
-    setColoredRegion(fullRegionName || '');
-    setSelectedRegion(regionParam || '');
-  }, [regionParam, setSelectedRegion, setColoredRegion]);
+    setRegionState(regionParam || null);
+  }, [regionParam, setRegionState]);
 
   useEffect(() => {
     router.push(
       createQueryString(`/search`, [
         { name: 'category', value: categoryParam },
-        { name: 'region', value: selectedRegion },
+        { name: 'region', value: regionState },
       ])
     );
-  }, [createQueryString, router, categoryParam, selectedRegion, regionParam]);
+  }, [createQueryString, router, categoryParam, regionState, regionParam]);
 
   const closeSearch = () => {
     router.push(
@@ -76,8 +47,8 @@ const Search = () => {
 
   const handleSearch = async () => {
     try {
-      if (selectedRegion) {
-        sessionStorage.setItem('region', selectedRegion);
+      if (regionState) {
+        sessionStorage.setItem('region', regionState);
         router.push(
           createQueryString(`/${originParam}`, [
             { name: 'origin', value: null },
@@ -86,7 +57,7 @@ const Search = () => {
           ])
         );
       }
-      if (!selectedRegion) {
+      if (!regionState) {
         closeSearch();
       }
     } catch (error) {
@@ -109,9 +80,9 @@ const Search = () => {
           return (
             <div
               key={fullRegionName}
-              className={`flex justify-center items-center border  w-36 h-12 rounded-full ${coloredRegion === fullRegionName ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
+              className={`flex justify-center items-center border  w-36 h-12 rounded-full ${coloredState === fullRegionName ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
               onClick={(e) => {
-                handleUserSelect(e);
+                setRegionState(e);
               }}
             >
               {fullRegionName}

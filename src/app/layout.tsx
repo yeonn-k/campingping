@@ -1,12 +1,15 @@
 'use client';
 // import type { Metadata } from 'next';
-import { ToastContainer } from 'react-toastify';
+import { Id, toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './globals.css';
 import DesktopUi from './DesktopUi';
 import Script from 'next/script';
 import { useGlobalStore } from '@/stores/globalState';
+import { useEffect, useState } from 'react';
+import { useLocationStore } from '@/stores/locationState';
+import useGeoLocationPermission from '@/hooks/useGeoLocation';
 
 // export const metadata: Metadata = {
 //   title: 'Campingping',
@@ -19,6 +22,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const { setMapScriptLoaded } = useGlobalStore();
+  const { updateLocation } = useLocationStore();
+  const isGeoLocationGranted = useGeoLocationPermission();
+
+  useEffect(() => {
+    if (isGeoLocationGranted) {
+      updateLocation();
+    } else {
+      toast.warn(
+        '위치 권한을 설정하지 않으면 사용하지 못하는 기능이 있어요 !',
+        {
+          autoClose: 7000,
+        }
+      );
+    }
+  }, [isGeoLocationGranted, updateLocation]);
 
   return (
     <html lang="en">

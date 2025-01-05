@@ -1,5 +1,6 @@
 'use client';
 
+import { regionStore } from '@/stores/useRegionState';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { userStore } from '@/stores/userState';
@@ -19,14 +20,17 @@ const navItems: NavItem[] = [
 const Nav = () => {
   const router = useRouter();
   const pathname = usePathname();
+
   const user = userStore((state) => state.userState);
+
+  const { setRegionState } = regionStore();
 
   const handleNavClick = (navItem: NavItem) => {
     if (navItem.url) {
       router.push(navItem.url);
     }
     if (navItem.url === '/map') {
-      sessionStorage.clear();
+      setRegionState(null);
     }
   };
 
