@@ -9,6 +9,7 @@ import SearchBar from '@/components/SearchBar/SearchBar';
 import { api } from '@/utils/axios';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
+import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 
 const List = () => {
   const router = useRouter();
@@ -17,24 +18,24 @@ const List = () => {
   const [campingData, setCampingData] = useState<Camp[] | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { nextCursorRef, currentCursor, LIMIT } = useInfiniteScroll({
-    loadMoreElementRef: loadMoreRef,
-  });
+  const { nextCursorRef, currentCursor, LIMIT, resetCursor } =
+    useInfiniteScroll({
+      loadMoreElementRef: loadMoreRef,
+    });
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-      return params.toString();
-    },
-    [searchParams]
-  );
+  const createQueryString = useCreateQueryString(searchParams);
 
   const selectedCategory = searchParams.get('category') || '';
+  const selectedRegion = searchParams.get('region') || '';
 
-  const setSelectedCategory = (categoryValue: string) => {
-    router.push(`/list?${createQueryString('category', categoryValue)}`);
-  };
+  const setSelectedCategory = useCallback(
+    (categoryValue: string) => {
+      router.push(
+        createQueryString('/list', [{ name: 'category', value: categoryValue }])
+      );
+    },
+    [createQueryString, router]
+  );
 
   const handleCategorySelected = useCallback(
     (categoryValue: string) => {
@@ -45,7 +46,12 @@ const List = () => {
 
   const fetchCampingData = useCallback(async () => {
     try {
-      const apiUrl = `/campings/lists?limit=${LIMIT}&cursor=${currentCursor}${selectedCategory ? `&category=${selectedCategory}` : ''}`;
+      const apiUrl = createQueryString('/campings/lists', [
+        { name: 'limit', value: LIMIT },
+        { name: 'cursor', value: currentCursor },
+        { name: 'category', value: selectedCategory },
+        { name: 'region', value: selectedRegion },
+      ]);
       const response = await api.get(apiUrl);
       const camps = response.data.data.result;
       const nextCursor = response.data.data.nextCursor;
@@ -54,11 +60,18 @@ const List = () => {
       console.error(error);
       return { camps: [], nextCursor: 0 };
     }
-  }, [LIMIT, currentCursor, selectedCategory]);
+  }, [
+    LIMIT,
+    createQueryString,
+    currentCursor,
+    selectedCategory,
+    selectedRegion,
+  ]);
 
   useEffect(() => {
     setCampingData([]);
-  }, [selectedCategory]);
+    resetCursor();
+  }, [resetCursor, selectedCategory, selectedRegion]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -79,7 +92,11 @@ const List = () => {
 
   return (
     <div className="flex flex-col ">
-      <SearchBar />
+      <SearchBar
+        origin="list"
+        category={selectedCategory}
+        region={selectedRegion}
+      />
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}

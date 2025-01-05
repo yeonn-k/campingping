@@ -27,7 +27,13 @@ const useRegionHandler = () => {
     }
   };
 
-  return { selectedRegion, handleUserSelect, coloredRegion, setColoredRegion };
+  return {
+    selectedRegion,
+    handleUserSelect,
+    coloredRegion,
+    setSelectedRegion,
+    setColoredRegion,
+  };
 };
 
 export default useRegionHandler;
