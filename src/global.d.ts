@@ -2,6 +2,6 @@
 
 declare global {
   export interface Window {
-    kakao: any;
+    kakao: unknown;
   }
 }

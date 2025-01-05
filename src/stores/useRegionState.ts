@@ -1,3 +1,4 @@
+import { regions } from '@/utils/regions';
 import { create } from 'zustand';
 
 interface RegionState {
@@ -17,8 +18,12 @@ export const regionStore = create<RegionState>((set, get) => ({
       }));
     }
     if (typeof v === 'string') {
+      const coloredState = regions.find(
+        ({ shortRegionName }) => shortRegionName === v
+      )?.fullRegionName;
       set(() => ({
         regionState: v,
+        coloredState: coloredState || '',
       }));
     } else if (
       v !== null &&

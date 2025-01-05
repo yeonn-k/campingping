@@ -2,30 +2,18 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { fetchWeatherData } from '../../utils/fetchWeatherData';
-import { getCurrentLocation } from '../../utils/location';
+import { formatDate, filterWeatherData } from './Weather';
+
 import WeatherIcon from './WeatherIcon';
 
-const Weather = () => {
+const WeatherWithLatLon = ({ lat, lon }: { lat: number; lon: number }) => {
   const [weatherData, setWeatherData] = useState<any[]>([]);
-  const [currentLocation, setCurrentLocation] = useState({ lat: 0, lon: 0 });
+
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getCurrentLocation()
-      .then((location) => {
-        setCurrentLocation(location);
-      })
-      .catch((error) => {
-        setError(
-          '위치 정보를 가져오는데 실패했습니다. 위치 권한을 확인해주세요.'
-        );
-        console.error('위치 오류:', error);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (currentLocation.lat && currentLocation.lon) {
-      fetchWeatherData(currentLocation.lat, currentLocation.lon)
+    if (lat && lon) {
+      fetchWeatherData(lat, lon)
         .then((data) => {
           const filteredData = filterWeatherData(data);
           setWeatherData(filteredData);
@@ -35,7 +23,7 @@ const Weather = () => {
           console.error('날씨 데이터 오류:', err);
         });
     }
-  }, [currentLocation]);
+  }, [lat, lon]);
 
   if (error) {
     return <div className="text-red-500">{error}</div>;
@@ -67,31 +55,4 @@ const Weather = () => {
   );
 };
 
-export default Weather;
-
-export const formatDate = (date: string) => {
-  const month = date.slice(4, 6);
-  const day = date.slice(6, 8);
-  return `${month}/${day}`;
-};
-
-export const filterWeatherData = (data: any[]) => {
-  const today = new Date();
-  const formattedToday = formatDateAsKey(today);
-
-  const filteredData = data
-    .filter((item: any) => {
-      const itemDate = item.date;
-      return itemDate >= formattedToday;
-    })
-    .slice(0, 4);
-
-  return filteredData;
-};
-
-export const formatDateAsKey = (date: Date) => {
-  const year = date.getFullYear().toString();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}${month}${day}`;
-};
+export default WeatherWithLatLon;

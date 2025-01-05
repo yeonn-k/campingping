@@ -1,4 +1,5 @@
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
+import noImg from '@images/noImg.png';
 
 type DefaultImgProps = {
   src?: string;
@@ -18,9 +19,12 @@ const DefaultImg: React.FC<DefaultImgProps> = ({
   className = '',
   ...props
 }) => {
-  const defaultImages: Record<'user' | 'camp' | 'default', string> = {
+  const defaultImages: Record<
+    'user' | 'camp' | 'default',
+    string | StaticImageData
+  > = {
     user: '/path/to/user/default/image.png',
-    camp: '/image/campingping.png',
+    camp: noImg,
     default: '/path/to/general/default/image.png',
   };
 
