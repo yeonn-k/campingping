@@ -1,4 +1,5 @@
 'use client';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MapListWrap } from './component/MapListWrap';
 import { useLocationStore } from '@/stores/locationState';
@@ -12,13 +13,20 @@ import useLocation from '@/hooks/useLocation';
 
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
-
-import Overlay from './component/Overlay';
+import { useRouter } from 'next/navigation';
 
 const limit = 10;
 let region: string | null;
 
+const setQueryString = (name: string, value: string) => {
+  const params = new URLSearchParams(window.location.search);
+  params.set(name, value);
+  return params.toString;
+};
+
 const Map = () => {
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState(0);
@@ -46,8 +54,6 @@ const Map = () => {
     updateLocation();
     region = sessionStorage.getItem('region') ?? null;
   }, []);
-
-  useEffect(() => {}, []);
 
   const getNearByCampings = async () => {
     try {
@@ -179,7 +185,7 @@ const Map = () => {
           onCategorySelected={handleCategorySelected}
         />
       )}
-      <Overlay />
+
       <Weather />
       <div className="relative w-full h-full">
         {lat && lon ? (

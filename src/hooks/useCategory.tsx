@@ -1,7 +1,8 @@
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 const useCategory = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
@@ -10,11 +11,33 @@ const useCategory = () => {
     setSelectedCategory(category || '전체');
   }, [searchParams]);
 
-  const handleCategorySelected = useCallback((categoryName: string) => {
-    setSelectedCategory(categoryName);
-  }, []);
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-  return { selectedCategory, handleCategorySelected };
+      if (!value) {
+        params.delete(name);
+      } else {
+        params.set(name, value);
+        return params.toString();
+      }
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  const setSelectedCategoryValue = (categoryValue: string) => {
+    router.push(`/map?${createQueryString('category', categoryValue)}`);
+  };
+
+  const handleCategorySelected = useCallback(
+    (categoryValue: string) => {
+      setSelectedCategoryValue(categoryValue);
+    },
+    [setSelectedCategoryValue]
+  );
+
+  return { selectedCategory, handleCategorySelected, setSelectedCategory };
 };
 
 export default useCategory;
