@@ -38,12 +38,7 @@ const useInfiniteScroll = ({
     };
   }, [handleObserver, loadMoreElementRef]);
 
-  const resetCursor = useCallback(() => {
-    setCurrentCursor(1);
-    nextCursorRef.current = 1;
-  }, []);
-
-  return { nextCursorRef, currentCursor, resetCursor, LIMIT };
+  return { nextCursorRef, currentCursor, LIMIT };
 };
 
 export default useInfiniteScroll;
