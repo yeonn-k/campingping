@@ -3,7 +3,6 @@
 import { regionStore } from '@/stores/useRegionState';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import { userStore } from '@/stores/userState';
 
 interface NavItem {
   name: string;
@@ -20,9 +19,8 @@ const navItems: NavItem[] = [
 const Nav = () => {
   const router = useRouter();
   const pathname = usePathname();
-
-  const user = userStore((state) => state.userState);
-
+  // const user = useStore((state) => state.user); // 차후에 스토어에서 가지고 올것
+  const user = false; // user log out 상태 가정
   const { setRegionState } = regionStore();
 
   const handleNavClick = (navItem: NavItem) => {

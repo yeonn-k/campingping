@@ -26,12 +26,9 @@ const useCategory = () => {
     [searchParams]
   );
 
-  const setSelectedCategoryValue = useCallback(
-    (categoryValue: string) => {
-      router.push(`/map?${createQueryString('category', categoryValue)}`);
-    },
-    [createQueryString, router]
-  );
+  const setSelectedCategoryValue = (categoryValue: string) => {
+    router.push(`/map?${createQueryString('category', categoryValue)}`);
+  };
 
   const handleCategorySelected = useCallback(
     (categoryValue: string) => {
