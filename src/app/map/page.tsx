@@ -56,7 +56,6 @@ const Map = () => {
   const location = useLocation(regionState);
 
   useEffect(() => {
-    updateLocation();
     getRegionQueryString();
   }, []);
 
