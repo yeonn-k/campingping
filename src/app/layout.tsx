@@ -1,13 +1,13 @@
 'use client';
 // import type { Metadata } from 'next';
-import { toast, ToastContainer } from 'react-toastify';
+import { Id, toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './globals.css';
 import DesktopUi from './DesktopUi';
 import Script from 'next/script';
 import { useGlobalStore } from '@/stores/globalState';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
 
@@ -32,8 +32,7 @@ export default function RootLayout({
       toast.warn(
         '위치 권한을 설정하지 않으면 사용하지 못하는 기능이 있어요 !',
         {
-          autoClose: false,
-          closeOnClick: true,
+          autoClose: 7000,
         }
       );
     }

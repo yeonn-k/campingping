@@ -42,7 +42,7 @@ const Map = () => {
 
   const { selectedCategory, handleCategorySelected } = useCategory();
 
-  const { userLat, userLon, updateLocation } = useLocationStore();
+  const { userLat, userLon } = useLocationStore();
   const [lat, setLat] = useState<number | null>(userLat);
   const [lon, setLon] = useState<number | null>(userLon);
   const { regionState, setRegionState } = regionStore();
