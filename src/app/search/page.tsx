@@ -3,7 +3,6 @@
 import Image from 'next/image';
 
 import closeIcon from '@icons/close.svg';
-import { useRouter } from 'next/navigation';
 
 import { regionStore } from '@/stores/useRegionState';
 
@@ -28,30 +27,25 @@ const regions = [
 ];
 
 const Search = () => {
-  const router = useRouter();
-
-  const { regionState, coloredState, setRegionState } = regionStore();
-  const { pathState, setPathState } = regionStore();
+  const { coloredState, setRegionState } = regionStore();
 
   const closeSearch = () => {
     history.back();
   };
 
-  console.log(pathState);
-
   const handleSearch = async () => {
     try {
-      if (regionState && pathState === '/map') {
-        history.back();
-        setPathState(null);
-      }
-      if (regionState === null) {
-        history.back();
-      } else {
-        router.push('/map');
-      }
+      // if (regionState && pathState === '/map') {
+      //   history.back();
+      //   setPathState(null);
+      // }
+      // if (regionState === null) {
+      //   history.back();
+      // } else {
+      //   router.replace(`/map?region=${}`);
+      // }
 
-      // history.back();
+      history.back();
     } catch (error) {
       console.error(error);
     }
