@@ -10,6 +10,10 @@ import {
   deleteComment,
   getComments,
 } from '@utils/commentService';
+interface User {
+  email: string;
+  nickname: string;
+}
 
 interface Post {
   data: any;
@@ -30,7 +34,8 @@ interface PostDetailModalProps {
 }
 
 interface Comment {
-  id: string; // 문자열 타입
+  user: User;
+  id: string;
   content: string;
 }
 
@@ -44,7 +49,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [editingContent, setEditingContent] = useState('');
 
   useEffect(() => {
-    if (!post || !post.data || !post.data.id) {
+    if (!post) {
       console.error('Post or Post ID is undefined');
       setIsLoading(false);
       return;
@@ -52,8 +57,9 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
 
     const fetchPost = async () => {
       try {
-        const fetchedPost = await getPostById(post.data.id);
+        const fetchedPost = await getPostById(post.id);
         setCurrentPost(fetchedPost.data);
+        console.log(fetchedPost);
       } catch (error) {
         console.error('Error loading post:', error);
         setError('게시글을 불러오는 중 문제가 발생했습니다.');
@@ -179,7 +185,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
             />
           </button>
           <h3 className="text-subTitle text-center w-full mr-4 mt-4">
-            {post.data.title}
+            {post.title}
           </h3>
         </div>
 
@@ -217,57 +223,63 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
             <p>게시글이 없습니다.</p>
           )}
 
-          {/* 댓글 목록 */}
           <div className="mt-4">
             <div>댓글</div>
             <hr className="my-2 border-t-1 border-LightGray w-full" />
-            {comments.length > 0
-              ? comments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="flex justify-between items-center mb-2"
-                  >
-                    <p>{comment.content}</p>
-                    <div>
-                      {editingCommentId === comment.id ? (
-                        <>
-                          <input
-                            type="text"
-                            className="border rounded p-1 "
-                            value={editingContent}
-                            onChange={(e) => setEditingContent(e.target.value)}
-                          />
-                          <button
-                            className="ml-2 text-Green"
-                            onClick={handleEditSubmit}
-                          >
-                            완료
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            className="mr-2 text-Green"
-                            onClick={() =>
-                              handleEditClick(comment.id, comment.content)
-                            }
-                          >
-                            수정
-                          </button>
-                          <button
-                            className="text-red-500"
-                            onClick={() =>
-                              handleCommentAction('delete', comment.id)
-                            }
-                          >
-                            삭제
-                          </button>
-                        </>
-                      )}
-                    </div>
+            {comments.length > 0 ? (
+              comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="flex justify-between items-center mb-2"
+                >
+                  <div className="flex items-center">
+                    <p className="text-subTitle mr-2">
+                      {comment.user?.nickname}
+                      <p className="text-description">{comment.content}</p>
+                    </p>
                   </div>
-                ))
-              : null}
+                  <div>
+                    {editingCommentId === comment.id ? (
+                      <>
+                        <input
+                          type="text"
+                          className="border rounded p-1 "
+                          value={editingContent}
+                          onChange={(e) => setEditingContent(e.target.value)}
+                        />
+                        <button
+                          className="ml-2 text-Green"
+                          onClick={handleEditSubmit}
+                        >
+                          완료
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          className="mr-2 text-Green"
+                          onClick={() =>
+                            handleEditClick(comment.id, comment.content)
+                          }
+                        >
+                          수정
+                        </button>
+                        <button
+                          className="text-red-500"
+                          onClick={() =>
+                            handleCommentAction('delete', comment.id)
+                          }
+                        >
+                          삭제
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-500">댓글이 없습니다!</div>
+            )}
           </div>
           <textarea
             className="w-full border focus:border-Green rounded outline-none p-2 rounded mt-4"

@@ -46,14 +46,13 @@ export const getPosts = async (
   lat: number,
   lon: number,
   limit: number = 10,
-  cursor?: number,
-  radius: number = 1000 // 위치 반경 기본값 설정
+  cursor?: number
 ) => {
   try {
     const token = localStorage.getItem('token'); // 토큰 가져오기
 
     if (!token) throw new Error('토큰이 없습니다.');
-
+    console.log(lat, lon);
     const response = await axios.get(`${BASE_URL}/communities`, {
       headers: {
         Authorization: `Bearer ${token}`, // Bearer 토큰 형식
@@ -63,7 +62,6 @@ export const getPosts = async (
         lat: lat,
         limit: limit,
         cursor: cursor,
-        radius: radius,
       },
     });
 
@@ -93,7 +91,7 @@ export const getMyPosts = async (limit: number = 10, cursor?: number) => {
 
     console.log('Get My Posts Response:', response.data);
 
-    return response.data.result;
+    return response.data.data.result;
   } catch (error) {
     console.error('Error while fetching my posts:', error);
     throw error;

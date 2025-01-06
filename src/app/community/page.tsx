@@ -10,7 +10,9 @@ import chevron from '@icons/chevron_green.svg';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
 import logo1 from '@images/campingping_orange.svg';
+import chat from '@icons/chat_green.svg';
 import { getPosts, getMyPosts } from '@utils/communitiesService';
+import { useLocationStore } from '@/stores/locationState';
 
 interface Post {
   data: any;
@@ -31,6 +33,41 @@ const CommunityPage = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
+  const { lat, lon, updateLocation } = useLocationStore();
+
+  useEffect(() => {
+    updateLocation();
+  }, []);
+
+  useEffect(() => {
+    if (lat && lon) {
+      handleGetPosts();
+    }
+  }, [lat, lon]);
+
+  const handleGetPosts = async () => {
+    if (activeTab === 'myPosts') {
+      const data = await getMyPosts();
+      if (data) {
+        const postsWithDates = data.map((post: any) => ({
+          ...post,
+          startDate: new Date(post.startDate),
+          endDate: new Date(post.endDate),
+        }));
+        setMyPosts(postsWithDates);
+      }
+    }
+
+    const data = await getPosts(lat, lon);
+    if (data) {
+      const postsWithDates = data.map((post: any) => ({
+        ...post,
+        startDate: new Date(post.startDate),
+        endDate: new Date(post.endDate),
+      }));
+      setMyPosts(postsWithDates);
+    }
+  };
 
   const handleTabChange = async (tab: 'myPosts' | 'allPosts') => {
     setActiveTab(tab);
@@ -46,7 +83,7 @@ const CommunityPage = () => {
         setMyPosts(postsWithDates);
       }
     } else if (tab === 'allPosts') {
-      const data = await getPosts();
+      const data = await getPosts(lat, lon);
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
@@ -69,18 +106,19 @@ const CommunityPage = () => {
     setSelectedPost(null);
     setIsDetailModalOpen(false);
   };
-
-  const addNewPost = (newPost: Post) => {
-    setMyPosts((prevPosts) => [newPost, ...prevPosts]);
-  };
-
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined' && window.scrollTo) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
   };
 
   useEffect(() => {
     const fetchInitialPosts = async () => {
       const data = await getMyPosts(); // 초기에는 내 게시물로 설정
+      console.log(data);
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
@@ -137,21 +175,20 @@ const CommunityPage = () => {
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
                   onClick={() => openDetailModal(post)}
                 >
-                  <p className="ml-2 mt-2">{post.data.title}</p>
+                  <p className="ml-2 mt-2">{post.title}</p>
                   <hr className="my-2 border-t-1 border-Green" />
                   <p className="ml-2 mt-1">
-                    {new Date(post.data.startDate).toLocaleDateString()}
+                    {new Date(post.startDate).toLocaleDateString()}
                     부터
                   </p>
 
                   <p className="ml-2 mt-1">
-                    {new Date(post.data.endDate).toLocaleDateString()}
+                    {new Date(post.endDate).toLocaleDateString()}
                     까지
                   </p>
-
-                  <p className="ml-2 mt-1">{post.data.location}</p>
-                  <p className="ml-2 mt-1">{post.data.people}</p>
-                  <p className="ml-2 mt-1">{post.data.content}</p>
+                  <p className="ml-2 mt-1">{post.location}</p>
+                  <p className="ml-2 mt-1">{post.people}</p>
+                  <p className="ml-2 mt-1">{post.content}</p>
                 </div>
               ))}
             </div>
@@ -161,32 +198,63 @@ const CommunityPage = () => {
               <p>작성된 게시물이 없습니다.</p>
             </div>
           )
-        ) : (
-          <div className="flex flex-col items-center space-y-4 text-Gray">
-            <Image src={search} alt="검색 아이콘" width={40} height={40} />
-            <p>주변에 게시글을 작성한 사람이 없습니다.</p>
-          </div>
-        )}
+        ) : activeTab === 'allPosts' ? (
+          myPosts.length > 0 ? (
+            <div className="flex flex-col space-y-4">
+              {myPosts.map((post, index) => (
+                <div
+                  key={index}
+                  className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
+                  onClick={() => openDetailModal(post)}
+                >
+                  <p className="ml-2 mt-2">{post.title}</p>
+                  <hr className="my-2 border-t-1 border-Green" />
+                  <p className="ml-2 mt-1">
+                    {new Date(post.startDate).toLocaleDateString()}
+                    부터
+                  </p>
+                  <p className="ml-2 mt-1">
+                    {new Date(post.endDate).toLocaleDateString()}
+                    까지
+                  </p>
+                  <p className="ml-2 mt-1">{post.location}</p>
+                  <p className="ml-2 mt-1">{post.people}</p>
+                  <p className="ml-2 mt-1">{post.content}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center space-y-4 text-Gray">
+              <Image src={search} alt="검색 아이콘" width={40} height={40} />
+              <p>주변에 게시글을 작성한 사람이 없습니다.</p>
+            </div>
+          )
+        ) : null}
       </div>
-
       <button
-        className="fixed bottom-12 right-7 bg-white p-3 rounded-full shadow-lg"
+        className="fixed bottom-12 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
         onClick={scrollToTop}
       >
-        <Image src={chevron} alt="페이지 상단으로" width={22} height={22} />
+        <Image src={chevron} alt="페이지 상단으로" width={24} />
       </button>
       <button
-        className="fixed bottom-36 right-7 bg-white p-3 rounded-full shadow-lg"
+        className="fixed bottom-28 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
+        //구현안됨onClick={openWriteModal}
+      >
+        <Image src={chat} alt="채팅방" width={24} />
+      </button>
+      <button
+        className="fixed bottom-44 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
         onClick={openWriteModal}
       >
-        <Image src={write} alt="게시글 작성" width={22} height={22} />
+        <Image src={write} alt="게시글 작성" width={24} />
       </button>
 
       <Nav />
 
       {isWriteModalOpen && (
         <ModalBox>
-          <WriteModal onClose={closeWriteModal} onPostSubmit={addNewPost} />
+          <WriteModal onClose={closeWriteModal} onPostSubmit={handleGetPosts} />
         </ModalBox>
       )}
       {isDetailModalOpen && selectedPost && (

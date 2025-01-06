@@ -11,18 +11,7 @@ const WriteModal = ({
   onPostSubmit,
 }: {
   onClose: () => void;
-  onPostSubmit: (post: {
-    title: string;
-    location: string;
-    startDate: Date;
-    endDate: Date;
-    state: string;
-    people: number;
-    content: string;
-    lat: number;
-    lon: number;
-    data: any;
-  }) => void;
+  onPostSubmit: VoidFunction;
 }) => {
   const handleSubmit = async () => {
     const title = (document.querySelector('#title') as HTMLInputElement).value;
@@ -53,8 +42,8 @@ const WriteModal = ({
               lon: position.coords.longitude, // 경도
             };
 
-            const createdPost = await createPost(newPost); // API 호출
-            onPostSubmit(createdPost); // 부모 컴포넌트로 전달
+            await createPost(newPost);
+            onPostSubmit();
             onClose();
           },
           (error) => {
@@ -79,7 +68,7 @@ const WriteModal = ({
           <button onClick={onClose}>
             <Image src={closeIcon} alt="닫기" width={10} height={10} />
           </button>
-          <h2 className="text-content  text-center w-full">게시글 작성</h2>
+          <h2 className="text-subTitle text-center w-full">게시글 작성</h2>
         </div>
         <div className="mb-4 flex items-center space-x-2 ">
           <span className="w-16 text-left">제목</span>
