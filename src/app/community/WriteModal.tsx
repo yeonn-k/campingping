@@ -1,4 +1,5 @@
 'use client';
+import { createPost } from '@utils/communitiesService';
 
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
@@ -10,35 +11,54 @@ const WriteModal = ({
   onPostSubmit,
 }: {
   onClose: () => void;
-  onPostSubmit: (post: {
-    title: string;
-    date: string;
-    state: string;
-    people: string;
-    content: string;
-  }) => void;
+  onPostSubmit: VoidFunction;
 }) => {
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const title = (document.querySelector('#title') as HTMLInputElement).value;
-    const date = (document.querySelector('#date') as HTMLTextAreaElement).value;
-    const state = (document.querySelector('#location') as HTMLInputElement)
+    const startDate = (document.querySelector('#startDate') as HTMLInputElement)
       .value;
-    const people = (document.querySelector('#people') as HTMLTextAreaElement)
+    const endDate = (document.querySelector('#endDate') as HTMLInputElement)
       .value;
-    const content = (document.querySelector('#content') as HTMLInputElement)
+    const location = (document.querySelector('#location') as HTMLInputElement)
+      .value;
+    const people = (document.querySelector('#people') as HTMLInputElement)
+      .value;
+    const content = (document.querySelector('#content') as HTMLTextAreaElement)
       .value;
 
-    if (title && date && state && people && content) {
-      const newPost = { title, date, state, people, content };
-      onPostSubmit(newPost);
-      onClose(); // 작성 완료 후 모달 닫기
+    if (title && startDate && endDate && location && people && content) {
+      try {
+        // 현재 위치 가져오기
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const newPost = {
+              title,
+              startDate,
+              endDate,
+              location,
+              people,
+              content,
+              lat: position.coords.latitude, // 위도
+              lon: position.coords.longitude, // 경도
+            };
+
+            await createPost(newPost);
+            onPostSubmit();
+            onClose();
+          },
+          (error) => {
+            console.error('위치 정보를 가져오는 데 실패했습니다.', error);
+          }
+        );
+      } catch (error) {
+        console.error('게시글 작성 실패:', error);
+      }
     }
   };
-
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
-    textarea.style.height = 'auto'; // 높이를 초기화
-    textarea.style.height = `${textarea.scrollHeight}px`; // 입력 내용에 맞게 높이 조정
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
   return (
@@ -48,23 +68,27 @@ const WriteModal = ({
           <button onClick={onClose}>
             <Image src={closeIcon} alt="닫기" width={10} height={10} />
           </button>
-          <h2 className="text-content  text-center w-full">게시글 작성</h2>
+          <h2 className="text-subTitle text-center w-full">게시글 작성</h2>
         </div>
         <div className="mb-4 flex items-center space-x-2 ">
           <span className="w-16 text-left">제목</span>
-          <Input id="title" />
+          <Input id="title" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2 ">
-          <span className="w-16 text-left">일정</span>
-          <Input id="date" />
+          <span className="w-16 text-left">시작일</span>
+          <Input type="datetime-local" id="startDate" placeholder={''} />
+        </div>
+        <div className="mb-4 flex items-center space-x-2 ">
+          <span className="w-16 text-left">종료일</span>
+          <Input type="datetime-local" id="endDate" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2">
           <span className="w-16 text-left">장소</span>
-          <Input id="location" />
+          <Input id="location" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2">
           <span className="w-16 text-left">인원</span>
-          <Input id="people" />
+          <Input id="people" placeholder={''} />
         </div>
         <div className="mb-4 flex items-center space-x-2 ">
           <span className="w-16 text-left mb-2">기타</span>

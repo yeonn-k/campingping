@@ -10,6 +10,7 @@ import { api } from '@/utils/axios';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
+import { regionStore } from '@/stores/useRegionState';
 
 const List = () => {
   const router = useRouter();
@@ -24,6 +25,9 @@ const List = () => {
     });
 
   const createQueryString = useCreateQueryString(searchParams);
+  const { regionState } = regionStore();
+
+  console.log(regionState);
 
   const selectedCategory = searchParams.get('category') || '';
   const selectedRegion = searchParams.get('region') || '';
@@ -35,13 +39,6 @@ const List = () => {
       );
     },
     [createQueryString, router]
-  );
-
-  const handleCategorySelected = useCallback(
-    (categoryValue: string) => {
-      setSelectedCategory(categoryValue);
-    },
-    [setSelectedCategory]
   );
 
   const fetchCampingData = useCallback(async () => {
@@ -90,6 +87,13 @@ const List = () => {
     setIsLoading(false);
   }, [fetchCampingData, nextCursorRef]);
 
+  const handleCategorySelected = useCallback(
+    (categoryValue: string) => {
+      setSelectedCategory(categoryValue);
+    },
+    [setSelectedCategory]
+  );
+  console.log(campingData);
   return (
     <div className="flex flex-col ">
       <SearchBar

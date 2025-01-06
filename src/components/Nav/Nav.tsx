@@ -1,9 +1,9 @@
 'use client';
 
 import { regionStore } from '@/stores/useRegionState';
+import { userStore } from '@/stores/userState';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import { userStore } from '@/stores/userState';
 
 interface NavItem {
   name: string;
