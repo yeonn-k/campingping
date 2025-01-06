@@ -9,11 +9,10 @@ export const getComments = async (communitiesId: string) => {
 
 // 새로운 댓글 작성
 export const createComment = async (
+  token: string,
   communitiesId: string,
   commentData: any
 ) => {
-  const token = localStorage.getItem('token');
-
   const response = await api.post(
     `/communities/${communitiesId}/comments`,
     commentData,
@@ -28,11 +27,11 @@ export const createComment = async (
 
 // 특정 댓글 수정
 export const updateComment = async (
+  token: string,
   communitiesId: string,
   commentId: string,
   commentData: any
 ) => {
-  const token = localStorage.getItem('token');
   const response = await api.patch(
     `/communities/${communitiesId}/comments/${commentId}`,
     commentData,
@@ -47,10 +46,10 @@ export const updateComment = async (
 
 // 특정 댓글 삭제
 export const deleteComment = async (
+  token: string,
   communitiesId: string,
   commentId: string
 ) => {
-  const token = localStorage.getItem('token');
   const response = await api.delete(
     `/communities/${communitiesId}/comments/${commentId}`,
     {
