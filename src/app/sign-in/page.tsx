@@ -14,6 +14,7 @@ import { api } from '@/utils/axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { userStore } from '@/stores/userState';
+import Link from 'next/link';
 
 interface FormData {
   email: string;
@@ -109,16 +110,21 @@ const SignIn = () => {
           </div>
           <Button width={'w-10/12'}>로그인</Button>
         </form>
-        <Button
-          width={'w-10/12'}
-          bgcolor={'bg-kakaoYellow'}
-          onClick={kakaoSignIn}
+        <Link
+          href="https://kdt-react-node-1-team03.elicecoding.com/api/auth/kakao-login"
+          className="w-10/12"
         >
-          <div className="flex justify-center">
-            <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
-            <span className="ml-1">카카오 로그인</span>
-          </div>
-        </Button>
+          <Button
+            width={'w-full'}
+            bgcolor={'bg-kakaoYellow'}
+            onClick={kakaoSignIn}
+          >
+            <div className="flex justify-center">
+              <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
+              <span className="ml-1">카카오 로그인</span>
+            </div>
+          </Button>
+        </Link>
         <button className="mt-2" onClick={moveToSignUp}>
           회원가입
         </button>
