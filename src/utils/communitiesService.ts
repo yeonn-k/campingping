@@ -24,12 +24,7 @@ export const createPost = async (
 
     const response = await axios.post(
       `${BASE_URL}/communities`,
-      formattedPostData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      formattedPostData
     );
 
     console.log('Create Post Response:', response.data);
@@ -41,7 +36,6 @@ export const createPost = async (
 };
 
 export const getPosts = async (
-  token: string,
   lat: number,
   lon: number,
   limit: number = 10,
@@ -50,9 +44,6 @@ export const getPosts = async (
   try {
     console.log(lat, lon);
     const response = await axios.get(`${BASE_URL}/communities`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       params: { lon, lat, limit, cursor },
     });
 
@@ -64,16 +55,9 @@ export const getPosts = async (
   }
 };
 
-export const getMyPosts = async (
-  token: string,
-  limit: number = 10,
-  cursor?: number
-) => {
+export const getMyPosts = async (limit: number = 10, cursor?: number) => {
   try {
     const response = await axios.get(`${BASE_URL}/communities/myposts`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       params: { limit, cursor },
     });
 
@@ -99,12 +83,7 @@ export const updatePost = async (token: string, id: string, postData: any) => {
 
     const response = await axios.patch(
       `${BASE_URL}/communities/${id}`,
-      postData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      postData
     );
 
     console.log('Update Post Response:', response.data);
@@ -118,11 +97,7 @@ export const updatePost = async (token: string, id: string, postData: any) => {
 // 게시글 삭제
 export const deletePost = async (token: string, id: string) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/communities/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.delete(`${BASE_URL}/communities/${id}`, {});
 
     console.log('Delete Post Response:', response.data);
     return response.data;

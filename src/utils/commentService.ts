@@ -9,18 +9,12 @@ export const getComments = async (communitiesId: string) => {
 
 // 새로운 댓글 작성
 export const createComment = async (
-  token: string,
   communitiesId: string,
   commentData: any
 ) => {
   const response = await api.post(
     `/communities/${communitiesId}/comments`,
-    commentData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    commentData
   );
   return response.data;
 };
@@ -34,12 +28,7 @@ export const updateComment = async (
 ) => {
   const response = await api.patch(
     `/communities/${communitiesId}/comments/${commentId}`,
-    commentData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    commentData
   );
   return response.data;
 };
@@ -51,12 +40,7 @@ export const deleteComment = async (
   commentId: string
 ) => {
   const response = await api.delete(
-    `/communities/${communitiesId}/comments/${commentId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    `/communities/${communitiesId}/comments/${commentId}`
   );
   return response.data;
 };
