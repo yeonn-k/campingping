@@ -6,7 +6,6 @@ import closeIcon from '@icons/close.svg';
 import { useRouter } from 'next/navigation';
 
 import { regionStore } from '@/stores/useRegionState';
-import { useState } from 'react';
 
 const regions = [
   '서울특별시',
@@ -32,19 +31,27 @@ const Search = () => {
   const router = useRouter();
 
   const { regionState, coloredState, setRegionState } = regionStore();
+  const { pathState, setPathState } = regionStore();
 
   const closeSearch = () => {
     history.back();
   };
 
+  console.log(pathState);
+
   const handleSearch = async () => {
     try {
-      if (regionState) {
-        router.push('/map');
+      if (regionState && pathState === '/map') {
+        history.back();
+        setPathState(null);
       }
       if (regionState === null) {
         history.back();
+      } else {
+        router.push('/map');
       }
+
+      // history.back();
     } catch (error) {
       console.error(error);
     }

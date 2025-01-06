@@ -2,8 +2,17 @@ import Image from 'next/image';
 
 import Magnifier from '@icons/search_gray.svg';
 import Link from 'next/link';
+import { regionStore } from '@/stores/useRegionState';
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 const SearchBar = () => {
+  const pathname = usePathname();
+  const { setPathState } = regionStore();
+
+  useEffect(() => {
+    setPathState(pathname);
+  });
   return (
     <Link
       href="/search"

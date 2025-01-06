@@ -14,6 +14,7 @@ import useLocation from '@/hooks/useLocation';
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
 import { regionStore } from '@/stores/useRegionState';
+import { usePathname } from 'next/navigation';
 
 const limit = 10;
 
@@ -31,6 +32,7 @@ const setQueryString = (value: string | null) => {
 };
 
 const Map = () => {
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState(0);
