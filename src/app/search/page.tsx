@@ -3,7 +3,6 @@
 import Image from 'next/image';
 
 import closeIcon from '@icons/close.svg';
-import { useRouter } from 'next/navigation';
 
 import { regionStore } from '@/stores/useRegionState';
 
@@ -28,10 +27,7 @@ const regions = [
 ];
 
 const Search = () => {
-  const router = useRouter();
-
-  const { regionState, coloredState, setRegionState } = regionStore();
-  const { pathState, setPathState } = regionStore();
+  const { coloredState, setRegionState } = regionStore();
 
   const closeSearch = () => {
     history.back();
