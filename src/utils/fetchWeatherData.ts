@@ -2,8 +2,7 @@ import axios from 'axios';
 import { convertToGrid } from './coordinateConversion';
 
 export const fetchWeatherData = async (lat: number, lon: number) => {
-  const serviceKey =
-    'fR5r78vDyLa5VlMt5YTpJRUGjXoWDMk6ZQmB2LPtYHAHw%2F7mdvoXpnkrz7OuOB2JJH%2FOtbvUbmtUS%2FiPGGwoxQ%3D%3D';
+  const serviceKey = process.env.NEXT_PUBLIC_WEATHER_KEY;
   const baseDate = getBaseDate();
   const baseTime = '0200';
   const { nx, ny } = convertToGrid(lat, lon);

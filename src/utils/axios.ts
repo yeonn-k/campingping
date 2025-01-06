@@ -15,3 +15,5 @@ const axiosRequestConfig: AxiosRequestConfig = {
 export const api: AxiosInstance = axios.create(axiosRequestConfig);
 
 api.interceptors.response.use(successInterceptor, errorInterceptor);
+
+export { axios };
