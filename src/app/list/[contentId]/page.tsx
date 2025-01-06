@@ -8,6 +8,10 @@ import { useGlobalStore } from '@/stores/globalState';
 import { api } from '@/utils/axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
+import myWishIcon from '@icons/liked.svg';
+import notMyWishIcon from '@icons/not-liked.svg';
+import useWishlist from '@/hooks/useWishlist';
 
 interface Facility {
   name: string;
@@ -105,14 +109,19 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
 
   const facilities = !!campData.sbrsCl ? campData.sbrsCl.split(',') : null;
 
+  // const handleWishlist = (event: MouseEvent): void => {
+  //   useWishlist().addOrRemoveWishlist();
+  // };
+
   return (
     <div className="w-[390px] p-4">
+      <WeatherWithLatLon />
       <div className="flex flex-col grow p-2 ">
-        <div className="space-y-4 mb-4">
-          {campData.images ? (
+        <div className="relative space-y-4 mb-4">
+          {campData.firstImageUrl ? (
             <Image
               className=" rounded-[5px] justify-items-stretch "
-              src={campData.images[0]?.url}
+              src={campData.firstImageUrl}
               alt={`${campData.factDivNm} 사진`}
               width={380}
               height={320}
@@ -120,6 +129,15 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
           ) : (
             <DefaultImg type="camp" className="" width={350} height={200} />
           )}
+          <Image
+            src={campData.favorite ? myWishIcon : notMyWishIcon}
+            alt="위시리스트"
+            width={20}
+            height={19}
+            className="absolute top-2.5 right-2.5"
+            style={{ margin: '0px' }}
+            onClick={handleWishlist}
+          />
 
           <h2 className="text-subTitle">{campData.factDivNm}</h2>
           <p className="text-description text-Gray">
@@ -139,6 +157,11 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
           <span className="text-LightGray text-[6px]">●</span>
           <span className="text-LightGray text-[6px]">●</span>
           <span className="text-LightGray text-[6px]">●</span>
+        </div>
+
+        <div className="space-y-4 mb-4">
+          <p>기본정보</p>
+          <div className="flex flex-row flex-wrap"></div>
         </div>
 
         <div className="space-y-4 mb-4">
