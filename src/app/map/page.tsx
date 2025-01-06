@@ -1,4 +1,5 @@
 'use client';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MapListWrap } from './component/MapListWrap';
 import { useLocationStore } from '@/stores/locationState';
@@ -12,11 +13,22 @@ import useLocation from '@/hooks/useLocation';
 
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
-
-import Overlay from './component/Overlay';
+import { regionStore } from '@/stores/useRegionState';
 
 const limit = 10;
-let region: string | null;
+
+const setQueryString = (value: string | null) => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (value !== null) {
+    params.set('region', value);
+  } else {
+    params.delete('region');
+  }
+
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState(null, '', newUrl);
+};
 
 const Map = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,11 +40,12 @@ const Map = () => {
     { ssr: false }
   );
 
-  const { handleCategorySelected, selectedCategory } = useCategory();
+  const { selectedCategory, handleCategorySelected } = useCategory();
 
-  const { userLat, userLon, updateLocation } = useLocationStore();
+  const { userLat, userLon } = useLocationStore();
   const [lat, setLat] = useState<number | null>(userLat);
   const [lon, setLon] = useState<number | null>(userLon);
+  const { regionState, setRegionState } = regionStore();
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [kakaoMap, setKakaoMap] = useState<unknown | null>(null);
@@ -40,14 +53,23 @@ const Map = () => {
 
   const [campList, setCampList] = useState<CampMap[]>([]);
 
-  const location = useLocation(region);
+  const location = useLocation(regionState);
 
   useEffect(() => {
-    updateLocation();
-    region = sessionStorage.getItem('region') ?? null;
+    getRegionQueryString();
   }, []);
 
-  useEffect(() => {}, []);
+  const getRegionQueryString = () => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('region')) {
+      setRegionState(params.get('region'));
+    }
+  };
+
+  useEffect(() => {
+    setQueryString(regionState);
+  }, [regionState]);
 
   const getNearByCampings = async () => {
     try {
@@ -65,7 +87,7 @@ const Map = () => {
     setIsLoading(true);
     try {
       const res = await api.get(
-        `campings/lists?region=${region}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${nextCursor}`
+        `campings/lists?region=${regionState}&${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${nextCursor}`
       );
       const data = res.data.data.result;
 
@@ -82,7 +104,7 @@ const Map = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [nextCursor, isLoading, selectedCategory, region, hasMore]);
+  }, [nextCursor, isLoading, selectedCategory, regionState, hasMore]);
 
   const lastItemRef = useCallback(
     (node: HTMLDivElement) => {
@@ -93,8 +115,9 @@ const Map = () => {
       observerRef.current = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            if (region) {
+            if (regionState) {
             }
+            setQueryString(regionState);
             getCampingsByDoNm();
           }
         },
@@ -113,7 +136,7 @@ const Map = () => {
 
     if (lat !== null && lon !== null) {
       window.kakao?.maps.load(() => {
-        const options = region
+        const options = regionState
           ? {
               center: new window.kakao.maps.LatLng(lat, lon),
               level: 10,
@@ -124,7 +147,7 @@ const Map = () => {
             };
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
-        if (!region) {
+        if (!regionState) {
           map.setZoomable(false);
           map.setDraggable(false);
         }
@@ -132,13 +155,13 @@ const Map = () => {
         setKakaoMap(map);
       });
 
-      if (region) {
+      if (regionState) {
         getCampingsByDoNm();
       } else {
         getNearByCampings();
       }
     }
-  }, [lat, lon, region, selectedCategory]);
+  }, [lat, lon, regionState, selectedCategory]);
 
   useEffect(() => {
     if (!kakaoMap || campList.length === 0) return;
@@ -162,24 +185,24 @@ const Map = () => {
   });
 
   useEffect(() => {
-    if (region && location) {
+    if (regionState && location) {
       setLat(location.regionLat);
       setLon(location.regionLon);
     } else if (userLat && userLon) {
       setLat(userLat);
       setLon(userLon);
     }
-  }, [region, location, userLat, userLon]);
+  }, [regionState, location, userLat, userLon]);
 
   return (
     <>
-      {region && (
+      {regionState && (
         <NoSSRCategory
           selectedCategory={selectedCategory}
           onCategorySelected={handleCategorySelected}
         />
       )}
-      <Overlay />
+
       <Weather />
       <div className="relative w-full h-full">
         {lat && lon ? (
