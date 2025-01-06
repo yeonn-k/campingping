@@ -1,5 +1,7 @@
 'use client';
 
+import { createRoot } from 'react-dom/client';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MapListWrap } from './component/MapListWrap';
 import { useLocationStore } from '@/stores/locationState';
@@ -28,7 +30,10 @@ const setQueryString = (value: string | null) => {
     params.delete('region');
   }
 
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  const queryString = params.toString();
+  const newUrl = queryString
+    ? `${window.location.pathname}?${queryString}`
+    : window.location.pathname;
   window.history.replaceState(null, '', newUrl);
 };
 
@@ -155,6 +160,9 @@ const Map = () => {
             };
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
+        if (regionState) {
+          map.setZoomable(false);
+        }
         if (!regionState) {
           map.setZoomable(false);
           map.setDraggable(false);
@@ -174,11 +182,13 @@ const Map = () => {
   useEffect(() => {
     if (!kakaoMap || campList.length === 0) return;
     const positions = campList.map((camp) => ({
+      id: camp.contentId,
       title: camp.facltNm,
       latlng: new window.kakao.maps.LatLng(
         camp.location.coordinates[1],
         camp.location.coordinates[0]
       ),
+      address: camp.addr1,
     }));
 
     positions.forEach((position) => {
@@ -186,30 +196,52 @@ const Map = () => {
         map: kakaoMap,
         position: position.latlng,
         title: position.title,
+        address: position.address,
+        contentId: position.id,
       });
 
       marker.setMap(kakaoMap);
-      setKakaoMarker(marker);
 
-      const overlayContent = document.createElement('div');
-      // Overlay 컴포넌트를 HTML로 렌더링
-      // ReactDOM.render(<Overlay onClick={closeOverlay} />, overlayContent);
+      const createContent = (
+        closeHandler: React.MouseEventHandler<HTMLImageElement>
+      ) => {
+        const overlayContent = document.createElement('div');
+        const root = createRoot(overlayContent);
+        root.render(
+          <Overlay
+            id={position.id}
+            name={position.title}
+            address={position.address}
+            onClick={closeHandler}
+          />
+        );
+
+        return overlayContent;
+      };
+
+      const closeOverlay = () => {
+        overlay.setMap(null);
+      };
 
       const overlay = new window.kakao.maps.CustomOverlay({
-        content: overlayContent,
-        map: kakaoMap,
+        content: createContent(closeOverlay),
         position: marker.getPosition(),
       });
 
-      setKakaoOverlay(overlay);
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        const markerPosition = marker.getPosition();
+        const adjustedPosition = new window.kakao.maps.LatLng(
+          markerPosition.getLat() + 0.1,
+          markerPosition.getLng()
+        );
+
+        overlay.setPosition(adjustedPosition);
+        overlay.setMap(kakaoMap);
+      });
+
+      setKakaoMarker(marker);
     });
-  });
-
-  // 오버레이 코드
-
-  // window.kakao.maps.event.addListener(kakaoMarker, 'click', () => {
-  //   overlay.setMap(kakaoMap);
-  // });
+  }, [campList]);
 
   useEffect(() => {
     if (regionState && location) {
