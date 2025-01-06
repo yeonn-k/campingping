@@ -14,7 +14,8 @@ import useLocation from '@/hooks/useLocation';
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
 import { regionStore } from '@/stores/useRegionState';
-import { usePathname } from 'next/navigation';
+import ReactDOM from 'react-dom';
+import Overlay from './component/Overlay';
 
 const limit = 10;
 
@@ -32,7 +33,6 @@ const setQueryString = (value: string | null) => {
 };
 
 const Map = () => {
-  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState(0);
@@ -51,6 +51,8 @@ const Map = () => {
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [kakaoMap, setKakaoMap] = useState<unknown | null>(null);
+  const [kakaoMarker, setKakaoMarker] = useState<unknown | null>(null);
+  const [kakaoOverlay, setKakaoOverlay] = useState<unknown | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const [campList, setCampList] = useState<CampMap[]>([]);
@@ -81,6 +83,10 @@ const Map = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const closeOverlay = () => {
+    window.kakao.overlay.setMap(null);
   };
 
   const getCampingsByDoNm = useCallback(async () => {
@@ -183,8 +189,27 @@ const Map = () => {
       });
 
       marker.setMap(kakaoMap);
+      setKakaoMarker(marker);
+
+      const overlayContent = document.createElement('div');
+      // Overlay 컴포넌트를 HTML로 렌더링
+      // ReactDOM.render(<Overlay onClick={closeOverlay} />, overlayContent);
+
+      const overlay = new window.kakao.maps.CustomOverlay({
+        content: overlayContent,
+        map: kakaoMap,
+        position: marker.getPosition(),
+      });
+
+      setKakaoOverlay(overlay);
     });
   });
+
+  // 오버레이 코드
+
+  // window.kakao.maps.event.addListener(kakaoMarker, 'click', () => {
+  //   overlay.setMap(kakaoMap);
+  // });
 
   useEffect(() => {
     if (regionState && location) {

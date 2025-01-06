@@ -9,6 +9,7 @@ import SearchBar from '@/components/SearchBar/SearchBar';
 import { api } from '@/utils/axios';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
+import { regionStore } from '@/stores/useRegionState';
 
 const List = () => {
   const router = useRouter();
@@ -21,6 +22,8 @@ const List = () => {
     loadMoreElementRef: loadMoreRef,
   });
 
+  const { regionState } = regionStore();
+
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -29,6 +32,8 @@ const List = () => {
     },
     [searchParams]
   );
+
+  console.log(regionState);
 
   const selectedCategory = searchParams.get('category') || '';
 

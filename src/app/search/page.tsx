@@ -37,21 +37,19 @@ const Search = () => {
     history.back();
   };
 
-  console.log(pathState);
-
   const handleSearch = async () => {
     try {
-      if (regionState && pathState === '/map') {
-        history.back();
-        setPathState(null);
-      }
-      if (regionState === null) {
-        history.back();
-      } else {
-        router.push('/map');
-      }
+      // if (regionState && pathState === '/map') {
+      //   history.back();
+      //   setPathState(null);
+      // }
+      // if (regionState === null) {
+      //   history.back();
+      // } else {
+      //   router.replace(`/map?region=${}`);
+      // }
 
-      // history.back();
+      history.back();
     } catch (error) {
       console.error(error);
     }
