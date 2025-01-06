@@ -90,10 +90,6 @@ const Map = () => {
     }
   };
 
-  const closeOverlay = () => {
-    window.kakao.overlay.setMap(null);
-  };
-
   const getCampingsByDoNm = useCallback(async () => {
     if (isLoading) return;
 
@@ -153,10 +149,12 @@ const Map = () => {
           ? {
               center: new window.kakao.maps.LatLng(lat, lon),
               level: 10,
+              disableDoubleClick: true,
             }
           : {
               center: new window.kakao.maps.LatLng(lat, lon),
               level: 7,
+              disableDoubleClick: true,
             };
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
