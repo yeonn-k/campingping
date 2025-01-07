@@ -2,13 +2,16 @@ import { create } from 'zustand';
 
 interface UserState {
   userState: boolean;
-  setUserState: () => void;
+  userEmail: string | null;
+  setUserState: (v: string) => void;
 }
 
 export const userStore = create<UserState>((set) => ({
   userState: false,
-  setUserState: () =>
+  userEmail: null,
+  setUserState: (v) =>
     set((state) => ({
       userState: !state.userState,
+      userEmail: v,
     })),
 }));

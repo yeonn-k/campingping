@@ -10,6 +10,10 @@ import {
   deleteComment,
   getComments,
 } from '@utils/commentService';
+import { socket } from '@/socket';
+import { chattingStore } from '@/stores/chattingState';
+import { CreateChat } from '@/types/Chatting';
+
 interface User {
   email: string;
   nickname: string;
@@ -47,6 +51,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState('');
+  const { setChatState, setChatRoomId } = chattingStore();
 
   useEffect(() => {
     if (!post) {
@@ -170,6 +175,27 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     handleCommentAction('update', editingCommentId!, editingContent.trim());
   };
 
+  // chatting
+  const createNewChat = (email: string) => {
+    socket.emit('createRoom', {
+      email: email,
+    });
+  };
+
+  useEffect(() => {
+    const handleRoomCreated = (data: CreateChat) => {
+      const { roomId } = data;
+      setChatState();
+      setChatRoomId(roomId);
+    };
+
+    socket.on('roomCreated', handleRoomCreated);
+
+    return () => {
+      socket.off('roomCreated', handleRoomCreated);
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white rounded-lg w-[90%] h-[80%] max-w-md overflow-auto">
@@ -229,6 +255,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
                 <div
                   key={comment.id}
                   className="flex justify-between items-center mb-2"
+                  onClick={() => createNewChat(comment.user?.email)}
                 >
                   <div className="flex items-center">
                     <p className="text-subTitle mr-2">

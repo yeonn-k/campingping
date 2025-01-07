@@ -23,7 +23,7 @@ interface FormData {
 
 const SignIn = () => {
   const router = useRouter();
-  const { setUserState } = userStore();
+  const { userState, userEmail, setUserState } = userStore();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
@@ -37,7 +37,7 @@ const SignIn = () => {
         });
 
         if (res.status === 200) {
-          setUserState();
+          setUserState(email);
           router.push('/list');
         } else {
           toast.error('이메일 또는 비밀번호가 잘못되었습니다.');
@@ -52,7 +52,7 @@ const SignIn = () => {
     try {
       const res = await api.get('/auth/kakao-login');
       if (res.status === 200) {
-        setUserState();
+        setUserState(res.data.email);
         router.push('/list');
       }
     } catch (error) {
