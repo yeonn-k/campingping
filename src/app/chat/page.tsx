@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import socket from '../../socket';
+import { socket } from '../../socket';
 
 import Image from 'next/image';
 
@@ -12,8 +12,8 @@ import goToBack from '@icons/goToBack.svg';
 const Chat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [chatRoomId, setChatRoomId] = useState<number | null>(1);
-  // const [isConnected, setIsConnected] = useState(false);
-  // const [transport, setTransport] = useState('N/A');
+  const [isConnected, setIsConnected] = useState(false);
+  const [transport, setTransport] = useState('N/A');
 
   const handleGoBack = () => {
     setChatRoomId(null);
@@ -27,40 +27,40 @@ const Chat = () => {
     setIsOpen(true);
   }, []);
 
-  // useEffect(() => {
-  //   if (socket.connected) {
-  //     onConnect();
-  //   }
+  const onConnect = () => {
+    setIsConnected(true);
+    setTransport(socket.io.engine.transport.name);
 
-  //   const onConnect = () => {
-  //     setIsConnected(true);
-  //     setTransport(socket.io.engine.transport.name);
+    socket.io.engine.on('upgrade', (transport) => {
+      setTransport(transport.name);
+    });
+  };
 
-  //     socket.io.engine.on('upgrade', (transport) => {
-  //       setTransport(transport.name);
-  //     });
-  //   };
+  const onDisconnect = () => {
+    setIsConnected(false);
+    setTransport('N/A');
+  };
 
-  //   const onDisconnect = () => {
-  //     setIsConnected(false);
-  //     setTransport('N/A');
-  //   };
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
 
-  //   socket.on('connect', onConnect);
-  //   socket.on('disconnect', onDisconnect);
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
 
-  //   return () => {
-  //     socket.off('connect', onConnect);
-  //     socket.off('disconnect', onDisconnect);
-  //   };
-  // }, []);
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
+  }, []);
 
   return (
     <div
       className={`bg-white absolute bottom-0 w-full ${isOpen ? 'h-92%' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col  shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
     >
-      {/* <p>Status: {isConnected ? 'connected' : 'disconnected'}</p> */}
-      {/* <p>Transport: {transport}</p> */}
+      <p>Status: {isConnected ? 'connected' : 'disconnected'}</p>
+      <p>Transport: {transport}</p>
       <div className="relative flex justify-center ">
         <Image
           src={chevron}
