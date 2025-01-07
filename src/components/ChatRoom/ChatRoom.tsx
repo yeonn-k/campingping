@@ -1,14 +1,72 @@
-'use client';
-
 import Button from '@/components/Button/Button';
+import useInputValue from '@/hooks/useInputValue';
+import { socket } from '@/socket';
+import { chattingStore } from '@/stores/chattingState';
+import { ChatMsgs, sendMessage } from '@/types/Chatting';
 import profileGreen from '@icons/profile_green.svg';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import UrChatMsg from './UrChatMsg';
 
 interface ChatRoomProps {
   roomId: number;
 }
 const ChatRoom = ({ roomId }: ChatRoomProps) => {
+  const [inputValue, handleInputChange] = useInputValue();
+  const { chatRoomId } = chattingStore();
+  const [chatMsg, setChatMsg] = useState<sendMessage>();
+  const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
+
+  const sendChatMsg = (inputValue: string, chatRoomId: number) => {
+    socket.emit('sendMessage', {
+      message: inputValue,
+      room: chatRoomId,
+    });
+  };
+
+  const getChatHistory = () => {
+    socket.emit('getChatHistory', {
+      roomId: chatRoomId,
+      page: 1,
+      limit: 20,
+    });
+  };
+
+  const handleSendMessage = () => {
+    if (chatRoomId !== null) {
+      sendChatMsg(inputValue, chatRoomId);
+    } else {
+      console.error('Chat room ID is null.');
+    }
+  };
+
+  getChatHistory();
+
+  useEffect(() => {
+    const handleChatting = (data: sendMessage) => {
+      const { roomId, sender, message, createdAt } = data;
+      setChatMsg(data);
+    };
+
+    socket.on('newMessage', handleChatting);
+
+    return () => {
+      socket.off('newMessage', handleChatting);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleGetChatting = (data: ChatMsgs[]) => {
+      setChatMsgs(data);
+    };
+    socket.on('chatHistory', handleGetChatting);
+
+    return () => {
+      socket.off('chatHistory', handleGetChatting);
+    };
+  }, []);
+
   return (
     <div className="relative h-full">
       <div className="mt-6 ">
@@ -25,36 +83,30 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
               <span className="text-description text-Gray">님과의 대화</span>
             </div>
           </div>
-
           <button className="text-Green">대화 나가기</button>
         </div>
-
-        <div>
-          <div className="w-9/12 ml-3 mt-3 border border-LightGray p-3 rounded-2xl flex flex-wrap">
-            <p className="w-full">룰루</p>
-            <p className="w-full">안녕하세요!</p>
-          </div>
-          <p className="text-description text-Gray ml-6">
-            2024. 12. 18 05:21 pm
-          </p>
-        </div>
-        <div className="flex flex-wrap justify-end">
-          <div className="w-9/12 mr-3 mt-3 bg-Green text-white p-3 rounded-2xl flex flex-wrap">
-            <p className="w-full">나</p>
-            <p className="w-full">안녕하세요!</p>
-          </div>
-          <p className="text-description text-Gray mr-6">
-            2024. 12. 18 05:21 pm
-          </p>
-        </div>
       </div>
-
+      <div className="overflow-auto h-96">
+        {chatMsgs?.map((chat) => {
+          return (
+            <UrChatMsg
+              message={chat.message}
+              createdAt={chat.createdAt}
+              nickname={chat.author.nickname}
+            />
+          );
+        })}
+      </div>
       <div className="absolute bottom-0 border-t border-Green w-full h-40 flex justify-center items-center">
         <textarea
           placeholder="채팅을 입력하세요"
           className="w-64 h-36 outline-none	pt-2 pr-3"
+          value={inputValue}
+          onChange={handleInputChange}
         ></textarea>
-        <Button height="h-24">전송</Button>
+        <Button height="h-24" onClick={handleSendMessage}>
+          전송
+        </Button>
       </div>
     </div>
   );

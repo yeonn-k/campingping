@@ -52,8 +52,7 @@ const Chat = () => {
   const getChats = async () => {
     try {
       const res = await api.get('/chats/rooms');
-      console.log(res);
-      setChats(res.data);
+      setChats(res.data.data);
     } catch (error) {
       console.error(error);
     }
@@ -63,14 +62,19 @@ const Chat = () => {
     getChats();
   }, []);
 
-  console.log(chats);
+  useEffect(() => {
+    if (chatRoomId !== null) {
+      console.log(`Chat Room ID Changed: ${chatRoomId}`);
+    }
+  }, [chatRoomId]);
+  console.log(chatRoomId);
 
   return (
     <div
       className={`bg-white absolute bottom-0 w-full ${chatState ? 'h-[92%]' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
     >
-      {/* <p>Status: {isConnected ? 'connected' : 'disconnected'}</p> */}
-      {/* <p>Transport: {transport}</p> */}
+      <p>Status: {isConnected ? 'connected' : 'disconnected'}</p>
+      <p>Transport: {transport}</p>
       <div className="relative flex justify-center ">
         <Image
           src={chevron}
@@ -97,35 +101,23 @@ const Chat = () => {
         <div>
           <div className="text-title p-6">주변 사람들과 대화해보세요</div>
           <div className="flex flex-wrap flex-col items-center gap-4 w-full ">
-            <div className="w-11/12 border border-Green px-4 py-3 rounded-md flex justify-between items-center">
-              <div className="w-9/12">
-                <p className="w-full">룰루</p>
-                <p>안녕하세요 !</p>
-                <p className="text-description text-Gray">
-                  2024. 12. 18 05: 21 pm
-                </p>
-              </div>
-              <div className="text-Green">1</div>
-            </div>
-            <div className="w-11/12 border border-Gray px-4 py-3 rounded-md flex justify-between items-center">
-              <div className="w-9/12">
-                <p className="w-full">랄라</p>
-                <p>안녕하세요 !</p>
-                <p className="text-description text-Gray">
-                  2024. 12. 18 05: 21 pm
-                </p>
-              </div>
-              <div className="text-Green"></div>
-            </div>
-            {/* {chats.length > 0 ? (
+            {chats.length > 0 ? (
               chats.map((chat) => {
-                return <ChatBox />;
+                return (
+                  <div
+                    key={chat.roomId}
+                    className="w-full flex justify-center"
+                    onClick={() => setChatRoomId(chat.roomId)}
+                  >
+                    <ChatBox roomId={chat.roomId} />
+                  </div>
+                );
               })
             ) : (
               <div className="h-full items-center">
                 참여 중인 채팅이 없어요 !
               </div>
-            )} */}
+            )}
           </div>
         </div>
       ) : (

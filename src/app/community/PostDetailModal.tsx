@@ -183,7 +183,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   };
 
   useEffect(() => {
-    const handleRoomCreated = (data: { roomId: number; message: string }) => {
+    const handleRoomCreated = (data: CreateChat) => {
       const { roomId } = data;
       setChatState();
       setChatRoomId(roomId);
