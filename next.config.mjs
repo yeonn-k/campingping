@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     domains: ['gocamping.or.kr'],
+    domains: ['campingping-image.s3.ap-northeast-2.amazonaws.com'],
   },
   rewrites: async () => {
     return [

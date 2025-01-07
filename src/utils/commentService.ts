@@ -21,7 +21,6 @@ export const createComment = async (
 
 // 특정 댓글 수정
 export const updateComment = async (
-  token: string,
   communitiesId: string,
   commentId: string,
   commentData: any
@@ -35,7 +34,6 @@ export const updateComment = async (
 
 // 특정 댓글 삭제
 export const deleteComment = async (
-  token: string,
   communitiesId: string,
   commentId: string
 ) => {

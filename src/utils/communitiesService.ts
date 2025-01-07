@@ -77,7 +77,7 @@ export const getPostById = async (id: string) => {
 };
 
 // 게시글 수정
-export const updatePost = async (token: string, id: string, postData: any) => {
+export const updatePost = async (id: string, postData: any) => {
   try {
     console.log('Update Post Data:', postData);
 
@@ -95,7 +95,7 @@ export const updatePost = async (token: string, id: string, postData: any) => {
 };
 
 // 게시글 삭제
-export const deletePost = async (token: string, id: string) => {
+export const deletePost = async (id: string) => {
   try {
     const response = await axios.delete(`${BASE_URL}/communities/${id}`, {});
 
