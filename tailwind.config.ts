@@ -23,7 +23,7 @@ const config: Config = {
         zCard: '1',
         zSearchBar: '1',
         zFAB: '12',
-        zNav: '30',
+        zNav: '16',
         zModal: '16',
         zBottomNav: '8',
         zBanner: '4',
