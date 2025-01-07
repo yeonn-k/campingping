@@ -42,13 +42,17 @@ export const getPosts = async (
   cursor?: number
 ) => {
   try {
-    console.log(lat, lon);
+    const token = localStorage.getItem('token');
+
     const response = await axios.get(`${BASE_URL}/communities`, {
       params: { lon, lat, limit, cursor },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     console.log('Get Posts Response:', response.data);
-    return response.data.result;
+    return response.data.data.result;
   } catch (error) {
     console.error('Error while fetching posts:', error);
     throw error;
@@ -57,8 +61,12 @@ export const getPosts = async (
 
 export const getMyPosts = async (limit: number = 10, cursor?: number) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/communities/myposts`, {
       params: { limit, cursor },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     console.log('Get My Posts Response:', response.data);

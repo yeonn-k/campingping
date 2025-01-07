@@ -33,11 +33,8 @@ const CommunityPage = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
   const { userLat, userLon, updateLocation } = useLocationStore();
-
-  useEffect(() => {
-    updateLocation();
-  }, []);
 
   useEffect(() => {
     if (userLat && userLon) {
@@ -58,14 +55,16 @@ const CommunityPage = () => {
       }
     }
 
+    console.log('user location: ', userLat, userLon);
     const data = await getPosts(userLat, userLon);
+    console.log('data: ', data);
     if (data) {
       const postsWithDates = data.map((post: any) => ({
         ...post,
         startDate: new Date(post.startDate),
         endDate: new Date(post.endDate),
       }));
-      setMyPosts(postsWithDates);
+      setAllPosts(postsWithDates);
     }
   };
 
@@ -84,13 +83,14 @@ const CommunityPage = () => {
       }
     } else if (tab === 'allPosts') {
       const data = await getPosts(userLat, userLon);
+      console.log(data);
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
           startDate: new Date(post.startDate),
           endDate: new Date(post.endDate),
         }));
-        setMyPosts(postsWithDates);
+        setAllPosts(postsWithDates);
       }
     }
   };
@@ -119,7 +119,7 @@ const CommunityPage = () => {
   useEffect(() => {
     const fetchInitialPosts = async () => {
       const data = await getMyPosts(); // 초기에는 내 게시물로 설정
-      console.log(data);
+
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
@@ -147,7 +147,7 @@ const CommunityPage = () => {
       }
     }
   };
-
+  console.log('allPosts[] page:', allPosts);
   return (
     <div
       className="min-h-screen bg-white overflow-y-scroll h-full w-full"
@@ -233,9 +233,9 @@ const CommunityPage = () => {
             </div>
           )
         ) : activeTab === 'allPosts' ? (
-          myPosts.length > 0 ? (
+          allPosts.length > 0 ? (
             <div className="flex flex-col space-y-4">
-              {myPosts.map((post, index) => (
+              {allPosts.map((post, index) => (
                 <div
                   key={index}
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
