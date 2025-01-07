@@ -61,7 +61,7 @@ const Nav = () => {
           <div
             key="logout"
             onClick={() => {
-              router.push('/sign-out');
+              router.push('/list');
             }}
             className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
           >

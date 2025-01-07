@@ -51,7 +51,7 @@ export const getPosts = async (
       },
     });
 
-    console.log('Get Posts Response:', response.data);
+    // console.log('Get Posts Response:', response.data);
     return response.data.data.result;
   } catch (error) {
     console.error('Error while fetching posts:', error);
@@ -69,7 +69,7 @@ export const getMyPosts = async (limit: number = 10, cursor?: number) => {
       },
     });
 
-    console.log('Get My Posts Response:', response.data);
+    // console.log('Get My Posts Response:', response.data);
     return response.data.data.result;
   } catch (error) {
     console.error('Error while fetching my posts:', error);
