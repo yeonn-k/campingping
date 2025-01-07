@@ -5,27 +5,17 @@ import { socket } from '../../socket';
 import Image from 'next/image';
 
 import chevron from '@icons/chevron_gray.svg';
-import ChatRoom from './component/ChatRoom';
+import ChatRoom from '../ChatRoom/ChatRoom';
 
 import goToBack from '@icons/goToBack.svg';
+import { useChatState } from '@/hooks/useChat';
 
 const Chat = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [chatRoomId, setChatRoomId] = useState<number | null>(1);
   const [isConnected, setIsConnected] = useState(false);
   const [transport, setTransport] = useState('N/A');
 
-  const handleGoBack = () => {
-    setChatRoomId(null);
-  };
-
-  const handleClose = () => {
-    setIsOpen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    setIsOpen(true);
-  }, []);
+  const { isChatOpen, chatRoomId, handleChatState, handleGoBack } =
+    useChatState();
 
   const onConnect = () => {
     setIsConnected(true);
@@ -57,7 +47,7 @@ const Chat = () => {
 
   return (
     <div
-      className={`bg-white absolute bottom-0 w-full ${isOpen ? 'h-92%' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col  shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
+      className={`bg-white absolute bottom-0 w-full ${isChatOpen ? 'h-0' : 'h-[92%]'} rounded-t-2xl overflow-hidden flex flex-col  shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out z-zChat`}
     >
       <p>Status: {isConnected ? 'connected' : 'disconnected'}</p>
       <p>Transport: {transport}</p>
@@ -68,7 +58,7 @@ const Chat = () => {
           width={16}
           quality={10}
           className="pb-2 mb-4 mt-3 origin-center rotate-180 "
-          onClick={handleClose}
+          onClick={handleChatState}
         />
 
         {chatRoomId && (
@@ -83,9 +73,7 @@ const Chat = () => {
         )}
       </div>
 
-      {chatRoomId ? (
-        <ChatRoom roomId={chatRoomId} />
-      ) : (
+      {chatRoomId === null ? (
         <div>
           <div className="text-title p-6">주변 사람들과 대화해보세요</div>
           <div className="flex flex-wrap flex-col items-center gap-4 w-full">
@@ -111,6 +99,8 @@ const Chat = () => {
             </div>
           </div>
         </div>
+      ) : (
+        <ChatRoom roomId={chatRoomId} />
       )}
     </div>
   );
