@@ -16,7 +16,7 @@ import useLocation from '@/hooks/useLocation';
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
 import { regionStore } from '@/stores/useRegionState';
-import ReactDOM from 'react-dom';
+
 import Overlay from './component/Overlay';
 
 const limit = 10;
@@ -188,7 +188,7 @@ const Map = () => {
       ),
       address: camp.addr1,
     }));
-
+    console.log(regionState);
     positions.forEach((position) => {
       const marker = new window.kakao.maps.Marker({
         map: kakaoMap,
