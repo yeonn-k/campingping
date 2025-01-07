@@ -193,6 +193,27 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     handleCommentAction('update', editingCommentId!, editingContent.trim());
   };
 
+  // chatting
+  const createNewChat = (email: string) => {
+    socket.emit('createRoom', {
+      email: email,
+    });
+  };
+
+  useEffect(() => {
+    const handleRoomCreated = (data: { roomId: number; message: string }) => {
+      const { roomId } = data;
+      setChatState();
+      setChatRoomId(roomId);
+    };
+
+    socket.on('roomCreated', handleRoomCreated);
+
+    return () => {
+      socket.off('roomCreated', handleRoomCreated);
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white rounded-lg w-[90%] h-[80%] max-w-md overflow-auto">

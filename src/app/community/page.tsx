@@ -63,9 +63,8 @@ const CommunityPage = () => {
       }
     }
 
-    console.log('user location: ', userLat, userLon);
     const data = await getPosts(userLat, userLon);
-    console.log('data: ', data);
+
     if (data) {
       const postsWithDates = data.map((post: any) => ({
         ...post,
@@ -91,7 +90,7 @@ const CommunityPage = () => {
       }
     } else if (tab === 'allPosts') {
       const data = await getPosts(userLat, userLon);
-      console.log(data);
+
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
@@ -374,7 +373,7 @@ const CommunityPage = () => {
         className="fixed bottom-28 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
         //구현안됨onClick={openWriteModal}
       >
-        <Image src={chat} alt="채팅방" width={24} />
+        <Image src={chat} alt="채팅방" width={24} onClick={setChatState} />
       </button>
       <button
         className="fixed bottom-44 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
@@ -395,6 +394,7 @@ const CommunityPage = () => {
           <PostDetailModal post={selectedPost} onClose={closeDetailModal} />
         </ModalBox>
       )}
+      {chatState && <Chat />}
     </div>
   );
 };
