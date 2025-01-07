@@ -12,6 +12,7 @@ import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
 import useWishlist from '@/hooks/useWishlist';
+import Weather from '@/components/Weather/Weather';
 
 interface Facility {
   name: string;
@@ -115,7 +116,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
 
   return (
     <div className="w-[390px] p-4">
-      <WeatherWithLatLon />
+      <Weather />
       <div className="flex flex-col grow p-2 ">
         <div className="relative space-y-4 mb-4">
           {campData.firstImageUrl ? (
@@ -127,7 +128,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
               height={320}
             />
           ) : (
-            <DefaultImg type="camp" className="" width={350} height={200} />
+            <DefaultImg type="noimg" className="" width={350} height={200}/>
           )}
           <Image
             src={campData.favorite ? myWishIcon : notMyWishIcon}
@@ -136,7 +137,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
             height={19}
             className="absolute top-2.5 right-2.5"
             style={{ margin: '0px' }}
-            onClick={handleWishlist}
+            // onClick={handleWishlist}
           />
 
           <h2 className="text-subTitle">{campData.factDivNm}</h2>

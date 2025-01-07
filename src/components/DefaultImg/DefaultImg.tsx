@@ -3,7 +3,7 @@ import Image from 'next/image';
 type DefaultImgProps = {
   src?: string;
   alt?: string;
-  type?: 'user' | 'camp' | 'default';
+  type?: 'user' | 'camp' | 'noimg' | 'default';
   width?: number;
   height?: number;
   className?: string;
@@ -18,9 +18,10 @@ const DefaultImg: React.FC<DefaultImgProps> = ({
   className = '',
   ...props
 }) => {
-  const defaultImages: Record<'user' | 'camp' | 'default', string> = {
+  const defaultImages: Record<'user' | 'camp' | 'noimg' |'default', string> = {
     user: '/path/to/user/default/image.png',
     camp: '/image/campingping.png',
+    noimg: '/images/noImg.png',
     default: '/path/to/general/default/image.png',
   };
 
