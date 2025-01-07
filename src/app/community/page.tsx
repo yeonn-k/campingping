@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import ModalBox from '@/components/ModalBox/ModalBox';
 import WriteModal from './WriteModal';
@@ -13,9 +13,9 @@ import logo1 from '@images/campingping_orange.svg';
 import chat from '@icons/chat_green.svg';
 import { getPosts, getMyPosts, deletePost } from '@utils/communitiesService';
 import { useLocationStore } from '@/stores/locationState';
+import { api } from '@/utils/axios';
 
-import Chat from '@/components/Chat/Chat';
-import { chattingStore } from '@/stores/chattingState';
+const limit = 10;
 
 interface Post {
   data: any;
@@ -31,14 +31,18 @@ interface Post {
 }
 
 const CommunityPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [nextCursor, setNextCursor] = useState(0);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
   const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>('myPosts');
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[]>([]);
-  const { userLat, userLon, updateLocation } = useLocationStore();
-  const { chatState, setChatState } = chattingStore();
+  const { userLat, userLon } = useLocationStore();
 
   useEffect(() => {
     if (userLat && userLon) {
@@ -118,6 +122,22 @@ const CommunityPage = () => {
     }
   };
   const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const renderPosts = async () => {
+      if (isDetailModalOpen === false) {
+        const data = await getMyPosts();
+        if (data) {
+          const postsWithDates = data.map((post: any) => ({
+            ...post,
+            startDate: new Date(post.startDate),
+            endDate: new Date(post.endDate),
+          }));
+          setMyPosts(postsWithDates);
+        }
+      }
+    };
+    renderPosts();
+  }, [isDetailModalOpen]);
 
   useEffect(() => {
     const fetchInitialPosts = async () => {
@@ -135,6 +155,7 @@ const CommunityPage = () => {
 
     fetchInitialPosts();
   }, []);
+
   const handleDeletePost = async (postId: string) => {
     if (confirm('정말 이 게시글을 삭제하시겠습니까?')) {
       try {
@@ -150,6 +171,78 @@ const CommunityPage = () => {
       }
     }
   };
+  const getMyPosts = useCallback(async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await api.get('/communities/myposts', {
+        params: { limit, cursor: nextCursor },
+      });
+      const data = response.data.data.result;
+
+      if (response.data.data.nextCursor === null) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+        setNextCursor(response.data.data.nextCursor);
+      }
+
+      setMyPosts((prev) => [...prev, ...data]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [nextCursor, isLoading, hasMore]);
+
+  const getPosts = useCallback(async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await api.get('/communities', {
+        params: { lat: userLat, lon: userLon, limit, cursor: nextCursor },
+      });
+      const data = response.data.data.result;
+
+      if (response.data.data.nextCursor === null) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+        setNextCursor(response.data.data.nextCursor);
+      }
+
+      setMyPosts((prev) => [...prev, ...data]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [nextCursor, isLoading, hasMore]);
+
+  const lastItemRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isLoading || !hasMore) return;
+
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            getMyPosts();
+            getPosts();
+          }
+        },
+        { threshold: 0.4 }
+      );
+
+      if (node) {
+        observerRef.current.observe(node);
+      }
+    },
+    [isLoading, hasMore, getMyPosts, getPosts]
+  );
 
   return (
     <div
@@ -199,6 +292,7 @@ const CommunityPage = () => {
                   key={index}
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
                   onClick={() => openDetailModal(post)}
+                  ref={index === myPosts.length - 1 ? lastItemRef : null}
                 >
                   <p className="ml-2 mt-2 flex justify-between">
                     {post.title}
@@ -243,6 +337,7 @@ const CommunityPage = () => {
                   key={index}
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
                   onClick={() => openDetailModal(post)}
+                  ref={index === myPosts.length - 1 ? lastItemRef : null}
                 >
                   <p className="ml-2 mt-2">{post.title}</p>
                   <hr className="my-2 border-t-1 border-Green" />
