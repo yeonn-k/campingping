@@ -28,6 +28,7 @@ const config: Config = {
         zBottomNav: '8',
         zBanner: '4',
         zMapModal: '6',
+        zChat: '20',
       },
       fontSize: {
         title: '24px',

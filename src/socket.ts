@@ -29,8 +29,6 @@ socket.on('connect_error', (error) => {
   console.log('Connection Error:', error.message);
 });
 
-socket.emit('message', 'Hello, server!');
-
 // let socket: Socket<DefaultEventsMap, DefaultEventsMap> | null = null;
 
 // export const getSocket = () => {

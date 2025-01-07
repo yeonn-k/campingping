@@ -13,8 +13,9 @@ import logo1 from '@images/campingping_orange.svg';
 import chat from '@icons/chat_green.svg';
 import { getPosts, getMyPosts, deletePost } from '@utils/communitiesService';
 import { useLocationStore } from '@/stores/locationState';
-import { useChatState } from '@/hooks/useChat';
+
 import Chat from '@/components/Chat/Chat';
+import { chattingStore } from '@/stores/chattingState';
 
 interface Post {
   data: any;
@@ -37,8 +38,7 @@ const CommunityPage = () => {
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const { userLat, userLon, updateLocation } = useLocationStore();
-
-  const { isChatOpen, handleChatState } = useChatState();
+  const { chatState, setChatState } = chattingStore();
 
   useEffect(() => {
     if (userLat && userLon) {
@@ -278,7 +278,7 @@ const CommunityPage = () => {
         className="fixed bottom-28 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
         //구현안됨onClick={openWriteModal}
       >
-        <Image src={chat} alt="채팅방" width={24} onClick={handleChatState} />
+        <Image src={chat} alt="채팅방" width={24} onClick={setChatState} />
       </button>
       <button
         className="fixed bottom-44 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
@@ -299,7 +299,7 @@ const CommunityPage = () => {
           <PostDetailModal post={selectedPost} onClose={closeDetailModal} />
         </ModalBox>
       )}
-      {isChatOpen && <Chat />}
+      {chatState && <Chat />}
     </div>
   );
 };
