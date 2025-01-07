@@ -2,8 +2,12 @@
 
 import { regionStore } from '@/stores/useRegionState';
 import { userStore } from '@/stores/userState';
+import { api } from '@/utils/axios';
 import Image from 'next/image';
+import signInIcon from '@icons/nav/login_gray.png';
+import signOutIcon from '@icons/nav/logout_gray.png';
 import { useRouter, usePathname } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 interface NavItem {
   name: string;
@@ -21,16 +25,25 @@ const Nav = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const user = userStore((state) => state.userState);
+  const { userState, setUserState } = userStore();
 
   const { setRegionState } = regionStore();
 
   const handleNavClick = (navItem: NavItem) => {
     if (navItem.url) {
-      router.push(navItem.url);
+      if (navItem.url === '/my-page' && !userState) {
+        toast.error('로그인이 필요한 페이지에요');
+      } else router.push(navItem.url);
     }
     if (navItem.url === '/map') {
       setRegionState(null);
+    }
+  };
+
+  const signOut = async () => {
+    const res = await api.post('/auth/logout');
+    if (res.status === 200) {
+      setUserState(null);
     }
   };
 
@@ -56,8 +69,7 @@ const Nav = () => {
             </span>
           </div>
         ))}
-
-        {user ? (
+        {userState ? (
           <div
             key="logout"
             onClick={() => {
@@ -66,10 +78,11 @@ const Nav = () => {
             className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
           >
             <Image
-              src={`/icons/nav/logout_gray.png`}
+              src={signOutIcon}
               alt="로그아웃"
               width={24}
               height={24}
+              onClick={signOut}
             />
             <span className="text-[10px] text-Gray">로그아웃</span>
           </div>
@@ -81,17 +94,8 @@ const Nav = () => {
             }}
             className={`flex flex-col width-[80px] min-w-max items-center justify-center cursor-pointer p-1 rounded-lg transition`}
           >
-            <Image
-              src={`/icons/nav/login_${pathname === '/login' ? 'green' : 'gray'}.png`}
-              alt="로그인"
-              width={24}
-              height={24}
-            />
-            <span
-              className={`text-[10px] ${pathname === '/login' ? 'text-Green' : 'text-Gray'}`}
-            >
-              로그인
-            </span>
+            <Image src={signInIcon} alt="로그인" width={24} height={24} />
+            <span className={`text-[10px] text-Gray`}>로그인</span>
           </div>
         )}
       </div>
