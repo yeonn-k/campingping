@@ -167,7 +167,6 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
 
   const handleEditSubmit = () => {
     if (!editingContent.trim()) return;
-
     handleCommentAction('update', editingCommentId!, editingContent.trim());
   };
 
@@ -184,11 +183,10 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
               className="ml-4 mt-4"
             />
           </button>
-          <h3 className="text-subTitle text-center w-full mr-4 mt-4">
+          <h3 className="text-subTitle text-center w-full  mr-4 mt-4">
             {post.title}
           </h3>
         </div>
-
         <hr className="my-2 border-t-1 border-LightGray w-full" />
 
         <div className="p-2">

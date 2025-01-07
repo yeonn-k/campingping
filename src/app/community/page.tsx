@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import ModalBox from '@/components/ModalBox/ModalBox';
 import WriteModal from './WriteModal';
@@ -11,12 +11,12 @@ import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
 import logo1 from '@images/campingping_orange.svg';
 import chat from '@icons/chat_green.svg';
-import { getPosts, getMyPosts } from '@utils/communitiesService';
+import { getPosts, getMyPosts, deletePost } from '@utils/communitiesService';
 import { useLocationStore } from '@/stores/locationState';
 
 interface Post {
   data: any;
-  id?: string;
+  id: string;
   title: string;
   location: string;
   people: number;
@@ -33,17 +33,17 @@ const CommunityPage = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
-  const { lat, lon, updateLocation } = useLocationStore();
+  const { userLat, userLon, updateLocation } = useLocationStore();
 
   useEffect(() => {
     updateLocation();
   }, []);
 
   useEffect(() => {
-    if (lat && lon) {
+    if (userLat && userLon) {
       handleGetPosts();
     }
-  }, [lat, lon]);
+  }, [userLat, userLon]);
 
   const handleGetPosts = async () => {
     if (activeTab === 'myPosts') {
@@ -58,7 +58,7 @@ const CommunityPage = () => {
       }
     }
 
-    const data = await getPosts(lat, lon);
+    const data = await getPosts(userLat, userLon);
     if (data) {
       const postsWithDates = data.map((post: any) => ({
         ...post,
@@ -83,7 +83,7 @@ const CommunityPage = () => {
         setMyPosts(postsWithDates);
       }
     } else if (tab === 'allPosts') {
-      const data = await getPosts(lat, lon);
+      const data = await getPosts(userLat, userLon);
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
@@ -107,13 +107,14 @@ const CommunityPage = () => {
     setIsDetailModalOpen(false);
   };
   const scrollToTop = () => {
-    if (typeof window !== 'undefined' && window.scrollTo) {
-      window.scrollTo({
+    if (ref.current !== null) {
+      ref.current.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
     }
   };
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchInitialPosts = async () => {
@@ -131,34 +132,55 @@ const CommunityPage = () => {
 
     fetchInitialPosts();
   }, []);
+  const handleDeletePost = async (postId: string) => {
+    if (confirm('정말 이 게시글을 삭제하시겠습니까?')) {
+      try {
+        await deletePost(postId);
+        alert('게시글이 삭제되었습니다.');
+        setMyPosts((prevPosts) =>
+          prevPosts.filter((post) => post.id !== postId)
+        );
+        getMyPosts();
+      } catch (error) {
+        console.error('게시글 삭제 중 오류 발생:', error);
+        alert('게시글 삭제에 실패했습니다.');
+      }
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-white overflow-y-auto w-full">
-      <div className="flex justify-center mt-4 gap-1">
-        <Image src={logo1} alt="로고 이미지" width={100} height={100} />
-      </div>
-
-      <div className="flex justify-center border-b border-gray-200">
-        <button
-          className={`flex-1 p-3 ${
-            activeTab === 'myPosts'
-              ? 'border-b-2 border-Green text-Green'
-              : 'text-Gray'
-          }`}
-          onClick={() => handleTabChange('myPosts')}
-        >
-          내 게시물
-        </button>
-        <button
-          className={`flex-1 p-3 ${
-            activeTab === 'allPosts'
-              ? 'border-b-2 border-Green text-Green'
-              : 'text-Gray'
-          }`}
-          onClick={() => handleTabChange('allPosts')}
-        >
-          전체 게시물
-        </button>
+    <div
+      className="min-h-screen bg-white overflow-y-scroll h-full w-full"
+      ref={ref}
+    >
+      <div className="sticky top-0 bg-white shadow-md">
+        {/* 로고 */}
+        <div className="flex justify-center mt-4 gap-1">
+          <Image src={logo1} alt="로고 이미지" width={100} height={100} />
+        </div>
+        {/* 버튼 */}
+        <div className="flex justify-center border-b border-gray-200">
+          <button
+            className={`flex-1 p-3 ${
+              activeTab === 'myPosts'
+                ? 'border-b-2 border-Green text-Green'
+                : 'text-Gray'
+            }`}
+            onClick={() => handleTabChange('myPosts')}
+          >
+            내 게시물
+          </button>
+          <button
+            className={`flex-1 p-3 ${
+              activeTab === 'allPosts'
+                ? 'border-b-2 border-Green text-Green'
+                : 'text-Gray'
+            }`}
+            onClick={() => handleTabChange('allPosts')}
+          >
+            전체 게시물
+          </button>
+        </div>
       </div>
 
       <div
@@ -175,7 +197,19 @@ const CommunityPage = () => {
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
                   onClick={() => openDetailModal(post)}
                 >
-                  <p className="ml-2 mt-2">{post.title}</p>
+                  <p className="ml-2 mt-2 flex justify-between">
+                    {post.title}
+                    <button
+                      className="justify-end text-red-500 hover:text-red-700 whitespace-nowrap min-w-[50px]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeletePost(post.id!);
+                      }}
+                    >
+                      삭제
+                    </button>
+                  </p>
+
                   <hr className="my-2 border-t-1 border-Green" />
                   <p className="ml-2 mt-1">
                     {new Date(post.startDate).toLocaleDateString()}
