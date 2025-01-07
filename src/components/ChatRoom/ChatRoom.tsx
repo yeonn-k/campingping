@@ -13,7 +13,7 @@ interface ChatRoomProps {
   roomId: number;
 }
 const ChatRoom = ({ roomId }: ChatRoomProps) => {
-  const [inputValue, handleInputChange] = useInputValue();
+  const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
   const [chatMsg, setChatMsg] = useState<sendMessage>();
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
@@ -29,13 +29,14 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
       page: 1,
-      limit: 20,
+      limit: 100,
     });
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (chatRoomId !== null) {
       sendChatMsg(inputValue, chatRoomId);
+      resetInput();
     } else {
       console.error('Chat room ID is null.');
     }
