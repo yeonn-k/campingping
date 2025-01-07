@@ -27,10 +27,23 @@ const List = () => {
   const createQueryString = useCreateQueryString(searchParams);
   const { regionState } = regionStore();
 
-  console.log(regionState);
-
   const selectedCategory = searchParams.get('category') || '';
-  const selectedRegion = searchParams.get('region') || '';
+  const selectedRegion = regionState || '';
+
+  useEffect(() => {
+    router.replace(
+      createQueryString('/list', [
+        {
+          name: 'category',
+          value: selectedCategory,
+        },
+        {
+          name: 'region',
+          value: selectedRegion,
+        },
+      ])
+    );
+  }, []);
 
   const setSelectedCategory = useCallback(
     (categoryValue: string) => {
@@ -93,14 +106,9 @@ const List = () => {
     },
     [setSelectedCategory]
   );
-  console.log(campingData);
   return (
     <div className="flex flex-col ">
-      <SearchBar
-        origin="list"
-        category={selectedCategory}
-        region={selectedRegion}
-      />
+      <SearchBar />
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
