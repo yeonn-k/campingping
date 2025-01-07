@@ -55,9 +55,8 @@ const CommunityPage = () => {
       }
     }
 
-    console.log('user location: ', userLat, userLon);
     const data = await getPosts(userLat, userLon);
-    console.log('data: ', data);
+
     if (data) {
       const postsWithDates = data.map((post: any) => ({
         ...post,
@@ -83,7 +82,7 @@ const CommunityPage = () => {
       }
     } else if (tab === 'allPosts') {
       const data = await getPosts(userLat, userLon);
-      console.log(data);
+
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
@@ -147,7 +146,7 @@ const CommunityPage = () => {
       }
     }
   };
-  console.log('allPosts[] page:', allPosts);
+
   return (
     <div
       className="min-h-screen bg-white overflow-y-scroll h-full w-full"
