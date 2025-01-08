@@ -243,7 +243,7 @@ const CommunityPage = () => {
         observerRef.current.observe(node);
       }
     },
-    [isLoading, hasMore, getallPosts, getallMyPosts]
+    [isLoading, hasMore, getMyPosts, getPosts]
   );
 
   return (
@@ -294,6 +294,7 @@ const CommunityPage = () => {
                   key={index}
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
                   onClick={() => openDetailModal(post)}
+                  ref={index === myPosts.length - 1 ? lastItemRef : null}
                 >
                   <p className="ml-2 mt-2 flex justify-between">
                     {post.title}
