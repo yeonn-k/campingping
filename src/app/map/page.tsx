@@ -188,7 +188,7 @@ const Map = () => {
       ),
       address: camp.addr1,
     }));
-    console.log(regionState);
+
     positions.forEach((position) => {
       const marker = new window.kakao.maps.Marker({
         map: kakaoMap,

@@ -12,19 +12,19 @@ export const socket = io(
   }
 );
 
-socket.on('connect_error', (error) => {
-  if (socket.active) {
-    console.log('active: ', socket.active);
-  } else {
-    console.log(error.message);
-  }
-});
+// socket.on('connect_error', (error) => {
+//   if (socket.active) {
+//     console.log('active: ', socket.active);
+//   } else {
+//     console.log(error.message);
+//   }
+// });
 
-socket.on('connect', () => {
-  console.log('WebSocket connection established');
-  console.log('Socket connected:', socket.connected);
-});
+// socket.on('connect', () => {
+//   console.log('WebSocket connection established');
+//   console.log('Socket connected:', socket.connected);
+// });
 
-socket.on('connect_error', (error) => {
-  console.log('Connection Error:', error.message);
-});
+// socket.on('connect_error', (error) => {
+//   console.log('Connection Error:', error.message);
+// });

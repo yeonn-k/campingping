@@ -27,7 +27,7 @@ const SignUp = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    getValues,
     setError,
     clearErrors,
     formState: { errors },
@@ -35,7 +35,7 @@ const SignUp = () => {
 
   const sendVerification = async () => {
     try {
-      const email = watch('email');
+      const email = getValues('email');
       if (!email) return;
 
       const res = await api.post(`/auth/send-verification`, {
@@ -51,8 +51,8 @@ const SignUp = () => {
 
   const checkVerification = async () => {
     try {
-      const email = watch('email');
-      const verification = watch('verification');
+      const email = getValues('email');
+      const verification = getValues('verification');
       if (!email || !verification) return;
 
       const res = await api.post(`/auth/verify-code`, {
@@ -68,8 +68,8 @@ const SignUp = () => {
   };
 
   const checkPassword = () => {
-    const password = watch('password');
-    const passwordCheck = watch('passwordCheck');
+    const password = getValues('password');
+    const passwordCheck = getValues('passwordCheck');
 
     if (passwordCheck && password !== passwordCheck) {
       setError('passwordCheck', {
@@ -83,7 +83,7 @@ const SignUp = () => {
 
   useEffect(() => {
     checkPassword();
-  }, [watch('password')]);
+  }, [getValues('password')]);
 
   const onSubmit = async (data: FormData) => {
     const { email, password, nickname } = data;
@@ -194,8 +194,11 @@ const SignUp = () => {
               type="password"
               {...register('passwordCheck', {
                 required: '비밀번호를 확인해주세요',
-                validate: (v: string) =>
-                  v === watch('password') || '비밀번호가 일치하지 않습니다.',
+                validate: (v: string, formValues) => {
+                  if (v !== formValues.password) {
+                    return '비밀번호가 일치하지 않습니다';
+                  }
+                },
               })}
               hasError={!!errors.passwordCheck}
               errorMessage={errors.passwordCheck?.message}
