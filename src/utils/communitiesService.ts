@@ -13,17 +13,9 @@ export const createPost = async (postData: {
   lat: number;
   lon: number;
 }) => {
-  const errors = validatePostData(postData);
-  if (errors.length > 0) {
-    console.error('Validation Errors:', errors);
-    throw new Error('Validation failed');
-  }
-
   try {
     const formattedPostData = {
       ...postData,
-      startDate: postData.startDate.toISOString(),
-      endDate: postData.endDate.toISOString(),
     };
 
     console.log('Create Post Data:', formattedPostData);
@@ -31,11 +23,7 @@ export const createPost = async (postData: {
     const response = await axios.post(
       `${BASE_URL}/communities`,
       formattedPostData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      {}
     );
 
     console.log('Create Post Response:', response.data);
