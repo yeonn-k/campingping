@@ -178,7 +178,7 @@ const ChatRoom = ({ roomId, nickname }: ChatRoomProps) => {
               quality={10}
             />
             <div className="items-baseline ">
-              <span className="text-bold mr-1">{nickname}</span>
+              <span className="text-bold mr-1 text-[20px]">{nickname}</span>
               <span className="text-description text-Gray">님과의 대화</span>
             </div>
           </div>

@@ -4,7 +4,7 @@ interface ChatState {
   chatState: boolean;
   chatRoomId: number | null;
   chatNick: string;
-  setChatState: () => void;
+  setChatState: (v: boolean) => void;
   setChatRoomId: (v: number | null) => void;
   setChatNick: (v: string) => void;
 }
@@ -13,9 +13,9 @@ export const chattingStore = create<ChatState>((set) => ({
   chatState: false,
   chatRoomId: null,
   chatNick: '',
-  setChatState: () =>
-    set((state) => ({
-      chatState: !state.chatState,
+  setChatState: (v) =>
+    set(() => ({
+      chatState: v,
     })),
   setChatRoomId: (v) =>
     set(() => ({

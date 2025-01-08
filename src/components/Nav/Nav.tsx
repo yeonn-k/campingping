@@ -8,6 +8,7 @@ import signInIcon from '@icons/nav/login_gray.png';
 import signOutIcon from '@icons/nav/logout_gray.png';
 import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { chattingStore } from '@/stores/chattingState';
 
 interface NavItem {
   name: string;
@@ -26,6 +27,7 @@ const Nav = () => {
   const pathname = usePathname();
 
   const { userState, setUserState } = userStore();
+  const { setChatState, setChatRoomId, setChatNick } = chattingStore();
 
   const { setRegionState } = regionStore();
 
@@ -33,7 +35,12 @@ const Nav = () => {
     if (navItem.url) {
       if (navItem.url === '/my-page' && !userState) {
         toast.error('로그인이 필요한 페이지에요');
-      } else router.push(navItem.url);
+      } else {
+        router.push(navItem.url);
+        setChatState(false);
+        setChatRoomId(null);
+        setChatNick('');
+      }
     }
     if (navItem.url === '/map') {
       setRegionState(null);

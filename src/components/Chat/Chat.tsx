@@ -68,6 +68,7 @@ const Chat = () => {
     getChats();
   }, []);
 
+  console.log(chats);
   return (
     <div
       className={`bg-white absolute bottom-0 w-full ${chatState ? 'h-[92%]' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
@@ -79,7 +80,7 @@ const Chat = () => {
           width={16}
           quality={10}
           className="pb-2 mb-4 mt-3 origin-center rotate-180 "
-          onClick={setChatState}
+          onClick={() => setChatState(false)}
         />
 
         {chatRoomId && (
@@ -113,6 +114,7 @@ const Chat = () => {
                       roomId={chat.roomId}
                       nickname={chat.users[0].nickname}
                       lastMsg={chat.lastMessage}
+                      createdAt={chat.createdAt}
                     />
                   </div>
                 );

@@ -7,7 +7,7 @@ interface UserState {
   setUserState: (v: string | null) => void;
 }
 
-export const userStore = create(
+export const userStore = create<UserState>()(
   persist(
     (set) => ({
       userState: false,
