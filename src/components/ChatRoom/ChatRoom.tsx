@@ -1,3 +1,5 @@
+'use client';
+
 import Button from '@/components/Button/Button';
 import useInputValue from '@/hooks/useInputValue';
 import { socket } from '@/socket';
@@ -84,6 +86,7 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
               <span className="text-description text-Gray">님과의 대화</span>
             </div>
           </div>
+
           <button className="text-Green">대화 나가기</button>
         </div>
       </div>

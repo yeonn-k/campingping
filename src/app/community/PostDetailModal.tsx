@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import closeIcon from '@icons/close.svg';
-import { getPostById } from '@utils/communitiesService';
+import { getPostById, updatePost } from '@utils/communitiesService';
 import {
   createComment,
   updateComment,
@@ -51,7 +51,11 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [error, setError] = useState<string | null>(null);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState('');
-  const { setChatState, setChatRoomId } = chattingStore();
+  const [isEditingPost, setIsEditingPost] = useState(false);
+  const [editedFields, setEditedFields] = useState<Partial<Post>>({});
+
+  // chat
+  const { setChatRoomId, setChatState } = chattingStore();
 
   useEffect(() => {
     if (!post) {
@@ -64,7 +68,6 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
       try {
         const fetchedPost = await getPostById(post.id);
         setCurrentPost(fetchedPost.data);
-        console.log(fetchedPost);
       } catch (error) {
         console.error('Error loading post:', error);
         setError('게시글을 불러오는 중 문제가 발생했습니다.');
@@ -84,39 +87,70 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
 
   const fetchComments = async (communityId: string) => {
     try {
-      const response = await getComments(communityId); // API 호출
-      console.log('Fetched comments response:', response); // 반환값 디버깅
-      const commentsData = response?.data?.comments; // comments 배열 추출
-      if (!Array.isArray(commentsData)) {
-        throw new Error(
-          'getComments 함수가 올바른 배열을 반환하지 않았습니다.'
-        );
-      }
-      setComments(commentsData); // 상태 업데이트
+      const response = await getComments(communityId);
+      const commentsData = response?.data?.comments || [];
+      setComments(commentsData);
     } catch (error) {
       console.error('Error fetching comments:', error);
-      setComments([]); // 오류 발생 시 빈 배열로 초기화
+      setComments([]);
+    }
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    setEditedFields((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const toggleEditPost = () => {
+    setIsEditingPost((prev) => !prev);
+    if (!isEditingPost && currentPost) {
+      const { title, content, location, people, startDate, endDate, lon, lat } =
+        currentPost;
+      setEditedFields({
+        title,
+        content,
+        location,
+        people,
+        startDate,
+        endDate,
+        lon,
+        lat,
+      });
+    }
+  };
+
+  const handleSavePost = async () => {
+    if (!currentPost) return;
+
+    try {
+      const { title, content, location, people, startDate, endDate, lon, lat } =
+        editedFields;
+
+      const payload = {
+        title,
+        content,
+        location,
+        people,
+        startDate,
+        endDate,
+        lon,
+        lat,
+      };
+      await updatePost(currentPost.id, payload);
+      setCurrentPost((prev) => ({ ...prev, ...editedFields }));
+      setIsEditingPost(false);
+    } catch (error) {
+      console.error('Error updating post:', error);
     }
   };
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
 
-    const commentData = {
-      content: newComment.trim(),
-    };
-
+    const commentData = { content: newComment.trim() };
     try {
-      const newCommentData = await createComment(currentPost!.id, commentData);
-      console.log('New comment created:', newCommentData);
-      if (!newCommentData || typeof newCommentData !== 'object') {
-        throw new Error(
-          'createComment 함수가 올바른 데이터를 반환하지 않았습니다.'
-        );
-      }
-      setComments((prevComments) => [...prevComments, newCommentData]); // 새 댓글 추가
+      await createComment(currentPost!.id, commentData);
+      await fetchComments(currentPost!.id);
       setNewComment('');
-      await fetchComments(currentPost!.id); // 최신 댓글 다시 가져오기
     } catch (error) {
       console.error('Error creating comment:', error);
     }
@@ -127,41 +161,31 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     commentId: string,
     updatedContent?: string
   ) => {
-    if (!currentPost) {
-      console.error('Current post is not defined');
-      return;
-    }
-
-    const communityId = currentPost.id;
+    if (!currentPost) return;
 
     try {
-      let updatedComments = comments;
-
       if (action === 'update' && updatedContent) {
-        // 댓글 수정 요청
-        const response = await updateComment(communityId, commentId, {
+        await updateComment(currentPost.id, commentId, {
           content: updatedContent,
         });
-        console.log('Comment updated:', response);
-        updatedComments = comments.map((comment) =>
-          comment.id === commentId
-            ? { ...comment, content: updatedContent }
-            : comment
+        setComments((prev) =>
+          prev.map((comment) =>
+            comment.id === commentId
+              ? { ...comment, content: updatedContent }
+              : comment
+          )
         );
       } else if (action === 'delete') {
-        // 댓글 삭제 요청
-        await deleteComment(communityId, commentId);
-        console.log(`Comment ${commentId} deleted.`);
-        updatedComments = comments.filter(
-          (comment) => comment.id !== commentId
+        await deleteComment(currentPost.id, commentId);
+        setComments((prev) =>
+          prev.filter((comment) => comment.id !== commentId)
         );
       }
 
-      setComments(updatedComments); // 상태 업데이트
-      setEditingCommentId(null); // 수정 상태 초기화
-      setEditingContent(''); // 수정 내용 초기화
+      setEditingCommentId(null);
+      setEditingContent('');
     } catch (error) {
-      console.error(`Error ${action} comment:`, error);
+      console.error('Error performing comment action:', error);
     }
   };
 
@@ -183,7 +207,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   };
 
   useEffect(() => {
-    const handleRoomCreated = (data: CreateChat) => {
+    const handleRoomCreated = (data: { roomId: number; message: string }) => {
       const { roomId } = data;
       setChatState();
       setChatRoomId(roomId);
@@ -204,120 +228,157 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
             <Image
               src={closeIcon}
               alt="닫기"
-              width={10}
-              height={10}
+              width={12}
+              height={12}
               className="ml-4 mt-4"
             />
           </button>
-          <h3 className="text-subTitle text-center w-full  mr-4 mt-4">
+          <h3 className="text-subTitle w-full text-center mt-4 mr-4">
             {post.title}
           </h3>
         </div>
-        <hr className="my-2 border-t-1 border-LightGray w-full" />
+        <hr className="my-2 border-LightGray" />
 
         <div className="p-2">
-          {/* 게시글 내용 */}
           {isLoading ? (
             <p>게시글을 불러오는 중입니다...</p>
           ) : error ? (
             <p className="text-red-500">{error}</p>
-          ) : currentPost ? (
-            <>
-              <p className="text-darkGray ml-4 mt-2">
-                시작일:{' '}
-                {currentPost.startDate
-                  ? new Date(currentPost.startDate).toLocaleDateString()
-                  : '미정'}
-              </p>
-              <p className="text-darkGray ml-4 mt-4">
-                종료일:{' '}
-                {currentPost.endDate
-                  ? new Date(currentPost.endDate).toLocaleDateString()
-                  : '미정'}
-              </p>
-              <p className="text-darkGray ml-4 mt-4">
-                장소: {currentPost.location}
-              </p>
-              <p className="text-darkGray ml-4 mt-4">
-                인원: {currentPost.people}
-              </p>
-              <p className="ml-4 mt-4">{currentPost.content}</p>
-            </>
           ) : (
-            <p>게시글이 없습니다.</p>
-          )}
-
-          <div className="mt-4">
-            <div>댓글</div>
-            <hr className="my-2 border-t-1 border-LightGray w-full" />
-            {comments.length > 0 ? (
-              comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="flex justify-between items-center mb-2"
-                  onClick={() => createNewChat(comment.user?.email)}
-                >
-                  <div className="flex items-center">
-                    <p className="text-subTitle mr-2">
-                      {comment.user?.nickname}
-                      <p className="text-description">{comment.content}</p>
+            currentPost && (
+              <>
+                {[
+                  { field: 'title', label: '제목' },
+                  { field: 'startDate', label: '시작일', type: 'date' },
+                  { field: 'endDate', label: '종료일', type: 'date' },
+                  { field: 'location', label: '장소' },
+                  { field: 'people', label: '인원' },
+                  { field: 'content', label: '기타' },
+                ].map(({ field, label, type }) => (
+                  <div key={field} className="mb-4">
+                    <p className="text-darkGray">
+                      {label}:{' '}
+                      {isEditingPost ? (
+                        <input
+                          type={type || 'text'}
+                          className="border rounded p-1"
+                          value={
+                            type === 'date'
+                              ? new Date(
+                                  editedFields[field as keyof Post] as string
+                                )
+                                  .toISOString()
+                                  .slice(0, 10)
+                              : editedFields[field as keyof Post]?.toString() ||
+                                ''
+                          }
+                          onChange={(e) =>
+                            handleFieldChange(
+                              field,
+                              type === 'date'
+                                ? new Date(e.target.value).toISOString()
+                                : e.target.value
+                            )
+                          }
+                        />
+                      ) : type === 'date' ? (
+                        currentPost[field as keyof Post] ? (
+                          new Date(
+                            currentPost[field as keyof Post] as string
+                          ).toLocaleDateString()
+                        ) : (
+                          '미정'
+                        )
+                      ) : (
+                        currentPost[field as keyof Post]?.toString() || ''
+                      )}
                     </p>
                   </div>
-                  <div>
-                    {editingCommentId === comment.id ? (
-                      <>
-                        <input
-                          type="text"
-                          className="border rounded p-1 "
-                          value={editingContent}
-                          onChange={(e) => setEditingContent(e.target.value)}
-                        />
-                        <button
-                          className="ml-2 text-Green"
-                          onClick={handleEditSubmit}
-                        >
-                          완료
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          className="mr-2 text-Green"
-                          onClick={() =>
-                            handleEditClick(comment.id, comment.content)
-                          }
-                        >
-                          수정
-                        </button>
-                        <button
-                          className="text-red-500"
-                          onClick={() =>
-                            handleCommentAction('delete', comment.id)
-                          }
-                        >
-                          삭제
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))
+                ))}
+              </>
+            )
+          )}
+          <div className="text-right">
+            {isEditingPost ? (
+              <button
+                className="bg-Green text-white p-2 rounded w-20"
+                onClick={handleSavePost}
+              >
+                수정 완료
+              </button>
             ) : (
-              <div className="text-gray-500">댓글이 없습니다!</div>
+              <button
+                className="bg-Green text-white p-2 rounded w-20"
+                onClick={toggleEditPost}
+              >
+                수정
+              </button>
             )}
           </div>
+          <div className="mt-4">
+            <h4>댓글</h4>
+            <hr className="my-2 border-LightGray" />
+            {comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="flex justify-between items-center mb-2"
+              >
+                <div>
+                  <p className="text-subTitle">{comment.user.nickname}</p>
+                  {editingCommentId === comment.id ? (
+                    <>
+                      <input
+                        type="text"
+                        className="border rounded p-1"
+                        value={editingContent}
+                        onChange={(e) => setEditingContent(e.target.value)}
+                      />
+                      <button
+                        className="ml-2 text-Green"
+                        onClick={() =>
+                          handleCommentAction(
+                            'update',
+                            comment.id,
+                            editingContent
+                          )
+                        }
+                      >
+                        완료
+                      </button>
+                    </>
+                  ) : (
+                    <p>{comment.content}</p>
+                  )}
+                </div>
+                <div>
+                  <button
+                    className="mr-2 text-Green"
+                    onClick={() => handleEditClick(comment.id, comment.content)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="text-red-500"
+                    onClick={() => handleCommentAction('delete', comment.id)}
+                  >
+                    삭제
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
           <textarea
-            className="w-full border focus:border-Green rounded outline-none p-2 rounded mt-4"
+            className="w-full border rounded p-2 mt-4"
+            placeholder="댓글을 입력하세요."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="댓글을 입력하세요."
           />
-          <div className="flex justify-end">
+          <div className="text-right">
             <button
-              className="mt-2 bg-Green text-white p-2 w-20 rounded"
+              className="bg-Green text-white p-2 rounded w-20"
               onClick={handleCommentSubmit}
             >
-              등록
+              댓글 등록
             </button>
           </div>
         </div>
