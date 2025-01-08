@@ -11,6 +11,7 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 import { regionStore } from '@/stores/useRegionState';
+import { userStore } from '@/stores/userState';
 
 const List = () => {
   const router = useRouter();

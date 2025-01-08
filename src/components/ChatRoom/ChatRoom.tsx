@@ -10,28 +10,35 @@ import profileGreen from '@icons/profile_green.svg';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import UrChatMsg from './UrChatMsg';
+import { userStore } from '@/stores/userState';
+import MyChatMsg from './MyChatMsg';
 
 interface ChatRoomProps {
   roomId: number;
 }
 const ChatRoom = ({ roomId }: ChatRoomProps) => {
+  const { userEmail } = userStore();
   const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
   const [chatMsg, setChatMsg] = useState<sendMessage>();
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
-
-  const sendChatMsg = (inputValue: string, chatRoomId: number) => {
-    socket.emit('sendMessage', {
-      message: inputValue,
-      room: chatRoomId,
-    });
-  };
 
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
       page: 1,
       limit: 100,
+    });
+  };
+
+  useEffect(() => {
+    getChatHistory();
+  }, []);
+
+  const sendChatMsg = (inputValue: string, chatRoomId: number) => {
+    socket.emit('sendMessage', {
+      message: inputValue,
+      room: chatRoomId,
     });
   };
 
@@ -43,8 +50,6 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
       console.error('Chat room ID is null.');
     }
   };
-
-  getChatHistory();
 
   useEffect(() => {
     const handleChatting = (data: sendMessage) => {
@@ -70,6 +75,8 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
     };
   }, []);
 
+  console.log(userEmail);
+
   return (
     <div className="relative h-full">
       <div className="mt-6 ">
@@ -92,8 +99,15 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
       </div>
       <div className="overflow-auto h-96">
         {chatMsgs?.map((chat) => {
-          return (
+          return chat.author.email === userEmail ? (
+            <MyChatMsg
+              user={chat.author.email}
+              message={chat.message}
+              createdAt={chat.createdAt}
+            />
+          ) : (
             <UrChatMsg
+              user={chat.author.email}
               message={chat.message}
               createdAt={chat.createdAt}
               nickname={chat.author.nickname}

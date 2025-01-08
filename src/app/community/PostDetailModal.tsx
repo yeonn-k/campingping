@@ -322,6 +322,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
               <div
                 key={comment.id}
                 className="flex justify-between items-center mb-2"
+                onClick={() => createNewChat(comment.user.email)}
               >
                 <div>
                   <p className="text-subTitle">{comment.user.nickname}</p>
