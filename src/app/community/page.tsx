@@ -36,7 +36,9 @@ const CommunityPage = () => {
   const [nextCursor, setNextCursor] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>('myPosts');
+  const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>(
+    'allPosts'
+  );
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -172,7 +174,7 @@ const CommunityPage = () => {
       }
     }
   };
-  const getMyPosts = useCallback(async () => {
+  const getallMyPosts = useCallback(async () => {
     if (isLoading) return;
 
     setIsLoading(true);
@@ -197,7 +199,7 @@ const CommunityPage = () => {
     }
   }, [nextCursor, isLoading, hasMore]);
 
-  const getPosts = useCallback(async () => {
+  const getallPosts = useCallback(async () => {
     if (isLoading) return;
 
     setIsLoading(true);
@@ -231,8 +233,8 @@ const CommunityPage = () => {
       observerRef.current = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            getMyPosts();
-            getPosts();
+            getallMyPosts();
+            getallPosts();
           }
         },
         { threshold: 0.4 }
@@ -338,7 +340,7 @@ const CommunityPage = () => {
                   key={index}
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
                   onClick={() => openDetailModal(post)}
-                  ref={index === myPosts.length - 1 ? lastItemRef : null}
+                  ref={index === allPosts.length - 1 ? lastItemRef : null}
                 >
                   <p className="ml-2 mt-2">{post.title}</p>
                   <hr className="my-2 border-t-1 border-Green" />
