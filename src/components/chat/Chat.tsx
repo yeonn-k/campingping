@@ -115,6 +115,7 @@ const Chat = () => {
                     <ChatBox
                       roomId={chat.roomId}
                       nickname={chat.users[0].nickname}
+                      lastMsg={chat.lastMessage}
                     />
                   </div>
                 );
