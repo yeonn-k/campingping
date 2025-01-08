@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+
 import logoText from '@images/campingping_orange.svg';
 import symbolImg from '@images/campingping.png';
 

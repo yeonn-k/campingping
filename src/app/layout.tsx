@@ -1,6 +1,6 @@
 'use client';
 // import type { Metadata } from 'next';
-import { Id, toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './globals.css';
@@ -47,7 +47,11 @@ export default function RootLayout({
             setMapScriptLoaded(true);
           }}
         />
-        <ToastContainer position="top-center" draggable />
+        <ToastContainer
+          position="top-center"
+          draggable
+          className="w-auto max-w-[90%] mt-12"
+        />
         <div className="flex h-screen justify-center items-center">
           <DesktopUi />
           <div className="w-full md:max-w-[450px] h-full flex justify-center overflow-auto">

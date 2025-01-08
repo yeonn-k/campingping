@@ -1,8 +1,9 @@
 import Image from 'next/image';
+import Link from 'next/link';
+
+import noImg from '@images/noImg.png';
 import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
-import noImg from '@images/noImg.png';
-import Link from 'next/link';
 
 interface CardProps {
   itemId?: string;

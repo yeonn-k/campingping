@@ -1,20 +1,23 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
+
+import Input from '@/components/Input/Input';
+import Button from '@/components/Button/Button';
+
+import { userStore } from '@/stores/userState';
 
 import LogoWhite from '@images/campingping_white.svg';
 import RegisterBg from '@images/registerBg.jpg';
 import SymbolImg from '@images/campingping.png';
 import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 
-import Input from '@/components/Input/Input';
-import Button from '@/components/Button/Button';
 import { api } from '@/utils/axios';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import { userStore } from '@/stores/userState';
-import Link from 'next/link';
 
 interface FormData {
   email: string;

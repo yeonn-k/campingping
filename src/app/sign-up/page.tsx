@@ -1,18 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import Input from '@/components/Input/Input';
 import Button from '@/components/Button/Button';
 
-import { api } from '@utils/axios';
-
 import RegisterBg from '@images/registerBg.jpg';
 import LogoWhite from '@images/campingping_white.svg';
+
+import { api } from '@utils/axios';
 
 interface FormData {
   email: string;
