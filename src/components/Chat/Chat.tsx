@@ -18,8 +18,14 @@ const Chat = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [transport, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
-  const { chatState, chatRoomId, setChatState, setChatRoomId } =
-    chattingStore();
+  const {
+    chatState,
+    chatRoomId,
+    setChatState,
+    setChatRoomId,
+    setChatNick,
+    chatNick,
+  } = chattingStore();
 
   const onConnect = () => {
     setIsConnected(true);
@@ -62,19 +68,10 @@ const Chat = () => {
     getChats();
   }, []);
 
-  useEffect(() => {
-    if (chatRoomId !== null) {
-      console.log(`Chat Room ID Changed: ${chatRoomId}`);
-    }
-  }, [chatRoomId]);
-  console.log(chatRoomId);
-
   return (
     <div
       className={`bg-white absolute bottom-0 w-full ${chatState ? 'h-[92%]' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
     >
-      <p>Status: {isConnected ? 'connected' : 'disconnected'}</p>
-      <p>Transport: {transport}</p>
       <div className="relative flex justify-center ">
         <Image
           src={chevron}
@@ -107,9 +104,16 @@ const Chat = () => {
                   <div
                     key={chat.roomId}
                     className="w-full flex justify-center"
-                    onClick={() => setChatRoomId(chat.roomId)}
+                    onClick={() => {
+                      setChatRoomId(chat.roomId);
+                      setChatNick(chat.users[0].nickname);
+                    }}
                   >
-                    <ChatBox roomId={chat.roomId} />
+                    <ChatBox
+                      roomId={chat.roomId}
+                      nickname={chat.users[0].nickname}
+                      lastMsg={chat.lastMessage}
+                    />
                   </div>
                 );
               })
@@ -121,7 +125,7 @@ const Chat = () => {
           </div>
         </div>
       ) : (
-        <ChatRoom roomId={chatRoomId} />
+        <ChatRoom roomId={chatRoomId} nickname={chatNick} />
       )}
     </div>
   );
