@@ -13,11 +13,13 @@ import { api } from '@/utils/axios';
 import { ChatRooms } from '@/types/Chatting';
 import { chattingStore } from '@/stores/chattingState';
 import ChatBox from './ChatBox';
+import { useTimeFormat } from '@/utils/useTimeFormat';
 
 const Chat = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState('N/A');
+  const [, setIsConnected] = useState(false);
+  const [, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
+
   const {
     chatState,
     chatRoomId,
@@ -79,7 +81,7 @@ const Chat = () => {
           width={16}
           quality={10}
           className="pb-2 mb-4 mt-3 origin-center rotate-180 "
-          onClick={setChatState}
+          onClick={() => setChatState(false)}
         />
 
         {chatRoomId && (
@@ -113,6 +115,7 @@ const Chat = () => {
                       roomId={chat.roomId}
                       nickname={chat.users[0].nickname}
                       lastMsg={chat.lastMessage}
+                      createdAt={useTimeFormat(chat.createdAt)}
                     />
                   </div>
                 );

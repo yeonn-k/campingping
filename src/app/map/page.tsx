@@ -56,8 +56,8 @@ const Map = () => {
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [kakaoMap, setKakaoMap] = useState<unknown | null>(null);
-  const [kakaoMarker, setKakaoMarker] = useState<unknown | null>(null);
-  const [kakaoOverlay, setKakaoOverlay] = useState<unknown | null>(null);
+  const [, setKakaoMarker] = useState<unknown | null>(null);
+
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const [campList, setCampList] = useState<CampMap[]>([]);
@@ -96,8 +96,9 @@ const Map = () => {
     setIsLoading(true);
     try {
       const res = await api.get(
-        `campings/lists?region=${regionState}&${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${nextCursor}`
+        `campings/lists?region=${regionState}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${nextCursor}`
       );
+
       const data = res.data.data.result;
 
       if (res.data.data.nextCursor === null) {
@@ -188,7 +189,7 @@ const Map = () => {
       ),
       address: camp.addr1,
     }));
-    console.log(regionState);
+
     positions.forEach((position) => {
       const marker = new window.kakao.maps.Marker({
         map: kakaoMap,

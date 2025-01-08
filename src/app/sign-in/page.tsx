@@ -21,30 +21,38 @@ interface FormData {
   password: string;
 }
 
+const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
 const SignIn = () => {
   const router = useRouter();
-  const { userState, userEmail, setUserState } = userStore();
+  const { setUserState } = userStore();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
     const { email, password } = data;
 
-    if (email && password) {
-      try {
-        const res = await api.post('/auth/login', {
-          email,
-          password,
-        });
+    if (!email || !password) {
+      toast.error('이메일과 비밀번호를 모두 입력해주세요');
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      toast.error('올바른 이메일을 입력해주세요');
+    }
 
-        if (res.status === 200) {
-          setUserState(email);
-          router.push('/list');
-        } else {
-          toast.error('이메일 또는 비밀번호가 잘못되었습니다.');
-        }
-      } catch (error) {
-        console.error(error);
+    try {
+      const res = await api.post('/auth/login', {
+        email,
+        password,
+      });
+
+      if (res.status === 200) {
+        setUserState(email);
+        router.push('/list');
+      } else {
+        toast.error('이메일 또는 비밀번호가 잘못되었습니다.');
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 

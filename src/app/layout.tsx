@@ -7,7 +7,7 @@ import './globals.css';
 import DesktopUi from './DesktopUi';
 import Script from 'next/script';
 import { useGlobalStore } from '@/stores/globalState';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
 
