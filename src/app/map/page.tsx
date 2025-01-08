@@ -1,5 +1,7 @@
 'use client';
 
+import { createRoot } from 'react-dom/client';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MapListWrap } from './component/MapListWrap';
 import { useLocationStore } from '@/stores/locationState';
@@ -14,7 +16,8 @@ import useLocation from '@/hooks/useLocation';
 import Weather from '@/components/Weather/Weather';
 import useCategory from '@/hooks/useCategory';
 import { regionStore } from '@/stores/useRegionState';
-import { usePathname } from 'next/navigation';
+
+import Overlay from './component/Overlay';
 
 const limit = 10;
 
@@ -27,12 +30,14 @@ const setQueryString = (value: string | null) => {
     params.delete('region');
   }
 
-  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  const queryString = params.toString();
+  const newUrl = queryString
+    ? `${window.location.pathname}?${queryString}`
+    : window.location.pathname;
   window.history.replaceState(null, '', newUrl);
 };
 
 const Map = () => {
-  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState(0);
@@ -51,6 +56,8 @@ const Map = () => {
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [kakaoMap, setKakaoMap] = useState<unknown | null>(null);
+  const [kakaoMarker, setKakaoMarker] = useState<unknown | null>(null);
+  const [kakaoOverlay, setKakaoOverlay] = useState<unknown | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const [campList, setCampList] = useState<CampMap[]>([]);
@@ -142,13 +149,18 @@ const Map = () => {
           ? {
               center: new window.kakao.maps.LatLng(lat, lon),
               level: 10,
+              disableDoubleClick: true,
             }
           : {
               center: new window.kakao.maps.LatLng(lat, lon),
               level: 7,
+              disableDoubleClick: true,
             };
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
+        if (regionState) {
+          map.setZoomable(false);
+        }
         if (!regionState) {
           map.setZoomable(false);
           map.setDraggable(false);
@@ -168,23 +180,66 @@ const Map = () => {
   useEffect(() => {
     if (!kakaoMap || campList.length === 0) return;
     const positions = campList.map((camp) => ({
+      id: camp.contentId,
       title: camp.facltNm,
       latlng: new window.kakao.maps.LatLng(
         camp.location.coordinates[1],
         camp.location.coordinates[0]
       ),
+      address: camp.addr1,
     }));
-
+    console.log(regionState);
     positions.forEach((position) => {
       const marker = new window.kakao.maps.Marker({
         map: kakaoMap,
         position: position.latlng,
         title: position.title,
+        address: position.address,
+        contentId: position.id,
       });
 
       marker.setMap(kakaoMap);
+
+      const createContent = (
+        closeHandler: React.MouseEventHandler<HTMLImageElement>
+      ) => {
+        const overlayContent = document.createElement('div');
+        const root = createRoot(overlayContent);
+        root.render(
+          <Overlay
+            id={position.id}
+            name={position.title}
+            address={position.address}
+            onClick={closeHandler}
+          />
+        );
+
+        return overlayContent;
+      };
+
+      const closeOverlay = () => {
+        overlay.setMap(null);
+      };
+
+      const overlay = new window.kakao.maps.CustomOverlay({
+        content: createContent(closeOverlay),
+        position: marker.getPosition(),
+      });
+
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        const markerPosition = marker.getPosition();
+        const adjustedPosition = new window.kakao.maps.LatLng(
+          markerPosition.getLat() + 0.1,
+          markerPosition.getLng()
+        );
+
+        overlay.setPosition(adjustedPosition);
+        overlay.setMap(kakaoMap);
+      });
+
+      setKakaoMarker(marker);
     });
-  });
+  }, [campList]);
 
   useEffect(() => {
     if (regionState && location) {

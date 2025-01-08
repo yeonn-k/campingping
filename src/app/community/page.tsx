@@ -13,9 +13,10 @@ import logo1 from '@images/campingping_orange.svg';
 import chat from '@icons/chat_green.svg';
 import { getPosts, getMyPosts, deletePost } from '@utils/communitiesService';
 import { useLocationStore } from '@/stores/locationState';
-import { api } from '@/utils/axios';
 
-const limit = 10;
+import Chat from '@/components/Chat/Chat';
+import { chattingStore } from '@/stores/chattingState';
+import { api } from '@/utils/axios';
 
 interface Post {
   data: any;
@@ -30,21 +31,21 @@ interface Post {
   lon: number;
 }
 
+const limit = 10;
 const CommunityPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>(
-    'allPosts'
-  );
+  const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>('myPosts');
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const { userLat, userLon } = useLocationStore();
+  const { chatState, setChatState } = chattingStore();
 
   useEffect(() => {
     if (userLat && userLon) {
@@ -65,9 +66,8 @@ const CommunityPage = () => {
       }
     }
 
-    console.log('user location: ', userLat, userLon);
     const data = await getPosts(userLat, userLon);
-    console.log('data: ', data);
+
     if (data) {
       const postsWithDates = data.map((post: any) => ({
         ...post,
@@ -93,7 +93,7 @@ const CommunityPage = () => {
       }
     } else if (tab === 'allPosts') {
       const data = await getPosts(userLat, userLon);
-      console.log(data);
+
       if (data) {
         const postsWithDates = data.map((post: any) => ({
           ...post,
@@ -158,7 +158,6 @@ const CommunityPage = () => {
 
     fetchInitialPosts();
   }, []);
-
   const handleDeletePost = async (postId: string) => {
     if (confirm('정말 이 게시글을 삭제하시겠습니까?')) {
       try {
@@ -244,7 +243,7 @@ const CommunityPage = () => {
         observerRef.current.observe(node);
       }
     },
-    [isLoading, hasMore, getMyPosts, getPosts]
+    [isLoading, hasMore, getallPosts, getallMyPosts]
   );
 
   return (
@@ -295,7 +294,6 @@ const CommunityPage = () => {
                   key={index}
                   className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
                   onClick={() => openDetailModal(post)}
-                  ref={index === myPosts.length - 1 ? lastItemRef : null}
                 >
                   <p className="ml-2 mt-2 flex justify-between">
                     {post.title}
@@ -376,7 +374,7 @@ const CommunityPage = () => {
         className="fixed bottom-28 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
         //구현안됨onClick={openWriteModal}
       >
-        <Image src={chat} alt="채팅방" width={24} />
+        <Image src={chat} alt="채팅방" width={24} onClick={setChatState} />
       </button>
       <button
         className="fixed bottom-44 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
@@ -397,6 +395,7 @@ const CommunityPage = () => {
           <PostDetailModal post={selectedPost} onClose={closeDetailModal} />
         </ModalBox>
       )}
+      {chatState && <Chat />}
     </div>
   );
 };

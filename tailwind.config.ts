@@ -16,15 +16,19 @@ const config: Config = {
       width: {
         '10.5/12': '87.5%',
       },
+      height: {
+        '92%': '92%',
+      },
       zIndex: {
         zCard: '1',
         zSearchBar: '1',
         zFAB: '12',
-        zNav: '16',
+        zNav: '30',
         zModal: '16',
         zBottomNav: '8',
         zBanner: '4',
         zMapModal: '6',
+        zChat: '20',
       },
       fontSize: {
         title: '24px',
@@ -47,6 +51,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/line-clamp')],
 };
 export default config;
