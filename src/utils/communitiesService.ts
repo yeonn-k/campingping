@@ -2,29 +2,40 @@ import axios from 'axios';
 
 // Base URL 설정
 const BASE_URL = 'https://kdt-react-node-1-team03.elicecoding.com/api';
-
-// 게시글 작성
-export const createPost = async (
-  token: string,
-  postData: {
-    id?: string;
-    title: string;
-    location: string;
-    people: number;
-    content: string;
-    startDate: Date;
-    endDate: Date;
-    lat: number;
-    lon: number;
+export const createPost = async (postData: {
+  id?: string;
+  title: string;
+  location: string;
+  people: number;
+  content: string;
+  startDate: Date;
+  endDate: Date;
+  lat: number;
+  lon: number;
+}) => {
+  const errors = validatePostData(postData);
+  if (errors.length > 0) {
+    console.error('Validation Errors:', errors);
+    throw new Error('Validation failed');
   }
-) => {
+
   try {
-    const formattedPostData = { ...postData };
+    const formattedPostData = {
+      ...postData,
+      startDate: postData.startDate.toISOString(),
+      endDate: postData.endDate.toISOString(),
+    };
+
     console.log('Create Post Data:', formattedPostData);
 
     const response = await axios.post(
       `${BASE_URL}/communities`,
-      formattedPostData
+      formattedPostData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     console.log('Create Post Response:', response.data);
@@ -105,3 +116,16 @@ export const deletePost = async (id: string) => {
     throw error;
   }
 };
+function validatePostData(postData: {
+  id?: string;
+  title: string;
+  location: string;
+  people: number;
+  content: string;
+  startDate: Date;
+  endDate: Date;
+  lat: number;
+  lon: number;
+}) {
+  throw new Error('Function not implemented.');
+}
