@@ -12,7 +12,6 @@ import {
 } from '@utils/commentService';
 import { socket } from '@/socket';
 import { chattingStore } from '@/stores/chattingState';
-import { CreateChat } from '@/types/Chatting';
 
 interface User {
   email: string;
