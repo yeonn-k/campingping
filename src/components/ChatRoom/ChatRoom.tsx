@@ -1,17 +1,20 @@
 'use client';
 
-import Button from '@/components/Button/Button';
-import useInputValue from '@/hooks/useInputValue';
-import { socket } from '@/socket';
-import { chattingStore } from '@/stores/chattingState';
-import { ChatMsgs, sendMessage } from '@/types/Chatting';
-import profileGreen from '@icons/profile_green.svg';
-
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import UrChatMsg from './UrChatMsg';
-import { userStore } from '@/stores/userState';
+import { socket } from '@/socket';
+
+import Button from '@/components/Button/Button';
 import MyChatMsg from './MyChatMsg';
+import UrChatMsg from './UrChatMsg';
+
+import profileGreen from '@icons/profile_green.svg';
+
+import { ChatMsgs, sendMessage } from '@/types/Chatting';
+
+import { userStore } from '@/stores/userState';
+import { chattingStore } from '@/stores/chattingState';
+import useInputValue from '@/hooks/useInputValue';
 
 interface ChatRoomProps {
   roomId: number;

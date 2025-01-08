@@ -1,10 +1,10 @@
 'use client';
 
-import Card from '@/components/Card/Card';
 import Image from 'next/image';
-
-import chevron from '@icons/chevron_gray.svg';
 import { useState } from 'react';
+
+import Card from '@/components/Card/Card';
+import chevron from '@icons/chevron_gray.svg';
 import { CampMap } from '@/types/CampMap';
 
 interface MapProps {

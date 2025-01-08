@@ -1,4 +1,5 @@
 import Image from 'next/image';
+
 import noImg from '@images/noImg.png';
 import closeBtn from '@icons/close_white.svg';
 

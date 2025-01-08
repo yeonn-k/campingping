@@ -1,18 +1,19 @@
 'use client';
+import Image from 'next/image';
+
 import { useEffect, useState } from 'react';
 import { socket } from '../../socket';
 
-import Image from 'next/image';
-
-import chevron from '@icons/chevron_gray.svg';
+import ChatBox from './ChatBox';
 import ChatRoom from '../ChatRoom/ChatRoom';
 
+import chevron from '@icons/chevron_gray.svg';
 import goToBack from '@icons/goToBack.svg';
 
-import { api } from '@/utils/axios';
 import { ChatRooms } from '@/types/Chatting';
 import { chattingStore } from '@/stores/chattingState';
-import ChatBox from './ChatBox';
+
+import { api } from '@/utils/axios';
 import { useTimeFormat } from '@/utils/useTimeFormat';
 
 const Chat = () => {
