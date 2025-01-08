@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface UserState {
   userState: boolean;
@@ -6,12 +7,19 @@ interface UserState {
   setUserState: (v: string | null) => void;
 }
 
-export const userStore = create<UserState>((set) => ({
-  userState: false,
-  userEmail: null,
-  setUserState: (v) =>
-    set((state) => ({
-      userState: !state.userState,
-      userEmail: v,
-    })),
-}));
+export const userStore = create(
+  persist(
+    (set) => ({
+      userState: false,
+      userEmail: null,
+      setUserState: (v: string | null) =>
+        set((state: UserState) => ({
+          userState: !state.userState,
+          userEmail: v,
+        })),
+    }),
+    {
+      name: 'user-storage',
+    }
+  )
+);
