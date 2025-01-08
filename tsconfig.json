@@ -28,6 +28,8 @@
       "@hooks/*": ["./src/hooks/*"],
       "@confing/*": ["./src/config/*"]
     },
+    "allowSyntheticDefaultImports": true,
+
     "outDir": "./build", // 컴파일된 파일이 저장될 디렉토리
     "rootDir": "./src" // 소스 파일이 위치한 디렉토리
   },

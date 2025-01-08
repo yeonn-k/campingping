@@ -1,3 +1,5 @@
+import { useTimeFormat } from '@/utils/useTimeFormat';
+
 interface UrChatMsgProps {
   message: string;
   createdAt: string;
@@ -15,7 +17,9 @@ const UrChatMsg = ({ user, nickname, message, createdAt }: UrChatMsgProps) => {
         <p className="w-full">{nickname}</p>
         <p className="w-full">{message}</p>
       </div>
-      <p className="text-description text-Gray ml-6">{createdAt}</p>
+      <p className="text-description text-Gray ml-6">
+        {useTimeFormat(createdAt)}
+      </p>
     </div>
   );
 };
