@@ -18,8 +18,14 @@ const Chat = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [transport, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
-  const { chatState, chatRoomId, setChatState, setChatRoomId } =
-    chattingStore();
+  const {
+    chatState,
+    chatRoomId,
+    setChatState,
+    setChatRoomId,
+    setChatNick,
+    chatNick,
+  } = chattingStore();
 
   const onConnect = () => {
     setIsConnected(true);
@@ -52,11 +58,14 @@ const Chat = () => {
   const getChats = async () => {
     try {
       const res = await api.get('/chats/rooms');
+
       setChats(res.data.data);
     } catch (error) {
       console.error(error);
     }
   };
+
+  console.log(chats);
 
   useEffect(() => {
     getChats();
@@ -98,9 +107,15 @@ const Chat = () => {
                   <div
                     key={chat.roomId}
                     className="w-full flex justify-center"
-                    onClick={() => setChatRoomId(chat.roomId)}
+                    onClick={() => {
+                      setChatRoomId(chat.roomId);
+                      setChatNick(chat.users[0].nickname);
+                    }}
                   >
-                    <ChatBox roomId={chat.roomId} />
+                    <ChatBox
+                      roomId={chat.roomId}
+                      nickname={chat.users[0].nickname}
+                    />
                   </div>
                 );
               })
@@ -112,7 +127,7 @@ const Chat = () => {
           </div>
         </div>
       ) : (
-        <ChatRoom roomId={chatRoomId} />
+        <ChatRoom roomId={chatRoomId} nickname={chatNick} />
       )}
     </div>
   );

@@ -8,20 +8,23 @@ import { ChatMsgs, sendMessage } from '@/types/Chatting';
 import profileGreen from '@icons/profile_green.svg';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import UrChatMsg from './UrChatMsg';
 import { userStore } from '@/stores/userState';
 import MyChatMsg from './MyChatMsg';
 
 interface ChatRoomProps {
   roomId: number;
+  nickname: string;
 }
-const ChatRoom = ({ roomId }: ChatRoomProps) => {
+const ChatRoom = ({ roomId, nickname }: ChatRoomProps) => {
   const { userEmail } = userStore();
   const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
   const [chatMsg, setChatMsg] = useState<sendMessage>();
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
@@ -54,7 +57,38 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
   useEffect(() => {
     const handleChatting = (data: sendMessage) => {
       const { roomId, sender, message, createdAt } = data;
-      setChatMsg(data);
+
+      setChatMsgs((prev) => {
+        if (!prev) {
+          return [
+            {
+              message: data.message,
+              createdAt: data.createdAt,
+              author: {
+                email: sender.email,
+                nickname: sender.nickname,
+              },
+            },
+          ];
+        }
+
+        const isDuplicate = prev.some(
+          (msg) => msg.createdAt === data.createdAt
+        );
+        if (isDuplicate) return prev;
+
+        return [
+          ...prev,
+          {
+            message: data.message,
+            createdAt: data.createdAt,
+            author: {
+              email: sender.email,
+              nickname: sender.nickname,
+            },
+          },
+        ];
+      });
     };
 
     socket.on('newMessage', handleChatting);
@@ -62,7 +96,7 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
     return () => {
       socket.off('newMessage', handleChatting);
     };
-  }, []);
+  }, [chatMsgs]);
 
   useEffect(() => {
     const handleGetChatting = (data: ChatMsgs[]) => {
@@ -75,10 +109,65 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
     };
   }, []);
 
-  console.log(userEmail);
+  useEffect(() => {
+    const handleChatting = (data: sendMessage) => {
+      setChatMsgs((prev) => {
+        if (!prev)
+          return [
+            {
+              message: data.message,
+              createdAt: data.createdAt,
+              author: {
+                email: data.sender.email,
+                nickname: data.sender.nickname,
+              },
+            },
+          ];
+
+        const isDuplicate = prev.some(
+          (msg) => msg.createdAt === data.createdAt
+        );
+        if (isDuplicate) return prev;
+
+        return [
+          ...prev,
+          {
+            message: data.message,
+            createdAt: data.createdAt,
+            author: {
+              email: data.sender.email,
+              nickname: data.sender.nickname,
+            },
+          },
+        ];
+      });
+    };
+
+    socket.on('newMessage', handleChatting);
+
+    return () => {
+      socket.off('newMessage', handleChatting);
+    };
+  }, [chatMsg]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [chatMsgs]);
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full flex flex-col">
       <div className="mt-6 ">
         <div className="px-6 pt-6 pb-2 flex gap-1 justify-between border-b border-Green">
           <div className="flex gap-1">
@@ -89,7 +178,7 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
               quality={10}
             />
             <div className="items-baseline ">
-              <span className="text-bold mr-1">룰루</span>
+              <span className="text-bold mr-1">{nickname}</span>
               <span className="text-description text-Gray">님과의 대화</span>
             </div>
           </div>
@@ -97,7 +186,7 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
           <button className="text-Green">대화 나가기</button>
         </div>
       </div>
-      <div className="overflow-auto h-96">
+      <div className="overflow-auto h-[55%]" ref={chatContainerRef}>
         {chatMsgs?.map((chat) => {
           return chat.author.email === userEmail ? (
             <MyChatMsg
@@ -115,7 +204,7 @@ const ChatRoom = ({ roomId }: ChatRoomProps) => {
           );
         })}
       </div>
-      <div className="absolute bottom-0 border-t border-Green w-full h-40 flex justify-center items-center">
+      <div className="border-t border-Green w-full h-40 flex justify-center items-center">
         <textarea
           placeholder="채팅을 입력하세요"
           className="w-64 h-36 outline-none	pt-2 pr-3"

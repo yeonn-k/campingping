@@ -19,13 +19,15 @@ export interface CreateChat {
 
 export interface sendMessage {
   roomId: number;
-  sender: string;
   message: string;
   createdAt: string;
+  sender: {
+    email: string;
+    nickname: string;
+  };
 }
 
 export interface ChatMsgs {
-  id: number;
   message: string;
   createdAt: string;
   author: {
