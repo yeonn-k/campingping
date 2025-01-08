@@ -12,11 +12,6 @@ export interface ChatRooms {
   isRead: boolean;
 }
 
-export interface CreateChat {
-  roomId: number;
-  message: string;
-}
-
 export interface sendMessage {
   roomId: number;
   message: string;

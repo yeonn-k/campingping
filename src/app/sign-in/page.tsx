@@ -25,7 +25,7 @@ const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 const SignIn = () => {
   const router = useRouter();
-  const { userState, userEmail, setUserState } = userStore();
+  const { setUserState } = userStore();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {

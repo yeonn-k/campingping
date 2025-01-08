@@ -17,14 +17,13 @@ interface ChatRoomProps {
   roomId: number;
   nickname: string;
 }
-const ChatRoom = ({ roomId, nickname }: ChatRoomProps) => {
+const ChatRoom = ({ nickname }: ChatRoomProps) => {
   const { userEmail } = userStore();
   const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
-  const [chatMsg, setChatMsg] = useState<sendMessage>();
+  const [chatMsg] = useState<sendMessage>();
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [isInitialRender, setIsInitialRender] = useState(true);
 
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
@@ -56,14 +55,14 @@ const ChatRoom = ({ roomId, nickname }: ChatRoomProps) => {
 
   useEffect(() => {
     const handleChatting = (data: sendMessage) => {
-      const { roomId, sender, message, createdAt } = data;
+      const { sender, message, createdAt } = data;
 
       setChatMsgs((prev) => {
         if (!prev) {
           return [
             {
-              message: data.message,
-              createdAt: data.createdAt,
+              message: message,
+              createdAt: createdAt,
               author: {
                 email: sender.email,
                 nickname: sender.nickname,
@@ -72,16 +71,14 @@ const ChatRoom = ({ roomId, nickname }: ChatRoomProps) => {
           ];
         }
 
-        const isDuplicate = prev.some(
-          (msg) => msg.createdAt === data.createdAt
-        );
+        const isDuplicate = prev.some((msg) => msg.createdAt === createdAt);
         if (isDuplicate) return prev;
 
         return [
           ...prev,
           {
-            message: data.message,
-            createdAt: data.createdAt,
+            message: message,
+            createdAt: createdAt,
             author: {
               email: sender.email,
               nickname: sender.nickname,
@@ -111,32 +108,31 @@ const ChatRoom = ({ roomId, nickname }: ChatRoomProps) => {
 
   useEffect(() => {
     const handleChatting = (data: sendMessage) => {
+      const { message, createdAt, sender } = data;
       setChatMsgs((prev) => {
         if (!prev)
           return [
             {
-              message: data.message,
-              createdAt: data.createdAt,
+              message: message,
+              createdAt: createdAt,
               author: {
-                email: data.sender.email,
-                nickname: data.sender.nickname,
+                email: sender.email,
+                nickname: sender.nickname,
               },
             },
           ];
 
-        const isDuplicate = prev.some(
-          (msg) => msg.createdAt === data.createdAt
-        );
+        const isDuplicate = prev.some((msg) => msg.createdAt === createdAt);
         if (isDuplicate) return prev;
 
         return [
           ...prev,
           {
-            message: data.message,
-            createdAt: data.createdAt,
+            message: message,
+            createdAt: createdAt,
             author: {
-              email: data.sender.email,
-              nickname: data.sender.nickname,
+              email: sender.email,
+              nickname: sender.nickname,
             },
           },
         ];

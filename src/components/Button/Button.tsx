@@ -1,6 +1,6 @@
 'use client';
 
-import { ButtonHTMLAttributes, ReactNode, useState } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 import LoadingSpinner from './LoadingSpinner';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

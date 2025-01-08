@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import noImg from '@images/noImg.png';
 import closeBtn from '@icons/close_white.svg';
-import Link from 'next/link';
 
 interface OverlayProps {
   onClick: React.MouseEventHandler<HTMLImageElement>;
@@ -10,7 +9,7 @@ interface OverlayProps {
   address: string;
 }
 
-const Overlay = ({ id, name, address, onClick }: OverlayProps) => {
+const Overlay = ({ name, address, onClick }: OverlayProps) => {
   return (
     <div className="relative w-52 h-34 rounded-md bg-white p-2 flex justify-center items-end border border-Green">
       <div className="absolute w-5 h-5 bg-white border border-Green rotate-45 translate-y-4" />

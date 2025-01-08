@@ -6,7 +6,7 @@ interface MyChatMsgProps {
   user: string;
 }
 
-const MyChatMsg = ({ message, createdAt, user }: MyChatMsgProps) => {
+const MyChatMsg = ({ message, createdAt }: MyChatMsgProps) => {
   return (
     <div className="flex flex-wrap justify-end">
       <div className="w-9/12 mr-3 mt-3 bg-Green text-white p-3 rounded-2xl flex flex-wrap">

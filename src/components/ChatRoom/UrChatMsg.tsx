@@ -7,7 +7,7 @@ interface UrChatMsgProps {
   user: string;
 }
 
-const UrChatMsg = ({ user, nickname, message, createdAt }: UrChatMsgProps) => {
+const UrChatMsg = ({ nickname, message, createdAt }: UrChatMsgProps) => {
   return (
     <div>
       <div className="w-9/12 ml-3 mt-3 border border-LightGray p-3 rounded-2xl flex flex-wrap">

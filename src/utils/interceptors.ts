@@ -1,13 +1,9 @@
-import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 
 export interface ConsoleError {
   status: number;
   data: unknown;
 }
-
-// export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
-//   return config;
-// };
 
 export const successInterceptor = (response: AxiosResponse) => {
   return response;

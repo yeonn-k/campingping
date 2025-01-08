@@ -16,8 +16,8 @@ import ChatBox from './ChatBox';
 import { useTimeFormat } from '@/utils/useTimeFormat';
 
 const Chat = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState('N/A');
+  const [, setIsConnected] = useState(false);
+  const [, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
 
   const {
