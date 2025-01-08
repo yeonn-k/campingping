@@ -10,6 +10,9 @@ import {
   deleteComment,
   getComments,
 } from '@utils/commentService';
+import { socket } from '@/socket';
+import { chattingStore } from '@/stores/chattingState';
+import { CreateChat } from '@/types/Chatting';
 
 interface User {
   email: string;
@@ -50,6 +53,9 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [editingContent, setEditingContent] = useState('');
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editedFields, setEditedFields] = useState<Partial<Post>>({});
+
+  // chat
+  const { setChatRoomId, setChatState } = chattingStore();
 
   useEffect(() => {
     if (!post) {
@@ -316,6 +322,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
               <div
                 key={comment.id}
                 className="flex justify-between items-center mb-2"
+                onClick={() => createNewChat(comment.user.email)}
               >
                 <div>
                   <p className="text-subTitle">{comment.user.nickname}</p>
