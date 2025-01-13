@@ -12,11 +12,13 @@ import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 import { regionStore } from '@/stores/useRegionState';
 import { userStore } from '@/stores/userState';
+import useCategory from '@/hooks/useCategory';
 
 const List = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const { selectedCategory, handleCategorySelected } = useCategory();
   const [campingData, setCampingData] = useState<Camp[] | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +30,6 @@ const List = () => {
   const createQueryString = useCreateQueryString(searchParams);
   const { regionState } = regionStore();
 
-  const selectedCategory = searchParams.get('category') || '';
   const selectedRegion = regionState || '';
 
   useEffect(() => {
@@ -45,15 +46,6 @@ const List = () => {
       ])
     );
   }, []);
-
-  const setSelectedCategory = useCallback(
-    (categoryValue: string) => {
-      router.push(
-        createQueryString('/list', [{ name: 'category', value: categoryValue }])
-      );
-    },
-    [createQueryString, router]
-  );
 
   const fetchCampingData = useCallback(async () => {
     try {
@@ -101,17 +93,10 @@ const List = () => {
     setIsLoading(false);
   }, [fetchCampingData, nextCursorRef]);
 
-  const handleCategorySelected = useCallback(
-    (categoryValue: string) => {
-      setSelectedCategory(categoryValue);
-    },
-    [setSelectedCategory]
-  );
   return (
     <div className="flex flex-col ">
       <SearchBar />
       <Category
-        origin="list"
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />

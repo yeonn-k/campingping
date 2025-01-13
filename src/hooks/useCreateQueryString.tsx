@@ -7,10 +7,10 @@ export const useCreateQueryString = (searchParams: ReadonlyURLSearchParams) => {
       baseUrl: string,
       paramsList: { name: string; value?: string | number | null }[]
     ) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams);
 
       paramsList.forEach(({ name, value }) => {
-        if (value) {
+        if (value != null) {
           params.set(name, `${value}`);
         } else {
           params.delete(name);

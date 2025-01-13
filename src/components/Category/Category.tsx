@@ -8,7 +8,6 @@ interface Category {
 }
 
 interface CategoryProps {
-  origin: string;
   selectedCategory: string;
   onCategorySelected: (selectedCategoryName: string) => void;
 }
