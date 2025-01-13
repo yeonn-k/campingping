@@ -111,6 +111,7 @@ const List = () => {
     <div className="flex flex-col ">
       <SearchBar />
       <Category
+        origin="list"
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />

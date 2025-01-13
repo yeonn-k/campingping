@@ -8,6 +8,7 @@ interface Category {
 }
 
 interface CategoryProps {
+  origin: string;
   selectedCategory: string;
   onCategorySelected: (selectedCategoryName: string) => void;
 }
@@ -34,6 +35,7 @@ export const categories: Category[] = [
 const Category = ({
   selectedCategory,
   onCategorySelected: handleCategoryClick,
+  origin,
 }: CategoryProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);

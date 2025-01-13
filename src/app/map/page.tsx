@@ -19,17 +19,16 @@ import useLocation from '@/hooks/useLocation';
 import useCategory from '@/hooks/useCategory';
 
 const limit = 10;
+const params = new URLSearchParams(window.location.search);
+const queryString = params.toString();
 
 const setQueryString = (value: string | null) => {
-  const params = new URLSearchParams(window.location.search);
-
   if (value !== null) {
     params.set('region', value);
   } else {
     params.delete('region');
   }
 
-  const queryString = params.toString();
   const newUrl = queryString
     ? `${window.location.pathname}?${queryString}`
     : window.location.pathname;
@@ -255,6 +254,7 @@ const Map = () => {
     <>
       {regionState && (
         <NoSSRCategory
+          origin="map"
           selectedCategory={selectedCategory}
           onCategorySelected={handleCategorySelected}
         />

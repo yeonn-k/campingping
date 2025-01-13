@@ -27,15 +27,15 @@ const useCategory = () => {
   );
 
   const setSelectedCategoryValue = useCallback(
-    (categoryValue: string) => {
-      router.push(`/map?${createQueryString('category', categoryValue)}`);
+    (origin: string, categoryValue: string) => {
+      router.push(`/${origin}?${createQueryString('category', categoryValue)}`);
     },
     [createQueryString, router]
   );
 
   const handleCategorySelected = useCallback(
     (categoryValue: string) => {
-      setSelectedCategoryValue(categoryValue);
+      setSelectedCategoryValue(origin, categoryValue);
     },
     [setSelectedCategoryValue]
   );
