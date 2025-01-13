@@ -17,25 +17,30 @@ import { regionStore } from '@/stores/useRegionState';
 import { api } from '@/utils/axios';
 import useLocation from '@/hooks/useLocation';
 import useCategory from '@/hooks/useCategory';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 
 const limit = 10;
 const params = new URLSearchParams(window.location.search);
 const queryString = params.toString();
 
-const setQueryString = (value: string | null) => {
-  if (value !== null) {
-    params.set('region', value);
-  } else {
-    params.delete('region');
-  }
+// const setQueryString = (value: string | null) => {
+//   if (value !== null) {
+//     params.set('region', value);
+//   } else {
+//     params.delete('region');
+//   }
 
-  const newUrl = queryString
-    ? `${window.location.pathname}?${queryString}`
-    : window.location.pathname;
-  window.history.replaceState(null, '', newUrl);
-};
+//   const newUrl = queryString
+//     ? `${window.location.pathname}?${queryString}`
+//     : window.location.pathname;
+//   window.history.replaceState(null, '', newUrl);
+// };
 
 const Map = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const createQueryString = useCreateQueryString(searchParams);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState(0);
@@ -63,20 +68,23 @@ const Map = () => {
   const location = useLocation(regionState);
 
   useEffect(() => {
-    getRegionQueryString();
-  }, []);
+    router.replace(
+      createQueryString('/map', [
+        {
+          name: 'category',
+          value: selectedCategory,
+        },
+        {
+          name: 'region',
+          value: regionState,
+        },
+      ])
+    );
+  }, [regionState, selectedCategory]);
 
-  const getRegionQueryString = () => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get('region')) {
-      setRegionState(params.get('region'));
-    }
-  };
-
-  useEffect(() => {
-    setQueryString(regionState);
-  }, [regionState]);
+  // useEffect(() => {
+  //   setQueryString(regionState);
+  // }, [regionState]);
 
   const getNearByCampings = async () => {
     try {
@@ -125,7 +133,7 @@ const Map = () => {
           if (entry.isIntersecting) {
             if (regionState) {
             }
-            setQueryString(regionState);
+            // setQueryString(regionState);
             getCampingsByDoNm();
           }
         },
@@ -254,7 +262,6 @@ const Map = () => {
     <>
       {regionState && (
         <NoSSRCategory
-          origin="map"
           selectedCategory={selectedCategory}
           onCategorySelected={handleCategorySelected}
         />

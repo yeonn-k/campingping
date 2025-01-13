@@ -1,9 +1,10 @@
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useCreateQueryString } from './useCreateQueryString';
 
 const useCategory = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const createQueryString = useCreateQueryString(searchParams);
 
@@ -16,7 +17,7 @@ const useCategory = () => {
 
   const setSelectedCategoryValue = useCallback(
     (categoryValue: string) => {
-      const queryString = createQueryString('/', [
+      const queryString = createQueryString(pathname, [
         { name: 'category', value: categoryValue },
       ]);
       router.push(queryString);
