@@ -1,9 +1,10 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
+const router = useRouter();
+const searchParams = useSearchParams();
+
 const useCategory = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
   useEffect(() => {
