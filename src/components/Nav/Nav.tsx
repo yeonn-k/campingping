@@ -29,8 +29,6 @@ const Nav = () => {
   const { userState, setUserState } = userStore();
   const { setChatState, setChatRoomId, setChatNick } = chattingStore();
 
-  const { setRegionState } = regionStore();
-
   const handleNavClick = (navItem: NavItem) => {
     if (navItem.url) {
       if (navItem.url === '/my-page' && !userState) {
@@ -41,9 +39,6 @@ const Nav = () => {
         setChatRoomId(null);
         setChatNick('');
       }
-    }
-    if (navItem.url === '/map') {
-      setRegionState(null);
     }
   };
 

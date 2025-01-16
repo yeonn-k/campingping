@@ -33,7 +33,7 @@ const Search = () => {
   const router = useRouter();
   const { updateRegion } = useRegion();
   const { coloredState } = regionStore();
-  const [originPath, setOriginPath] = useState<string | null>(null);
+  const [originPath, setOriginPath] = useState<string | null>('map');
   const [query, setQuery] = useState<string | null>(null);
 
   const closeSearch = () => {
@@ -43,7 +43,9 @@ const Search = () => {
   useEffect(() => {
     const currentQuery = new URLSearchParams(window.location.search);
     const origin = currentQuery.get('origin');
-    setOriginPath(origin);
+    if (origin) {
+      setOriginPath(origin);
+    }
 
     currentQuery.delete('origin');
     const updatedQuery = currentQuery.toString();
