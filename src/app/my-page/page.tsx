@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import logo1 from '@images/campingping_orange.svg';
 import profile from '@images/profile.svg';
-import Nav from '@/components/Nav/Nav';
+
 import axios from 'axios';
 
 interface UserProfile {
@@ -128,9 +128,6 @@ const MyPage = () => {
           />
         </div>
       </main>
-
-      {/* Navigation Section */}
-      <Nav className="mt-auto" />
     </div>
   );
 };

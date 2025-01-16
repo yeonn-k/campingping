@@ -50,7 +50,7 @@ const Nav = () => {
   };
 
   return (
-    <div className="flex w-full bg-white z-zNav justify-center sticky bottom-0 left-0 z-zNav">
+    <div className="absolute bottom-0 flex w-full bg-white z-zNav justify-center py-1 z-zNav ">
       <div className="flex w-full justify-around">
         {navItems.map((navItem) => (
           <div

@@ -5,7 +5,6 @@ import Image from 'next/image';
 import ModalBox from '@/components/ModalBox/ModalBox';
 import WriteModal from './WriteModal';
 import PostDetailModal from './PostDetailModal';
-import Nav from '@/components/Nav/Nav';
 import chevron from '@icons/chevron_green.svg';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
@@ -383,8 +382,6 @@ const CommunityPage = () => {
       >
         <Image src={write} alt="게시글 작성" width={24} />
       </button>
-
-      <Nav />
 
       {isWriteModalOpen && (
         <ModalBox>
