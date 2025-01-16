@@ -56,6 +56,21 @@ const Map = () => {
 
   const location = useLocation(regionQuery);
 
+  useEffect(() => {
+    const currentRegionQuery = searchParams.get('region');
+    setRegionQuery(currentRegionQuery);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (regionQuery && location) {
+      setLat(location.regionLat);
+      setLon(location.regionLon);
+    } else if (!regionQuery && userLat && userLon) {
+      setLat(userLat);
+      setLon(userLon);
+    }
+  }, [regionQuery, location, userLat, userLon]);
+
   const getNearByCampings = async () => {
     try {
       const apiUrl = createQueryString('campings/map', [
@@ -99,6 +114,12 @@ const Map = () => {
     }
   }, [nextCursor, isLoading, selectedCategory, regionQuery, hasMore]);
 
+  useEffect(() => {
+    if (regionQuery === null) {
+      getNearByCampings();
+    }
+  }, [regionQuery]);
+
   const lastItemRef = useCallback(
     (node: HTMLDivElement) => {
       if (isLoading || !hasMore) return;
@@ -111,7 +132,7 @@ const Map = () => {
             if (regionQuery) {
             }
             getCampingsByDoNm();
-          }
+          } else getNearByCampings();
         },
         { threshold: 0.4 }
       );
@@ -128,35 +149,23 @@ const Map = () => {
 
     if (lat !== null && lon !== null) {
       window.kakao?.maps.load(() => {
-        const options = regionQuery
-          ? {
-              center: new window.kakao.maps.LatLng(lat, lon),
-              level: 10,
-              disableDoubleClick: true,
-            }
-          : {
-              center: new window.kakao.maps.LatLng(lat, lon),
-              level: 7,
-              disableDoubleClick: true,
-            };
+        const options = {
+          center: new window.kakao.maps.LatLng(lat, lon),
+          level: regionQuery ? 10 : 7,
+          disableDoubleClick: true,
+        };
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
-        if (regionQuery) {
-          map.setZoomable(false);
-        }
+        map.setZoomable(false);
+
         if (!regionQuery) {
-          map.setZoomable(false);
           map.setDraggable(false);
+          getNearByCampings();
         }
 
+        getCampingsByDoNm();
         setKakaoMap(map);
       });
-
-      if (regionQuery) {
-        getCampingsByDoNm();
-      } else {
-        getNearByCampings();
-      }
     }
   }, [lat, lon, regionQuery, selectedCategory]);
 
@@ -223,16 +232,6 @@ const Map = () => {
       setKakaoMarker(marker);
     });
   }, [campList]);
-
-  useEffect(() => {
-    if (regionQuery && location) {
-      setLat(location.regionLat);
-      setLon(location.regionLon);
-    } else if (userLat && userLon) {
-      setLat(userLat);
-      setLon(userLon);
-    }
-  }, [regionQuery, location, userLat, userLon]);
 
   return (
     <>
