@@ -1,6 +1,5 @@
 'use client';
 
-import { regionStore } from '@/stores/regionState';
 import { userStore } from '@/stores/userState';
 import { api } from '@/utils/axios';
 import Image from 'next/image';

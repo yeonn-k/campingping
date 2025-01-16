@@ -1,4 +1,4 @@
-import { useTimeFormat } from '@/utils/TimeFormat';
+import { useTimeFormat } from '@/utils/timeFormat';
 
 interface UrChatMsgProps {
   message: string;

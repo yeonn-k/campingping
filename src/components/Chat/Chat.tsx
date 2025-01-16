@@ -14,7 +14,7 @@ import { ChatRooms } from '@/types/Chatting';
 import { chattingStore } from '@/stores/chattingState';
 
 import { api } from '@/utils/axios';
-import { useTimeFormat } from '@/utils/TimeFormat';
+import { useTimeFormat } from '@/utils/timeFormat';
 
 const Chat = () => {
   const [, setIsConnected] = useState(false);
