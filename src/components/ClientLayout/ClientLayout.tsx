@@ -50,6 +50,7 @@ export default function ClientLayout({
         <DesktopUi />
         <div className="relative w-full md:max-w-[450px] h-full flex justify-center overflow-auto">
           {children}
+          <Nav />
         </div>
       </div>
     </>
