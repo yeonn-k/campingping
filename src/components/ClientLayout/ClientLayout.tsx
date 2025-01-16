@@ -10,6 +10,11 @@ import { useEffect } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
 import Nav from '../Nav/Nav';
+import { usePathname, useRouter } from 'next/navigation';
+import OpenTheChats from '../OpenTheChats/OpenTheChats';
+import { chattingStore } from '@/stores/chattingState';
+import Chat from '../Chat/Chat';
+import { userStore } from '@/stores/userState';
 
 export default function ClientLayout({
   children,
@@ -18,7 +23,12 @@ export default function ClientLayout({
 }) {
   const { setMapScriptLoaded } = useGlobalStore();
   const { updateLocation } = useLocationStore();
+  const { chatState, setChatState } = chattingStore();
+  const { userState } = userStore();
   const isGeoLocationGranted = useGeoLocationPermission();
+
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     if (isGeoLocationGranted) {
@@ -50,7 +60,17 @@ export default function ClientLayout({
         <DesktopUi />
         <div className="relative w-full md:max-w-[450px] h-full flex justify-center overflow-auto">
           {children}
+          {pathname !== '/sign-in' && (
+            <OpenTheChats
+              onClick={() => {
+                userState ? setChatState(true) : router.push('/sign-in');
+                toast.error('로그인이 필요한 기능이에요');
+              }}
+            />
+          )}
           <Nav />
+
+          {chatState && <Chat />}
         </div>
       </div>
     </>
