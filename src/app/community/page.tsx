@@ -14,6 +14,7 @@ import { getPosts, getMyPosts, deletePost } from '@utils/communitiesService';
 import { useLocationStore } from '@/stores/locationState';
 
 import { api } from '@/utils/axios';
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 interface Post {
   data: any;
@@ -361,13 +362,7 @@ const CommunityPage = () => {
           )
         ) : null}
       </div>
-
-      <button
-        className="fixed bottom-16 right-0 translate-x-[-64px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
-        onClick={scrollToTop}
-      >
-        <Image src={chevron} alt="페이지 상단으로" width={24} />
-      </button>
+      <ScrollToTop scrollRef={ref} />
 
       <button
         className="fixed bottom-56 right-0 translate-x-[-64px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"

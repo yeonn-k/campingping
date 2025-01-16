@@ -12,6 +12,7 @@ import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 
 import useCategory from '@/hooks/useCategory';
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 const List = () => {
   const searchParams = useSearchParams();
@@ -26,6 +27,8 @@ const List = () => {
     useInfiniteScroll({
       loadMoreElementRef: loadMoreRef,
     });
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const createQueryString = useCreateQueryString(searchParams);
 
@@ -80,7 +83,10 @@ const List = () => {
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />
-      <div className="flex flex-col space-y-8 scroll-smooth p-4 mx-*">
+      <div
+        className="flex flex-col space-y-8 scroll-smooth p-4 mx-*"
+        ref={scrollRef}
+      >
         {campingData?.length ? (
           campingData.map((camp) => (
             <Card
@@ -106,6 +112,8 @@ const List = () => {
       <div ref={loadMoreRef} className="h-[100px]">
         {isLoading && <LoadingSpinner />}
       </div>
+
+      <ScrollToTop scrollRef={scrollRef} />
     </div>
   );
 };

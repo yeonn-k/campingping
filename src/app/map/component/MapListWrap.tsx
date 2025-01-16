@@ -1,11 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import Card from '@/components/Card/Card';
 import chevron from '@icons/chevron_gray.svg';
 import { CampMap } from '@/types/CampMap';
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 interface MapProps {
   campList: CampMap[];
@@ -18,8 +19,11 @@ export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
     setIsOpenList((prev) => !prev);
   };
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   return (
     <div
+      ref={scrollRef}
       className={`bg-white absolute bottom-0 w-full ${isOpenList ? 'h-full overflow-auto' : 'h-32 pt-5 rounded-t-2xl overflow-hidden'} flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
     >
       {isOpenList ? (
@@ -66,6 +70,7 @@ export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
           <p>검색 결과가 없습니다.</p>
         </div>
       )}
+      {isOpenList && <ScrollToTop scrollRef={scrollRef} />}
     </div>
   );
 };
