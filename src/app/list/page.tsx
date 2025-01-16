@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
 import { Camp } from '@/types/Camp';
@@ -11,12 +11,13 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 import { regionStore } from '@/stores/useRegionState';
-import { userStore } from '@/stores/userState';
+import useCategory from '@/hooks/useCategory';
+import { updateQueryString } from '@/utils/updateQueryString';
 
 const List = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
+  const { selectedCategory, handleCategorySelected } = useCategory();
   const [campingData, setCampingData] = useState<Camp[] | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,34 +27,18 @@ const List = () => {
     });
 
   const createQueryString = useCreateQueryString(searchParams);
+
   const { regionState } = regionStore();
 
-  const selectedCategory = searchParams.get('category') || '';
   const selectedRegion = regionState || '';
 
   useEffect(() => {
-    router.replace(
-      createQueryString('/list', [
-        {
-          name: 'category',
-          value: selectedCategory,
-        },
-        {
-          name: 'region',
-          value: selectedRegion,
-        },
-      ])
+    const paramsToUpdate = Object.fromEntries(
+      new URLSearchParams(window.location.search)
     );
-  }, []);
 
-  const setSelectedCategory = useCallback(
-    (categoryValue: string) => {
-      router.push(
-        createQueryString('/list', [{ name: 'category', value: categoryValue }])
-      );
-    },
-    [createQueryString, router]
-  );
+    updateQueryString(paramsToUpdate);
+  }, []);
 
   const fetchCampingData = useCallback(async () => {
     try {
@@ -101,12 +86,6 @@ const List = () => {
     setIsLoading(false);
   }, [fetchCampingData, nextCursorRef]);
 
-  const handleCategorySelected = useCallback(
-    (categoryValue: string) => {
-      setSelectedCategory(categoryValue);
-    },
-    [setSelectedCategory]
-  );
   return (
     <div className="flex flex-col ">
       <SearchBar />

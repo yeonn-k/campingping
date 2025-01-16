@@ -17,24 +17,9 @@ import { regionStore } from '@/stores/useRegionState';
 import { api } from '@/utils/axios';
 import useLocation from '@/hooks/useLocation';
 import useCategory from '@/hooks/useCategory';
+import { updateQueryString } from '@/utils/updateQueryString';
 
-const limit = 10;
-
-const setQueryString = (value: string | null) => {
-  const params = new URLSearchParams(window.location.search);
-
-  if (value !== null) {
-    params.set('region', value);
-  } else {
-    params.delete('region');
-  }
-
-  const queryString = params.toString();
-  const newUrl = queryString
-    ? `${window.location.pathname}?${queryString}`
-    : window.location.pathname;
-  window.history.replaceState(null, '', newUrl);
-};
+const LIMIT = 10;
 
 const Map = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +61,7 @@ const Map = () => {
   };
 
   useEffect(() => {
-    setQueryString(regionState);
+    updateQueryString({ region: regionState });
   }, [regionState]);
 
   const getNearByCampings = async () => {
@@ -95,7 +80,7 @@ const Map = () => {
     setIsLoading(true);
     try {
       const res = await api.get(
-        `campings/lists?region=${regionState}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${limit}&cursor=${nextCursor}`
+        `campings/lists?region=${regionState}${selectedCategory !== '전체' ? `&category=${selectedCategory}` : ''}&limit=${LIMIT}&cursor=${nextCursor}`
       );
 
       const data = res.data.data.result;

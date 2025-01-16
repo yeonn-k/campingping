@@ -1,46 +1,42 @@
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { updateQueryString } from '@/utils/updateQueryString';
 
 const useCategory = () => {
-  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
     const category = searchParams.get('category');
     setSelectedCategory(category || '전체');
   }, [searchParams]);
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-
-      if (!value) {
-        params.delete(name);
-      } else {
-        params.set(name, value);
-        return params.toString();
-      }
-      return params.toString();
-    },
-    [searchParams]
-  );
-
   const setSelectedCategoryValue = useCallback(
-    (categoryValue: string) => {
-      router.push(`/map?${createQueryString('category', categoryValue)}`);
+    (category: string) => {
+      if (category === '전체') {
+        updateQueryString({ category: null });
+      } else {
+        updateQueryString({ category });
+      }
     },
-    [createQueryString, router]
+    [pathname]
   );
 
   const handleCategorySelected = useCallback(
-    (categoryValue: string) => {
-      setSelectedCategoryValue(categoryValue);
+    (category: string) => {
+      setSelectedCategoryValue(category);
+      setSelectedCategory(category);
     },
     [setSelectedCategoryValue]
   );
 
-  return { selectedCategory, handleCategorySelected, setSelectedCategory };
+  return {
+    selectedCategory,
+    handleCategorySelected,
+    setSelectedCategory,
+  };
 };
 
 export default useCategory;
