@@ -83,10 +83,10 @@ const Category = ({
   };
 
   return (
-    <div className="w-[390px]">
+    <div className="w-full">
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto whitespace-nowrap scroll-smooth p-2"
+        className="flex overflow-x-auto whitespace-nowrap scroll-smooth pt-2"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
