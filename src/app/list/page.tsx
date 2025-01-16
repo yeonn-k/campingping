@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
 import { Camp } from '@/types/Camp';
@@ -11,11 +11,14 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 import { regionStore } from '@/stores/useRegionState';
-import { userStore } from '@/stores/userState';
 import useCategory from '@/hooks/useCategory';
+import { updateQueryString } from '@/utils/updateQueryString';
+
+const paramsToUpdate = Object.fromEntries(
+  new URLSearchParams(window.location.search)
+);
 
 const List = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const { selectedCategory, handleCategorySelected } = useCategory();
@@ -28,23 +31,13 @@ const List = () => {
     });
 
   const createQueryString = useCreateQueryString(searchParams);
+
   const { regionState } = regionStore();
 
   const selectedRegion = regionState || '';
 
   useEffect(() => {
-    router.replace(
-      createQueryString('/list', [
-        {
-          name: 'category',
-          value: selectedCategory,
-        },
-        {
-          name: 'region',
-          value: selectedRegion,
-        },
-      ])
-    );
+    updateQueryString(paramsToUpdate);
   }, []);
 
   const fetchCampingData = useCallback(async () => {

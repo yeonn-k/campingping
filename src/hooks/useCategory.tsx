@@ -1,14 +1,12 @@
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-import { useCreateQueryString } from './useCreateQueryString';
+import { updateQueryString } from '@/utils/updateQueryString';
 
 const useCategory = () => {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const createQueryString = useCreateQueryString(searchParams);
 
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
     const category = searchParams.get('category');
@@ -16,18 +14,20 @@ const useCategory = () => {
   }, [searchParams]);
 
   const setSelectedCategoryValue = useCallback(
-    (categoryValue: string) => {
-      const queryString = createQueryString(pathname, [
-        { name: 'category', value: categoryValue },
-      ]);
-      router.push(queryString);
+    (category: string) => {
+      if (category === '') {
+        updateQueryString({ category: null });
+      } else {
+        updateQueryString({ category });
+      }
     },
-    [createQueryString, router]
+    [pathname]
   );
 
   const handleCategorySelected = useCallback(
-    (categoryValue: string) => {
-      setSelectedCategoryValue(categoryValue);
+    (category: string) => {
+      setSelectedCategoryValue(category);
+      setSelectedCategory(category);
     },
     [setSelectedCategoryValue]
   );
