@@ -8,17 +8,29 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      zindex: {
+      boxShadow: {
+        shadowCustom: '1px 4px 15px rgba(0,0,0,0.15)',
+        iconShadow: '1px 2px 9px rgba(0,0,0,0.15)',
+        mapListShadow: '1px -5px 14px rgba(0,0,0,0.25)',
+      },
+      width: {
+        '10.5/12': '87.5%',
+      },
+      height: {
+        '92%': '92%',
+      },
+      zIndex: {
         zCard: '1',
         zSearchBar: '1',
         zFAB: '12',
-        zNav: '16',
+        zNav: '30',
         zModal: '16',
         zBottomNav: '8',
         zBanner: '4',
         zMapModal: '6',
+        zChat: '20',
       },
-      fontsize: {
+      fontSize: {
         title: '24px',
         subTitle: '22px',
         content: '16px',
@@ -35,9 +47,10 @@ const config: Config = {
         DarkGray: '#919191',
         black: '#000000',
         white: '#ffffff',
+        kakaoYellow: '#FBE300',
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/line-clamp')],
 };
 export default config;

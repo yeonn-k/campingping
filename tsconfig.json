@@ -17,16 +17,29 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@utils/*": ["./src/utils/*"],
-      "@icons/*": ["./src/assets/icons/*"],
-      "@images/*": ["./src/assets/images/*"],
-      "@types/*": ["./src/assets/types/*"],
-      "@hooks/*": ["./src/hooks/*"]
-    }
+      "@icons/*": ["./public/icons/*"],
+      "@images/*": ["./public/images/*"],
+      "@types/*": ["src/types/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@confing/*": ["./src/config/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+
+    "outDir": "./build", // 컴파일된 파일이 저장될 디렉토리
+    "rootDir": "./src" // 소스 파일이 위치한 디렉토리
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "src/**/*.d.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/socket.ts"
+  ],
   "exclude": ["node_modules"]
 }
