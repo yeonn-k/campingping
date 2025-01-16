@@ -248,8 +248,9 @@ const Map = () => {
         />
       )}
 
-      <Weather />
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full flex justify-center">
+        <Weather />
+
         {lat && lon ? (
           <div ref={mapRef} className="w-full h-full">
             <MapListWrap campList={campList} lastItemRef={lastItemRef} />
