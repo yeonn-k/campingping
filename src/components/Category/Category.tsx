@@ -86,7 +86,7 @@ const Category = ({
     <div className="w-full">
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto whitespace-nowrap scroll-smooth pt-2"
+        className="flex overflow-x-auto whitespace-nowrap scroll-smooth"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -99,7 +99,7 @@ const Category = ({
           <div
             key={category.name}
             onClick={() => handleCategoryClick(category.name)}
-            className={`flex flex-col min-w-max items-center justify-center cursor-pointer p-2 rounded-lg transition`}
+            className={`flex flex-col min-w-max items-center justify-center cursor-pointer px-2 pb-2 rounded-lg transition`}
           >
             <Image
               src={getIconPath(
