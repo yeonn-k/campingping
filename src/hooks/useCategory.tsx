@@ -15,7 +15,7 @@ const useCategory = () => {
 
   const setSelectedCategoryValue = useCallback(
     (category: string) => {
-      if (category === '') {
+      if (category === '전체') {
         updateQueryString({ category: null });
       } else {
         updateQueryString({ category });

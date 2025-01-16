@@ -14,10 +14,6 @@ import { regionStore } from '@/stores/useRegionState';
 import useCategory from '@/hooks/useCategory';
 import { updateQueryString } from '@/utils/updateQueryString';
 
-const paramsToUpdate = Object.fromEntries(
-  new URLSearchParams(window.location.search)
-);
-
 const List = () => {
   const searchParams = useSearchParams();
 
@@ -37,6 +33,10 @@ const List = () => {
   const selectedRegion = regionState || '';
 
   useEffect(() => {
+    const paramsToUpdate = Object.fromEntries(
+      new URLSearchParams(window.location.search)
+    );
+
     updateQueryString(paramsToUpdate);
   }, []);
 

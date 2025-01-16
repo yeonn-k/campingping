@@ -3,7 +3,6 @@ import { useRef } from 'react';
 
 interface Category {
   name: string;
-
   iconName: string;
 }
 
@@ -99,7 +98,7 @@ const Category = ({
         {categories.map((category) => (
           <div
             key={category.name}
-            onClick={() => handleCategoryClick(category.value)}
+            onClick={() => handleCategoryClick(category.name)}
             className={`flex flex-col min-w-max items-center justify-center cursor-pointer p-2 rounded-lg transition`}
           >
             <Image
