@@ -4,10 +4,10 @@ import Image from 'next/image';
 
 import closeIcon from '@icons/close.svg';
 
-import { updateQueryString } from '@/utils/updateQueryString';
 import { useRouter } from 'next/navigation';
 import { useRegion } from '@/hooks/useRegion';
 import { regionStore } from '@/stores/RegionState';
+import { useEffect, useState } from 'react';
 
 const regions = [
   '서울특별시',
@@ -32,15 +32,27 @@ const regions = [
 const Search = () => {
   const router = useRouter();
   const { updateRegion } = useRegion();
-  const { coloredState, setColoredState } = regionStore();
+  const { coloredState } = regionStore();
+  const [originPath, setOriginPath] = useState<string | null>(null);
+  const [query, setQuery] = useState<string | null>(null);
 
   const closeSearch = () => {
-    history.back();
+    router.back();
   };
+
+  useEffect(() => {
+    const currentQuery = new URLSearchParams(window.location.search);
+    const origin = currentQuery.get('origin');
+    setOriginPath(origin);
+
+    currentQuery.delete('origin');
+    const updatedQuery = currentQuery.toString();
+    setQuery(updatedQuery);
+  }, [updateRegion]);
 
   const handleSearch = async () => {
     try {
-      router.push('/map');
+      router.push(`/${originPath}?${query || ''}`);
     } catch (error) {
       console.error(error);
     }
@@ -81,5 +93,4 @@ const Search = () => {
     </div>
   );
 };
-
 export default Search;

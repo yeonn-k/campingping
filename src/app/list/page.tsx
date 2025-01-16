@@ -10,7 +10,7 @@ import { api } from '@/utils/axios';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
-import { regionStore } from '@/stores/RegionState';
+
 import useCategory from '@/hooks/useCategory';
 import { updateQueryString } from '@/utils/updateQueryString';
 
@@ -28,9 +28,7 @@ const List = () => {
 
   const createQueryString = useCreateQueryString(searchParams);
 
-  const { regionState } = regionStore();
-
-  const selectedRegion = regionState || '';
+  // const selectedRegion = regionState || '';
 
   useEffect(() => {
     const paramsToUpdate = Object.fromEntries(
@@ -46,7 +44,7 @@ const List = () => {
         { name: 'limit', value: LIMIT },
         { name: 'cursor', value: currentCursor },
         { name: 'category', value: selectedCategory },
-        { name: 'region', value: selectedRegion },
+        // { name: 'region', value: selectedRegion },
       ]);
       const response = await api.get(apiUrl);
       const camps = response.data.data.result;
@@ -61,13 +59,17 @@ const List = () => {
     createQueryString,
     currentCursor,
     selectedCategory,
-    selectedRegion,
+    // selectedRegion,
   ]);
 
   useEffect(() => {
     setCampingData([]);
     resetCursor();
-  }, [resetCursor, selectedCategory, selectedRegion]);
+  }, [
+    resetCursor,
+    selectedCategory,
+    // selectedRegion
+  ]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -88,7 +90,7 @@ const List = () => {
 
   return (
     <div className="flex flex-col ">
-      <SearchBar />
+      <SearchBar origin="list" />
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
