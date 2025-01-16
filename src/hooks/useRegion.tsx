@@ -1,4 +1,4 @@
-import { regionStore } from '@/stores/RegionState';
+import { regionStore } from '@/stores/regionState';
 import { updateQueryString } from '@/utils/updateQueryString';
 import { useState, useCallback } from 'react';
 

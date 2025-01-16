@@ -1,4 +1,4 @@
-import { useTimeFormat } from '@/utils/useTimeFormat';
+import { useTimeFormat } from '@/utils/TimeFormat';
 
 interface MyChatMsgProps {
   message: string;

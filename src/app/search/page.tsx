@@ -6,7 +6,7 @@ import closeIcon from '@icons/close.svg';
 
 import { useRouter } from 'next/navigation';
 import { useRegion } from '@/hooks/useRegion';
-import { regionStore } from '@/stores/RegionState';
+import { regionStore } from '@/stores/regionState';
 import { useEffect, useState } from 'react';
 
 const regions = [
