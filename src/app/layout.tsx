@@ -50,7 +50,7 @@ export default function RootLayout({
         <ToastContainer
           position="top-center"
           draggable
-          className="w-auto max-w-[90%] mt-12"
+          className="fixed top-0 max-w-[90%] left-1/2 -translate-x-1/2 mt-9"
         />
         <div className="flex h-screen justify-center items-center">
           <DesktopUi />
