@@ -17,7 +17,7 @@ const ScrollToTop = ({ scrollRef }: ScrollToTopProps) => {
 
   return (
     <button
-      className="fixed bottom-16 right-0 translate-x-[-64px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
+      className="fixed bottom-16 right-0 translate-x-[-14px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
       onClick={scrollToTop}
     >
       <Image src={chevron} alt="페이지 상단으로" width={24} />
