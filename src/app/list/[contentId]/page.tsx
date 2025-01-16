@@ -2,7 +2,7 @@
 
 import { CampDetail } from '@/types/Camp';
 import Carousel from '@/components/Carousel/Carousel';
-import DefaultImg from '@/components/DefaultImg/DefaultImg';
+import noImg from '@images/noImg.png';
 import { BASE_URL } from '@/config/config';
 import { useGlobalStore } from '@/stores/globalState';
 import { api } from '@/utils/axios';
@@ -119,17 +119,14 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
       <Weather />
       <div className="flex flex-col grow p-2 ">
         <div className="relative space-y-4 mb-4">
-          {campData.firstImageUrl ? (
-            <Image
-              className=" rounded-[5px] justify-items-stretch "
-              src={campData.firstImageUrl}
-              alt={`${campData.factDivNm} 사진`}
-              width={380}
-              height={320}
-            />
-          ) : (
-            <DefaultImg type="noimg" className="" width={350} height={200}/>
-          )}
+          <Image
+            className=" rounded-[5px] justify-items-stretch "
+            src={campData.firstImageUrl ? campData.firstImageUrl : noImg}
+            alt={`${campData.factDivNm} 사진`}
+            width={380}
+            height={320}
+          />
+
           <Image
             src={campData.favorite ? myWishIcon : notMyWishIcon}
             alt="위시리스트"

@@ -74,7 +74,7 @@ const List = () => {
   }, [fetchCampingData, nextCursorRef]);
 
   return (
-    <div className="flex flex-col ">
+    <div className="w-full flex flex-col ">
       <SearchBar origin="list" category={selectedCategory} />
       <Category
         selectedCategory={selectedCategory}

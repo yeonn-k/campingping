@@ -48,13 +48,15 @@ const WeatherIcon = ({
   };
 
   return (
-    <Image
-      src={getIconSource()}
-      alt={condition}
-      width={22}
-      height={22}
-      className="transition-colors duration-200"
-    />
+    <div className="flex justify-center items-center w-6 h-6">
+      <Image
+        src={getIconSource()}
+        alt={condition}
+        width={22}
+        height={22}
+        className="transition-colors duration-200"
+      />
+    </div>
   );
 };
 

@@ -47,10 +47,11 @@ const Weather = () => {
 
   return (
     <div className="grid grid-cols-4 w-full">
+      {/* <div className="absolute mt-36 grid grid-cols-4 w-[94%] bg-white/80 rounded-2xl z-zModal"> */}
       {weatherData.map((day, index) => (
         <div
           key={index}
-          className={`flex flex-col items-center justify-start p-4 ${
+          className={`flex flex-col items-center justify-start p-2 ${
             index === 0 ? 'text-Green' : 'text-Gray'
           }`}
         >
