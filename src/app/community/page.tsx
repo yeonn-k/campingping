@@ -9,12 +9,10 @@ import chevron from '@icons/chevron_green.svg';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
 import logo1 from '@images/campingping_orange.svg';
-import chat from '@icons/chat_green.svg';
+
 import { getPosts, getMyPosts, deletePost } from '@utils/communitiesService';
 import { useLocationStore } from '@/stores/locationState';
 
-import Chat from '@/components/Chat/Chat';
-import { chattingStore } from '@/stores/chattingState';
 import { api } from '@/utils/axios';
 
 interface Post {
@@ -44,7 +42,6 @@ const CommunityPage = () => {
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const { userLat, userLon } = useLocationStore();
-  const { chatState, setChatState } = chattingStore();
 
   useEffect(() => {
     if (userLat && userLon) {
@@ -364,20 +361,16 @@ const CommunityPage = () => {
           )
         ) : null}
       </div>
+
       <button
-        className="fixed bottom-12 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
+        className="fixed bottom-16 right-0 translate-x-[-64px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
         onClick={scrollToTop}
       >
         <Image src={chevron} alt="페이지 상단으로" width={24} />
       </button>
+
       <button
-        className="fixed bottom-28 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
-        //구현안됨onClick={openWriteModal}
-      >
-        <Image src={chat} alt="채팅방" width={24} onClick={setChatState} />
-      </button>
-      <button
-        className="fixed bottom-44 right-4 bg-white p-4 rounded-full shadow-lg w-14 h-14"
+        className="fixed bottom-56 right-0 translate-x-[-64px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
         onClick={openWriteModal}
       >
         <Image src={write} alt="게시글 작성" width={24} />
@@ -393,7 +386,6 @@ const CommunityPage = () => {
           <PostDetailModal post={selectedPost} onClose={closeDetailModal} />
         </ModalBox>
       )}
-      {chatState && <Chat />}
     </div>
   );
 };
