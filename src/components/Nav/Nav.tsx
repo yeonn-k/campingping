@@ -8,6 +8,7 @@ import signOutIcon from '@icons/nav/logout_gray.png';
 import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { chattingStore } from '@/stores/chattingState';
+import { regionStore } from '@/stores/regionState';
 
 interface NavItem {
   name: string;
@@ -24,6 +25,7 @@ const navItems: NavItem[] = [
 const Nav = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { setColoredState } = regionStore();
 
   const { userState, setUserState } = userStore();
   const { setChatState, setChatRoomId, setChatNick } = chattingStore();
@@ -36,6 +38,7 @@ const Nav = () => {
         router.push(navItem.url);
         setChatState(false);
         setChatRoomId(null);
+        setColoredState(null);
         setChatNick('');
       }
     }
