@@ -4,7 +4,10 @@ import Image from 'next/image';
 
 import closeIcon from '@icons/close.svg';
 
-import { regionStore } from '@/stores/useRegionState';
+import { useRouter } from 'next/navigation';
+import { useRegion } from '@/hooks/useRegion';
+import { regionStore } from '@/stores/RegionState';
+import { useEffect, useState } from 'react';
 
 const regions = [
   '서울특별시',
@@ -27,25 +30,31 @@ const regions = [
 ];
 
 const Search = () => {
-  const { coloredState, setRegionState } = regionStore();
+  const router = useRouter();
+  const { updateRegion } = useRegion();
+  const { coloredState } = regionStore();
+  const [originPath, setOriginPath] = useState<string | null>('map');
+  const [query, setQuery] = useState<string | null>(null);
 
   const closeSearch = () => {
-    history.back();
+    router.back();
   };
+
+  useEffect(() => {
+    const currentQuery = new URLSearchParams(window.location.search);
+    const origin = currentQuery.get('origin');
+    if (origin) {
+      setOriginPath(origin);
+    }
+
+    currentQuery.delete('origin');
+    const updatedQuery = currentQuery.toString();
+    setQuery(updatedQuery);
+  }, [updateRegion]);
 
   const handleSearch = async () => {
     try {
-      // if (regionState && pathState === '/map') {
-      //   history.back();
-      //   setPathState(null);
-      // }
-      // if (regionState === null) {
-      //   history.back();
-      // } else {
-      //   router.replace(`/map?region=${}`);
-      // }
-
-      history.back();
+      router.push(`/${originPath}?${query || ''}`);
     } catch (error) {
       console.error(error);
     }
@@ -62,16 +71,16 @@ const Search = () => {
       <h1 className="mt-20 mb-7 text-title">지역으로 검색해보세요</h1>
       <div className="bg-LightGray w-full h-[1px] mb-2" />
       <div className="grid grid-cols-2 w-10/12 h-2/3 place-items-center">
-        {regions.map((region) => {
+        {regions.map((regionName) => {
           return (
             <div
-              key={region}
-              className={`flex justify-center items-center border  w-36 h-12 rounded-full ${coloredState === region ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
+              key={regionName}
+              className={`flex justify-center items-center border  w-36 h-12 rounded-full ${coloredState === regionName ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
               onClick={(e) => {
-                setRegionState(e);
+                updateRegion(e);
               }}
             >
-              {region}
+              {regionName}
             </div>
           );
         })}
@@ -86,5 +95,4 @@ const Search = () => {
     </div>
   );
 };
-
 export default Search;

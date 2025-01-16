@@ -1,22 +1,17 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
-import { useEffect } from 'react';
 
 import Magnifier from '@icons/search_gray.svg';
-import { regionStore } from '@/stores/useRegionState';
 
-const SearchBar = () => {
-  const pathname = usePathname();
-  const { setPathState } = regionStore();
+interface SearchBarProps {
+  origin: string;
+  category: string;
+}
 
-  useEffect(() => {
-    setPathState(pathname);
-  });
+const SearchBar = ({ origin, category }: SearchBarProps) => {
   return (
     <Link
-      href="/search"
+      href={{ pathname: '/search', query: { origin, category } }}
       className="w-full h-15 mt-2 flex justify-center items-center"
     >
       <div className="w-9/12 h-10 mt-5 rounded-full shadow-shadowCustom flex justify-center items-center text-Gray">

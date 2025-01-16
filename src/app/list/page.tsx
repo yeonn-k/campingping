@@ -10,14 +10,15 @@ import { api } from '@/utils/axios';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
-import { regionStore } from '@/stores/useRegionState';
+
 import useCategory from '@/hooks/useCategory';
-import { updateQueryString } from '@/utils/updateQueryString';
 
 const List = () => {
   const searchParams = useSearchParams();
 
   const { selectedCategory, handleCategorySelected } = useCategory();
+  const [regionQuery, setRegionQuery] = useState<string | null>(null);
+
   const [campingData, setCampingData] = useState<Camp[] | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,17 +29,9 @@ const List = () => {
 
   const createQueryString = useCreateQueryString(searchParams);
 
-  const { regionState } = regionStore();
-
-  const selectedRegion = regionState || '';
-
   useEffect(() => {
-    const paramsToUpdate = Object.fromEntries(
-      new URLSearchParams(window.location.search)
-    );
-
-    updateQueryString(paramsToUpdate);
-  }, []);
+    setRegionQuery(new URLSearchParams(window.location.search).get('region'));
+  });
 
   const fetchCampingData = useCallback(async () => {
     try {
@@ -46,7 +39,7 @@ const List = () => {
         { name: 'limit', value: LIMIT },
         { name: 'cursor', value: currentCursor },
         { name: 'category', value: selectedCategory },
-        { name: 'region', value: selectedRegion },
+        { name: 'region', value: regionQuery },
       ]);
       const response = await api.get(apiUrl);
       const camps = response.data.data.result;
@@ -56,18 +49,12 @@ const List = () => {
       console.error(error);
       return { camps: [], nextCursor: 0 };
     }
-  }, [
-    LIMIT,
-    createQueryString,
-    currentCursor,
-    selectedCategory,
-    selectedRegion,
-  ]);
+  }, [LIMIT, createQueryString, currentCursor, selectedCategory, regionQuery]);
 
   useEffect(() => {
     setCampingData([]);
     resetCursor();
-  }, [resetCursor, selectedCategory, selectedRegion]);
+  }, [resetCursor, selectedCategory, regionQuery]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -88,7 +75,7 @@ const List = () => {
 
   return (
     <div className="flex flex-col ">
-      <SearchBar />
+      <SearchBar origin="list" category={selectedCategory} />
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
