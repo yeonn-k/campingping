@@ -10,7 +10,7 @@ import { api } from '@/utils/axios';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
-import { regionStore } from '@/stores/useRegionState';
+import { regionStore } from '@/stores/RegionState';
 import useCategory from '@/hooks/useCategory';
 import { updateQueryString } from '@/utils/updateQueryString';
 

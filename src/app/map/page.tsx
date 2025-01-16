@@ -12,7 +12,7 @@ import Overlay from './component/Overlay';
 
 import { CampMap } from '@/types/CampMap';
 import { useLocationStore } from '@/stores/locationState';
-import { regionStore } from '@/stores/useRegionState';
+import { regionStore } from '@/stores/RegionState';
 
 import { api } from '@/utils/axios';
 import useLocation from '@/hooks/useLocation';
@@ -47,18 +47,6 @@ const Map = () => {
   const [campList, setCampList] = useState<CampMap[]>([]);
 
   const location = useLocation(regionState);
-
-  useEffect(() => {
-    getRegionQueryString();
-  }, []);
-
-  const getRegionQueryString = () => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get('region')) {
-      setRegionState(params.get('region'));
-    }
-  };
 
   useEffect(() => {
     updateQueryString({ region: regionState });

@@ -4,7 +4,10 @@ import Image from 'next/image';
 
 import closeIcon from '@icons/close.svg';
 
-import { regionStore } from '@/stores/useRegionState';
+import { updateQueryString } from '@/utils/updateQueryString';
+import { useRouter } from 'next/navigation';
+import { useRegion } from '@/hooks/useRegion';
+import { regionStore } from '@/stores/RegionState';
 
 const regions = [
   '서울특별시',
@@ -27,7 +30,9 @@ const regions = [
 ];
 
 const Search = () => {
-  const { coloredState, setRegionState } = regionStore();
+  const router = useRouter();
+  const { updateRegion } = useRegion();
+  const { coloredState, setColoredState } = regionStore();
 
   const closeSearch = () => {
     history.back();
@@ -35,17 +40,7 @@ const Search = () => {
 
   const handleSearch = async () => {
     try {
-      // if (regionState && pathState === '/map') {
-      //   history.back();
-      //   setPathState(null);
-      // }
-      // if (regionState === null) {
-      //   history.back();
-      // } else {
-      //   router.replace(`/map?region=${}`);
-      // }
-
-      history.back();
+      router.push('/map');
     } catch (error) {
       console.error(error);
     }
@@ -62,16 +57,16 @@ const Search = () => {
       <h1 className="mt-20 mb-7 text-title">지역으로 검색해보세요</h1>
       <div className="bg-LightGray w-full h-[1px] mb-2" />
       <div className="grid grid-cols-2 w-10/12 h-2/3 place-items-center">
-        {regions.map((region) => {
+        {regions.map((regionName) => {
           return (
             <div
-              key={region}
-              className={`flex justify-center items-center border  w-36 h-12 rounded-full ${coloredState === region ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
+              key={regionName}
+              className={`flex justify-center items-center border  w-36 h-12 rounded-full ${coloredState === regionName ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
               onClick={(e) => {
-                setRegionState(e);
+                updateRegion(e);
               }}
             >
-              {region}
+              {regionName}
             </div>
           );
         })}

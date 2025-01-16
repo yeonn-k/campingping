@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 import Magnifier from '@icons/search_gray.svg';
-import { regionStore } from '@/stores/useRegionState';
+import { regionStore } from '@/stores/RegionState';
 
 const SearchBar = () => {
   const pathname = usePathname();
