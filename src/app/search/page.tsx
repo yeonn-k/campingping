@@ -46,8 +46,8 @@ const Search = () => {
     if (origin) {
       setOriginPath(origin);
     }
-
     currentQuery.delete('origin');
+
     const updatedQuery = currentQuery.toString();
     setQuery(updatedQuery);
   }, [updateRegion]);

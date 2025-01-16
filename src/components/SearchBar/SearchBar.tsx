@@ -5,13 +5,22 @@ import Magnifier from '@icons/search_gray.svg';
 
 interface SearchBarProps {
   origin: string;
-  category: string;
+  category: string | null;
+  region: string | null;
 }
 
-const SearchBar = ({ origin, category }: SearchBarProps) => {
+const SearchBar = ({ origin, category, region }: SearchBarProps) => {
+  const query: Record<string, string> = { origin };
+  if (category) {
+    query['category'] = category;
+  }
+  if (region) {
+    query['region'] = region;
+  }
+
   return (
     <Link
-      href={{ pathname: '/search', query: { origin, category } }}
+      href={{ pathname: '/search', query }}
       className="w-full h-15 mt-2 flex justify-center items-center"
     >
       <div className="w-9/12 h-10 mt-5 rounded-full shadow-shadowCustom flex justify-center items-center text-Gray">

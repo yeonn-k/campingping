@@ -235,7 +235,11 @@ const Map = () => {
 
   return (
     <>
-      <SearchBar origin="map" category={selectedCategory} />
+      <SearchBar
+        origin="map"
+        category={selectedCategory !== '전체' ? selectedCategory : null}
+        region={regionQuery}
+      />
 
       {regionQuery && (
         <NoSSRCategory

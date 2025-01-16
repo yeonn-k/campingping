@@ -78,7 +78,11 @@ const List = () => {
 
   return (
     <div className="w-full flex flex-col ">
-      <SearchBar origin="list" category={selectedCategory} />
+      <SearchBar
+        origin="list"
+        category={selectedCategory !== '전체' ? selectedCategory : null}
+        region={regionQuery}
+      />
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
