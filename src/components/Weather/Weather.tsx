@@ -47,7 +47,7 @@ const Weather = () => {
     // <div className="grid grid-cols-4 w-full">
 
     <div
-      className={`absolute mt-2 grid ${gridClass} w-[94%] bg-white/80 rounded-2xl z-zModal`}
+      className={`absolute mt-2 grid ${gridClass} w-[94%] bg-white/80 rounded-2xl z-zBanner`}
     >
       {!weatherData.length ? (
         <div className="w-full flex justify-center items-center text-Gray p-2">
