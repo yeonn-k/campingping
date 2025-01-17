@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import noImg from '@images/noImg.png';
 import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
+import DefaultImg from '../DefaultImg/DefaultImg';
 
 interface CardProps {
   itemId?: string;
@@ -26,15 +26,20 @@ const Card = ({
     <Link href={`/list/${itemId}`} className="w-full flex justify-center">
       <div className="w-10.5/12 rounded overflow-hidden">
         <div className="relative">
-          <Image
-            src={imgSrc ? imgSrc : noImg}
-            alt="캠핑장 이미지"
-            width="100"
-            height="67"
-            layout="responsive"
-            className="rounded"
-            quality={30}
-          />
+          {imgSrc ? (
+            <Image
+              src={imgSrc}
+              alt="캠핑장 이미지"
+              width="100"
+              height="67"
+              layout="responsive"
+              className="rounded"
+              quality={30}
+            />
+          ) : (
+            <DefaultImg />
+          )}
+
           <Image
             src={liked ? myWishIcon : notMyWishIcon}
             alt="위시리스트"

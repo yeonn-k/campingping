@@ -2,17 +2,17 @@
 
 import { CampDetail } from '@/types/Camp';
 import Carousel from '@/components/Carousel/Carousel';
-import noImg from '@images/noImg.png';
-import { BASE_URL } from '@/config/config';
+
 import { useGlobalStore } from '@/stores/globalState';
 import { api } from '@/utils/axios';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
+
 import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
-import useWishlist from '@/hooks/useWishlist';
+
 import Weather from '@/components/Weather/Weather';
+import DefaultImg from '@/components/DefaultImg/DefaultImg';
 
 interface Facility {
   name: string;
@@ -115,17 +115,21 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   // };
 
   return (
-    <div className="w-[390px] p-4">
+    <div className="w-full p-4">
       <Weather />
       <div className="flex flex-col grow p-2 ">
         <div className="relative space-y-4 mb-4">
-          <Image
-            className=" rounded-[5px] justify-items-stretch "
-            src={campData.firstImageUrl ? campData.firstImageUrl : noImg}
-            alt={`${campData.factDivNm} 사진`}
-            width={380}
-            height={320}
-          />
+          {campData.firstImageUrl ? (
+            <Image
+              className=" rounded-[5px] justify-items-stretch "
+              src={campData.firstImageUrl}
+              alt={`${campData.factDivNm} 사진`}
+              width={380}
+              height={320}
+            />
+          ) : (
+            <DefaultImg />
+          )}
 
           <Image
             src={campData.favorite ? myWishIcon : notMyWishIcon}
