@@ -43,7 +43,7 @@ const Search = () => {
   useEffect(() => {
     const currentQuery = new URLSearchParams(window.location.search);
     const origin = currentQuery.get('origin');
-    if (origin) {
+    if (origin && origin !== 'detail') {
       setOriginPath(origin);
     }
     currentQuery.delete('origin');

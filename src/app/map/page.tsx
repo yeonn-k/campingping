@@ -11,7 +11,7 @@ import Weather from '@/components/Weather/Weather';
 import { MapListWrap } from './component/MapListWrap';
 import Overlay from './component/Overlay';
 
-import { CampMap } from '@/types/CampMap';
+import { CampMap } from '@/types/Camp';
 import { useLocationStore } from '@/stores/locationState';
 
 import { api } from '@/utils/axios';
@@ -19,6 +19,8 @@ import useLocation from '@/hooks/useLocation';
 import useCategory from '@/hooks/useCategory';
 import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 import { useSearchParams } from 'next/navigation';
+import LoadingSpinner from '@/components/Button/LoadingSpinner';
+import useGeoLocationPermission from '@/hooks/useGeoLocation';
 
 const LIMIT = 10;
 
@@ -30,6 +32,8 @@ const Map = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState(0);
+
+  const isGeoLocationGranted = useGeoLocationPermission();
 
   const NoSSRCategory = dynamic(
     () => import('../../components/Category/Category'),
@@ -251,7 +255,16 @@ const Map = () => {
       <div className="relative w-full h-full flex justify-center">
         <Weather />
 
-        {lat && lon ? (
+        {isGeoLocationGranted && !lat && !lon ? (
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="flex flex-wrap justify-center pb-28">
+              <LoadingSpinner />
+              <p className="w-full text-Gray text-center mt-2">
+                지도를 불러오는 중 입니다
+              </p>
+            </div>
+          </div>
+        ) : lat && lon ? (
           <div ref={mapRef} className="w-full h-full">
             <MapListWrap campList={campList} lastItemRef={lastItemRef} />
           </div>

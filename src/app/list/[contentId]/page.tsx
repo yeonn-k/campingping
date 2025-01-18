@@ -1,3 +1,4 @@
+// list> [contentId] > page.tsx
 'use client';
 
 import { CampDetail } from '@/types/Camp';
@@ -6,13 +7,16 @@ import Carousel from '@/components/Carousel/Carousel';
 import { useGlobalStore } from '@/stores/globalState';
 import { api } from '@/utils/axios';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
 
 import Weather from '@/components/Weather/Weather';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
+import axios from 'axios';
+import SearchBar from '@/components/SearchBar/SearchBar';
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 interface Facility {
   name: string;
@@ -39,6 +43,8 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   const { contentId } = params;
   const [campData, setCampData] = useState<CampDetail | null>(null);
   const { mapScriptLoaded } = useGlobalStore();
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (mapScriptLoaded && campData) {
@@ -76,23 +82,38 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
     }
   }, [campData, mapScriptLoaded]);
 
+  console.log(campData);
+
   useEffect(() => {
-    const fetchDataAndCreateMap = async () => {
+    const fetchMockData = async () => {
       try {
-        const response = await api.get(`/campings/lists/${contentId}`);
-
-        const camp = response.data.data;
-
-        if (!response) {
-          throw new Error('Error on fetching camp data');
-        }
-        setCampData(camp);
+        const res = await axios.get('/data/mock.json');
+        setCampData(res.data[contentId]);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchDataAndCreateMap();
+    fetchMockData();
+  }, []);
+
+  useEffect(() => {
+    // const fetchDataAndCreateMap = async () => {
+    //   try {
+    //     const response = await api.get(`/campings/lists/${contentId}`);
+
+    //     const camp = response.data.data;
+
+    //     if (!response) {
+    //       throw new Error('Error on fetching camp data');
+    //     }
+    //     setCampData(camp);
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // };
+
+    // fetchDataAndCreateMap();
 
     return () => {
       const script = document.querySelector(
@@ -115,15 +136,16 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   // };
 
   return (
-    <div className="w-full p-4">
-      <Weather />
-      <div className="flex flex-col grow p-2 ">
-        <div className="relative space-y-4 mb-4">
+    <div className="w-full h-screen overflow-y-scroll" ref={scrollRef}>
+      <SearchBar origin="detail" category={null} region={null} />
+      <div className="flex justify-center">{/* <Weather /> */}</div>
+      <div className="flex flex-col grow p-5 ">
+        <div className="relative mb-4">
           {campData.firstImageUrl ? (
             <Image
               className=" rounded-[5px] justify-items-stretch "
               src={campData.firstImageUrl}
-              alt={`${campData.factDivNm} 사진`}
+              alt={`${campData.facltNm} 사진`}
               width={380}
               height={320}
             />
@@ -141,29 +163,42 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
             // onClick={handleWishlist}
           />
 
-          <h2 className="text-subTitle">{campData.factDivNm}</h2>
-          <p className="text-description text-Gray">
-            {campData.doNm} {campData.signguNm}
-          </p>
+          <h2 className="text-subTitle mt-4">{campData.facltNm}</h2>
+          <p className="text-description text-Gray mt-1 ">{campData.addr1}</p>
         </div>
         <hr className="mb-4" />
 
         {campData.intro && (
-          <div className="space-y-4 mb-4">
-            <p className="text-content">캠핑장 소개</p>
-            <p className="text-description text-Gray">{campData.intro}</p>
-          </div>
+          <>
+            <div className="space-y-4 mb-4">
+              <p className="text-content">캠핑장 소개</p>
+              <p className="text-description text-Gray">{campData.intro}</p>
+            </div>
+
+            <div className="flex space-x-6 justify-center my-6">
+              <span className="text-LightGray text-[6px]">●</span>
+              <span className="text-LightGray text-[6px]">●</span>
+              <span className="text-LightGray text-[6px]">●</span>
+            </div>
+          </>
         )}
 
-        <div className="flex space-x-6 justify-center my-6">
-          <span className="text-LightGray text-[6px]">●</span>
-          <span className="text-LightGray text-[6px]">●</span>
-          <span className="text-LightGray text-[6px]">●</span>
-        </div>
-
-        <div className="space-y-4 mb-4">
-          <p>기본정보</p>
-          <div className="flex flex-row flex-wrap"></div>
+        <div className="space-y-1 mb-4">
+          <p className="mb-2">기본정보</p>
+          <div className="grid grid-cols-[1fr,2fr] gap-1 text-description">
+            {campData.bizrno && (
+              <>
+                <div>사업자 정보</div>
+                <div className="text-Gray">{campData.bizrno}</div>
+              </>
+            )}
+            {campData.manageSttus && (
+              <>
+                <div>운영 상태</div>
+                <div className="text-Gray">{campData.bizrno}</div>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="space-y-4 mb-4">
@@ -238,6 +273,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
           </div>
         </div>
       </div>
+      <ScrollToTop scrollRef={scrollRef} />
     </div>
   );
 };
