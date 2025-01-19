@@ -13,10 +13,10 @@
     "favorite": false,
 
     "bizrno": "123-456-78901",
-    "manageSttus": null,
+    "manageSttus": "휴무",
     "hvofBgnde": null,
     "hvofEndde": null,
-    "induty": "일반 야영장",
+    "induty": "일반야영장",
     "lccl": "산",
     "tel": "010-1234-5678",
     "homepage": "www.homepage.com",
@@ -55,7 +55,7 @@
     "intro": null,
     "favorite": false,
 
-    "bizrno": "123-213-12312",
+    "bizrno": null,
     "manageSttus": null,
     "hvofBgnde": null,
     "hvofEndde": null,
@@ -95,7 +95,7 @@
     "doNm": "서울시",
     "signguNm": "서울특별시",
     "lineIntro": null,
-    "intro": "우리는 할 말이 너무 많아요. 왜냐면 완전 짱짱 자신 있는 너무 좋은 캠핑장이거든요. 그래서 한줄 소개는 없습니다. 이거는 그냥 소개입니다. 한줄소개는 'null'이에요",
+    "intro": "우리는 할 말이 너무 많아요. 왜냐면 완전 짱짱 자신 있는 너무 좋은 캠핑장이거든요. 그래서 한줄 소개는 없습니다. 이거는 그냥 소개입니다.",
     "favorite": false,
 
     "bizrno": "123-456-78903",

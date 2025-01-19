@@ -29,10 +29,10 @@ export interface CampMap extends Camp {
 }
 
 export interface CampDetail extends Camp {
-  bizrno: NullableString; // 사업자 번호
-  manageSttus: NullableString; // 운영 상태, 관리 상태
-  hvofBgnde: NullableString; // 휴장, 휴무 기간 시작일
-  hvofEndde: NullableString; // 휴장, 휴무 기간 종료일
+  bizrno: NullableString; // 사업자 번호 ㅇ
+  manageSttus: NullableString; // 운영 상태, 관리 상태 ㅇ
+  hvofBgnde: NullableString; // 휴장, 휴무 기간 시작일 ㅇ
+  hvofEndde: NullableString; // 휴장, 휴무 기간 종료일 ㅇ
   induty: NullableString; // 업종: 일반 야영장, 글램핑, 카라반 ...
   lccl: NullableString; // 입지구분: 산, 호수 ...
   tel: NullableString; // 연락처

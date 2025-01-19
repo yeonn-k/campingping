@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useRef } from 'react';
+import { getIconPath } from '@/utils/getIconPath';
 
 interface Category {
   name: string;
@@ -38,10 +39,6 @@ const Category = ({
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
-
-  const getIconPath = (iconName: string, isActive: boolean): string => {
-    return `/icons/category/${iconName}_${isActive ? 'green' : 'gray'}.png`;
-  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     isDragging.current = true;

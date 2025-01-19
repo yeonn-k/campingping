@@ -18,6 +18,9 @@ import axios from 'axios';
 import SearchBar from '@/components/SearchBar/SearchBar';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
+import { categories } from '@/components/Category/Category';
+import { getIconPath } from '@/utils/getIconPath';
+
 interface Facility {
   name: string;
   iconName: string;
@@ -84,36 +87,36 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
 
   console.log(campData);
 
+  // useEffect(() => {
+  //   const fetchMockData = async () => {
+  //     try {
+  //       const res = await axios.get('/data/mock.json');
+  //       setCampData(res.data[parseInt(contentId) - 1]);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   fetchMockData();
+  // }, []);
+
   useEffect(() => {
-    const fetchMockData = async () => {
+    const fetchDataAndCreateMap = async () => {
       try {
-        const res = await axios.get('/data/mock.json');
-        setCampData(res.data[contentId]);
+        const response = await api.get(`/campings/lists/${contentId}`);
+
+        const camp = response.data.data;
+
+        if (!response) {
+          throw new Error('Error on fetching camp data');
+        }
+        setCampData(camp);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchMockData();
-  }, []);
-
-  useEffect(() => {
-    // const fetchDataAndCreateMap = async () => {
-    //   try {
-    //     const response = await api.get(`/campings/lists/${contentId}`);
-
-    //     const camp = response.data.data;
-
-    //     if (!response) {
-    //       throw new Error('Error on fetching camp data');
-    //     }
-    //     setCampData(camp);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // };
-
-    // fetchDataAndCreateMap();
+    fetchDataAndCreateMap();
 
     return () => {
       const script = document.querySelector(
@@ -136,10 +139,12 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   // };
 
   return (
-    <div className="w-full h-screen overflow-y-scroll" ref={scrollRef}>
+    <div className="w-full h-screen overflow-y-scroll pb-12" ref={scrollRef}>
       <SearchBar origin="detail" category={null} region={null} />
-      <div className="flex justify-center">{/* <Weather /> */}</div>
-      <div className="flex flex-col grow p-5 ">
+      {/* <div className="flex justify-center">
+        <Weather />
+      </div> */}
+      <div className="flex flex-col grow p-5">
         <div className="relative mb-4">
           {campData.firstImageUrl ? (
             <Image
@@ -163,15 +168,51 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
             // onClick={handleWishlist}
           />
 
-          <h2 className="text-subTitle mt-4">{campData.facltNm}</h2>
-          <p className="text-description text-Gray mt-1 ">{campData.addr1}</p>
+          <div className="flex justify-between">
+            <div>
+              <h2 className="text-subTitle mt-4">{campData.facltNm}</h2>
+              <p className="text-description text-Gray ">{campData.addr1}</p>
+              <p className="text-description text-Gray mt-1 ">
+                {campData.lineIntro}
+              </p>
+            </div>
+            <div>
+              {campData.induty || campData.lccl ? (
+                <div className="flex flex-col items-center mt-5">
+                  {categories.map((category) => {
+                    if (
+                      campData.induty?.includes(category.name) ||
+                      campData.lccl?.includes(category.name)
+                    ) {
+                      const iconPath = getIconPath(category.iconName, false);
+                      return (
+                        <div className="flex flex-wrap justify-center">
+                          <Image
+                            key={category.name}
+                            src={iconPath}
+                            alt={`${category.name} 아이콘`}
+                            width={24}
+                            height={24}
+                            className="m-1.5"
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
+          </div>
         </div>
         <hr className="mb-4" />
 
         {campData.intro && (
           <>
-            <div className="space-y-4 mb-4">
-              <p className="text-content">캠핑장 소개</p>
+            <div className="space-y-1 mb-2">
+              <p className="text-content ">캠핑장 소개</p>
               <p className="text-description text-Gray">{campData.intro}</p>
             </div>
 
@@ -183,29 +224,63 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
           </>
         )}
 
-        <div className="space-y-1 mb-4">
-          <p className="mb-2">기본정보</p>
-          <div className="grid grid-cols-[1fr,2fr] gap-1 text-description">
-            {campData.bizrno && (
-              <>
-                <div>사업자 정보</div>
-                <div className="text-Gray">{campData.bizrno}</div>
-              </>
-            )}
-            {campData.manageSttus && (
-              <>
-                <div>운영 상태</div>
-                <div className="text-Gray">{campData.bizrno}</div>
-              </>
-            )}
+        {campData.bizrno || campData.manageSttus || campData.homepage ? (
+          <div className="space-y-1 mb-8">
+            <p className="mb-1 ">기본정보</p>
+            <div className="grid grid-cols-[1fr,2fr] gap-1 text-description">
+              {campData.bizrno && (
+                <>
+                  <div>사업자 정보</div>
+                  <div className="text-Gray">{campData.bizrno}</div>
+                </>
+              )}
+              {campData.manageSttus && (
+                <>
+                  <div>운영 상태</div>
+                  <div className="text-Gray">{campData.manageSttus}</div>
+                  {campData.manageSttus !== '운영' &&
+                    campData.hvofBgnde &&
+                    campData.hvofEndde && (
+                      <>
+                        <div>휴무 기간 시작일</div>
+                        <div className="text-Gray">{campData.hvofBgnde}</div>
+                        <div>휴무 기간 종료일</div>
+                        <div className="text-Gray">{campData.hvofEndde}</div>
+                      </>
+                    )}
+                </>
+              )}
+              {campData.homepage && (
+                <>
+                  <div>홈페이지</div>
+                  <a
+                    href={
+                      campData.homepage.startsWith('http://') ||
+                      campData.homepage.startsWith('https://')
+                        ? campData.homepage
+                        : `https://${campData.homepage}`
+                    }
+                    target="_blank"
+                    className="text-Gray"
+                  >
+                    {campData.homepage}
+                  </a>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-1 mb-8">
+            <p className="mb-1">기본정보</p>
+            <p className="text-Gray">정보를 업데이트할 예정입니다.</p>
+          </div>
+        )}
 
-        <div className="space-y-4 mb-4">
-          <p>시설정보</p>
-          <div className="flex flex-row flex-wrap">
-            {facilities &&
-              facilities.map((facility) => {
+        {facilities && (
+          <div className="space-y-1 mb-8">
+            <p className="mb-1">시설정보</p>
+            <div className="flex flex-row flex-wrap">
+              {facilities?.map((facility) => {
                 const matchedFacility = facilityIcons.find(
                   (icon) => icon.name === facility
                 );
@@ -228,20 +303,57 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
                   </div>
                 );
               })}
-          </div>
-        </div>
-
-        <div className="space-y-4 mb-4">
-          <p>캠핑장 사진</p>
-          {campData.images && (
-            <div className="flex flex-col  p-2">
-              <Carousel images={campData.images} />
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="space-y-2 mb-4">
-          <p className="flex">위치</p>
+        {(campData.posblFcltyCl ||
+          campData.themaEnvrnCl ||
+          campData.eqpmnLendCl ||
+          campData.animalCmgCl) && (
+          <>
+            <div className="space-y-1 mb-8">
+              <p className="mb-1">추가정보</p>
+              <div className="grid grid-cols-[1fr,2fr] gap-1 text-description">
+                {campData.posblFcltyCl && (
+                  <>
+                    <div>주변 이용 가능 시설</div>
+                    <div className="text-Gray">{campData.posblFcltyCl}</div>
+                  </>
+                )}
+                {campData.themaEnvrnCl && (
+                  <>
+                    <div>테마 환경</div>
+                    <div className="text-Gray">{campData.themaEnvrnCl}</div>
+                  </>
+                )}
+                {campData.eqpmnLendCl && (
+                  <>
+                    <div>캠핑장비 대여</div>
+                    <div className="text-Gray">{campData.eqpmnLendCl}</div>
+                  </>
+                )}
+                {campData.animalCmgCl && (
+                  <>
+                    <div>반려동물 출입</div>
+                    <div className="text-Gray">{campData.animalCmgCl}</div>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="space-y-1 mb-8">
+              <p className="mb-1">캠핑장 사진</p>
+              {campData.images && (
+                <div className="flex flex-col  p-2">
+                  <Carousel images={campData.images} />
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        <div className="space-y-2">
+          <p className="mb-1">위치</p>
           <div className="flex">
             <Image
               className="flex"
@@ -252,7 +364,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
             />
             <span className="text-Gray text-description align-middle">
               {campData.addr1}
-              {!!campData.addr2 && ` / ${campData.addr2}`}
+              {!!campData.addr2 && ` ${campData.addr2}`}
             </span>
           </div>
           <div className="flex space-x-1 ">
