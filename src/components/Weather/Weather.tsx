@@ -5,6 +5,9 @@ import { fetchWeatherData } from '../../utils/fetchWeatherData';
 import { getCurrentLocation } from '../../utils/location';
 import WeatherIcon from './WeatherIcon';
 
+import { weatherFormatDate } from '@/utils/weatherFormatDate';
+import { filterWeatherData } from '@/utils/filterWeatherData';
+
 const Weather = () => {
   const [weatherData, setWeatherData] = useState<any[]>([]);
   const [currentLocation, setCurrentLocation] = useState({ lat: 0, lon: 0 });
@@ -61,7 +64,7 @@ const Weather = () => {
               index === 0 ? 'text-Green' : 'text-Gray'
             }`}
           >
-            <div className="text-xs mb-1">{formatDate(day.date)}</div>
+            <div className="text-xs mb-1">{weatherFormatDate(day.date)}</div>
             <div className="mb-1">
               <WeatherIcon condition={day.skyCondition} active={index === 0} />
             </div>
@@ -76,30 +79,3 @@ const Weather = () => {
 };
 
 export default Weather;
-
-const formatDate = (date: string) => {
-  const month = date.slice(4, 6);
-  const day = date.slice(6, 8);
-  return `${month}/${day}`;
-};
-
-const filterWeatherData = (data: any[]) => {
-  const today = new Date();
-  const formattedToday = formatDateAsKey(today);
-
-  const filteredData = data
-    .filter((item: any) => {
-      const itemDate = item.date;
-      return itemDate >= formattedToday;
-    })
-    .slice(0, 4);
-
-  return filteredData;
-};
-
-const formatDateAsKey = (date: Date) => {
-  const year = date.getFullYear().toString();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}${month}${day}`;
-};

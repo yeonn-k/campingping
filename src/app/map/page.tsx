@@ -21,6 +21,7 @@ import { useCreateQueryString } from '@/hooks/useCreateQueryString';
 import { useSearchParams } from 'next/navigation';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
+import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 
 const LIMIT = 10;
 
@@ -253,7 +254,7 @@ const Map = () => {
       )}
 
       <div className="relative w-full h-full flex justify-center">
-        <Weather />
+        <WeatherWithLatLon lat={lat} lon={lon} />
 
         {isGeoLocationGranted && !lat && !lon ? (
           <div className="w-full h-full flex justify-center items-center">
