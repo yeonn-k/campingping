@@ -88,7 +88,7 @@ const List = () => {
         onCategorySelected={handleCategorySelected}
       />
       <div
-        className="flex flex-col space-y-8 scroll-smooth p-4 mx-*"
+        className="flex flex-col space-y-8 scroll-smooth p-4 mx-* pb-20"
         ref={scrollRef}
       >
         {campingData?.length ? (
