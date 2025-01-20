@@ -55,6 +55,7 @@ const WeatherIcon = ({
         width={22}
         height={22}
         className="transition-colors duration-200"
+        quality={5}
       />
     </div>
   );

@@ -106,6 +106,7 @@ const Category = ({
               alt={category.name}
               width={24}
               height={24}
+              quality={5}
             />
             <span
               className={`text-[12px] ${
