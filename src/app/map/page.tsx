@@ -6,7 +6,6 @@ import { createRoot } from 'react-dom/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import SearchBar from '@/components/SearchBar/SearchBar';
-import Weather from '@/components/Weather/Weather';
 
 import { MapListWrap } from './component/MapListWrap';
 import Overlay from './component/Overlay';
@@ -17,7 +16,7 @@ import { useLocationStore } from '@/stores/locationState';
 import { api } from '@/utils/axios';
 import useLocation from '@/hooks/useLocation';
 import useCategory from '@/hooks/useCategory';
-import { useCreateQueryString } from '@/hooks/useCreateQueryString';
+import { createApiUrl } from '@/utils/createApiUrl';
 import { useSearchParams } from 'next/navigation';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
@@ -27,7 +26,6 @@ const LIMIT = 10;
 
 const Map = () => {
   const searchParams = useSearchParams();
-  const createQueryString = useCreateQueryString(searchParams);
 
   const [regionQuery, setRegionQuery] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +39,8 @@ const Map = () => {
     { ssr: false }
   );
 
-  const { selectedCategory, handleCategorySelected } = useCategory();
+  const { selectedCategoryValue, selectedCategory, handleCategorySelected } =
+    useCategory();
 
   const { userLat, userLon } = useLocationStore();
   const [lat, setLat] = useState<number | null>(userLat);
@@ -77,11 +76,14 @@ const Map = () => {
   }, [regionQuery, location, userLat, userLon]);
 
   const getNearByCampings = async () => {
+    if (regionQuery) return;
+
     try {
-      const apiUrl = createQueryString('campings/map', [
+      const apiUrl = createApiUrl('/campings/map', [
         { name: 'lat', value: userLat },
         { name: 'lon', value: userLon },
       ]);
+      console.log(apiUrl);
       const res = await api.get(apiUrl);
 
       setCampList(res.data.data);
@@ -91,37 +93,40 @@ const Map = () => {
   };
 
   const getCampingsByDoNm = useCallback(async () => {
-    if (isLoading) return;
+    if (isLoading || !regionQuery) return;
 
     setIsLoading(true);
     try {
-      const apiUrl = createQueryString('campings/lists', [
+      const apiUrl = createApiUrl('/campings/lists', [
         { name: 'limit', value: LIMIT },
         { name: 'cursor', value: nextCursor },
-        { name: 'category', value: selectedCategory },
+        { name: 'category', value: selectedCategoryValue },
         { name: 'region', value: regionQuery },
       ]);
+
       const res = await api.get(apiUrl);
-      const data = res.data.data.result;
+      const data = res.data.data.result || [];
+      console.log(apiUrl);
 
-      if (res.data.data.nextCursor === null) {
-        setHasMore(false);
-      } else {
-        setHasMore(true);
-        setNextCursor(res.data.data.nextCursor);
-      }
+      setHasMore(res.data.data.nextCursor !== null);
+      setNextCursor(res.data.data.nextCursor || null);
 
-      setCampList((prev) => [...prev, ...data]);
+      setCampList((prev) => {
+        if (!Array.isArray(prev)) return data;
+        return [...prev, ...data];
+      });
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching campings:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [nextCursor, isLoading, selectedCategory, regionQuery, hasMore]);
+  }, [nextCursor, isLoading, selectedCategoryValue, regionQuery]);
 
   useEffect(() => {
     if (regionQuery === null) {
       getNearByCampings();
+    } else {
+      getCampingsByDoNm();
     }
   }, [regionQuery]);
 
@@ -172,7 +177,7 @@ const Map = () => {
         setKakaoMap(map);
       });
     }
-  }, [lat, lon, regionQuery, selectedCategory]);
+  }, [lat, lon, regionQuery, selectedCategoryValue]);
 
   useEffect(() => {
     if (!kakaoMap || campList.length === 0) return;
@@ -242,7 +247,7 @@ const Map = () => {
     <>
       <SearchBar
         origin="map"
-        category={selectedCategory !== '전체' ? selectedCategory : null}
+        category={selectedCategoryValue}
         region={regionQuery}
       />
 

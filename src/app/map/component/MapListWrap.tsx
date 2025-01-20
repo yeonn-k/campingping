@@ -5,7 +5,8 @@ import { useRef, useState } from 'react';
 
 import Card from '@/components/Card/Card';
 import chevron from '@icons/chevron_gray.svg';
-import { CampMap } from '@/types/CampMap';
+
+import { CampMap } from '@/types/Camp';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 interface MapProps {
