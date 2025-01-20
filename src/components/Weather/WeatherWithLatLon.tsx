@@ -6,6 +6,7 @@ import { weatherFormatDate } from '@/utils/weatherFormatDate';
 import { filterWeatherData } from '@/utils/filterWeatherData';
 
 import WeatherIcon from './WeatherIcon';
+import { usePathname } from 'next/navigation';
 
 const WeatherWithLatLon = ({
   lat,
@@ -14,6 +15,7 @@ const WeatherWithLatLon = ({
   lat: number | null;
   lon: number | null;
 }) => {
+  const pathname = usePathname();
   const [weatherData, setWeatherData] = useState<any[]>([]);
 
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +44,9 @@ const WeatherWithLatLon = ({
     // <div className="grid grid-cols-4 w-full">
 
     <div
-      className={`absolute mt-2 grid ${gridClass} w-[94%] bg-white/80 rounded-2xl z-zBanner`}
+      className={`mt-2 grid ${gridClass} w-[94%] bg-white/80 rounded-2xl z-zBanner ${
+        pathname.startsWith('/list') ? '' : 'absolute'
+      }`}
     >
       {!weatherData.length ? (
         <div className="w-full flex justify-center items-center text-Gray p-2">

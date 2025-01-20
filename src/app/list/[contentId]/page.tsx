@@ -12,7 +12,6 @@ import { useEffect, useRef, useState } from 'react';
 import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
 
-import Weather from '@/components/Weather/Weather';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
 import axios from 'axios';
 import SearchBar from '@/components/SearchBar/SearchBar';
@@ -20,10 +19,17 @@ import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 import { categories } from '@/components/Category/Category';
 import { getIconPath } from '@/utils/getIconPath';
+import { regionCoordinates } from '@/hooks/useLocation';
+import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 
 interface Facility {
   name: string;
   iconName: string;
+}
+
+interface Location {
+  regionLat: number;
+  regionLon: number;
 }
 
 const facilityIcons: Facility[] = [
@@ -46,8 +52,60 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   const { contentId } = params;
   const [campData, setCampData] = useState<CampDetail | null>(null);
   const { mapScriptLoaded } = useGlobalStore();
+  const [location, setLocation] = useState<Location>({
+    regionLat: 0,
+    regionLon: 0,
+  });
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!campData) return;
+
+    const getRegion = () => {
+      const region = campData?.addr1?.split(' ')[0];
+
+      if (region?.includes('서울')) {
+        setLocation(regionCoordinates.서울시);
+      } else if (region?.includes('부산')) {
+        setLocation(regionCoordinates.부산시);
+      } else if (region?.includes('대구')) {
+        setLocation(regionCoordinates.대구시);
+      } else if (region?.includes('인천')) {
+        setLocation(regionCoordinates.인천시);
+      } else if (region?.includes('광주')) {
+        setLocation(regionCoordinates.광주시);
+      } else if (region?.includes('대전')) {
+        setLocation(regionCoordinates.대전시);
+      } else if (region?.includes('울산')) {
+        setLocation(regionCoordinates.울산시);
+      } else if (region?.includes('세종')) {
+        setLocation(regionCoordinates.세종시);
+      } else if (region?.includes('경기')) {
+        setLocation(regionCoordinates.경기도);
+      } else if (region?.includes('강원')) {
+        setLocation(regionCoordinates.강원도);
+      } else if (region?.includes('충') && region?.includes('북')) {
+        setLocation(regionCoordinates.충청북도);
+      } else if (region?.includes('충') && region?.includes('남')) {
+        setLocation(regionCoordinates.충청남도);
+      } else if (region?.includes('전') && region?.includes('북')) {
+        setLocation(regionCoordinates.전라북도);
+      } else if (region?.includes('전') && region?.includes('남')) {
+        setLocation(regionCoordinates.전라남도);
+      } else if (region?.includes('경') && region?.includes('북')) {
+        setLocation(regionCoordinates.경상북도);
+      } else if (region?.includes('경') && region?.includes('남')) {
+        setLocation(regionCoordinates.경상남도);
+      } else if (region?.includes('제주')) {
+        setLocation(regionCoordinates.제주도);
+      }
+    };
+
+    getRegion();
+  }, [campData]);
+
+  console.log(location);
 
   useEffect(() => {
     if (mapScriptLoaded && campData) {
@@ -84,8 +142,6 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
       });
     }
   }, [campData, mapScriptLoaded]);
-
-  console.log(campData);
 
   // useEffect(() => {
   //   const fetchMockData = async () => {
@@ -141,10 +197,10 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   return (
     <div className="w-full h-screen overflow-y-scroll pb-12" ref={scrollRef}>
       <SearchBar origin="detail" category={null} region={null} />
-      {/* <div className="flex justify-center">
-        <Weather />
-      </div> */}
-      <div className="flex flex-col grow p-5">
+      <div className="flex justify-center">
+        <WeatherWithLatLon lat={location.regionLat} lon={location.regionLon} />
+      </div>
+      <div className="flex flex-col grow p-5 ">
         <div className="relative mb-4">
           {campData.firstImageUrl ? (
             <Image

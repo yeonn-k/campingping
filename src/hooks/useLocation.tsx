@@ -5,7 +5,7 @@ interface Location {
   regionLon: number;
 }
 
-const regionCoordinates: { [key: string]: Location } = {
+export const regionCoordinates: { [key: string]: Location } = {
   서울시: { regionLat: 37.5665, regionLon: 126.978 },
   부산시: { regionLat: 35.1796, regionLon: 129.0756 },
   대구시: { regionLat: 35.8714, regionLon: 128.6014 },
@@ -24,6 +24,7 @@ const regionCoordinates: { [key: string]: Location } = {
   경상남도: { regionLat: 35.4606, regionLon: 128.2132 },
   제주도: { regionLat: 33.4996, regionLon: 126.5312 },
 };
+
 const useLocation = (region: string | null) => {
   const [location, setLocation] = useState<Location>();
 
