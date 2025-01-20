@@ -77,7 +77,7 @@ const List = () => {
   }, [fetchCampingData, nextCursorRef]);
 
   return (
-    <div className="w-full flex flex-col ">
+    <div className="w-full flex flex-col  ">
       <SearchBar
         origin="list"
         category={selectedCategoryValue}
@@ -88,7 +88,7 @@ const List = () => {
         onCategorySelected={handleCategorySelected}
       />
       <div
-        className="flex flex-col space-y-8 scroll-smooth p-4 mx-* pb-20"
+        className="flex flex-col space-y-8 scroll-smooth p-4 mx-* pb-20 h-screen"
         ref={scrollRef}
       >
         {campingData?.length ? (

@@ -11,9 +11,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
+import goToBack from '@icons/goToBack.svg';
 
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
-import axios from 'axios';
+
 import SearchBar from '@/components/SearchBar/SearchBar';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
@@ -143,19 +144,6 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
     }
   }, [campData, mapScriptLoaded]);
 
-  // useEffect(() => {
-  //   const fetchMockData = async () => {
-  //     try {
-  //       const res = await axios.get('/data/mock.json');
-  //       setCampData(res.data[parseInt(contentId) - 1]);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchMockData();
-  // }, []);
-
   useEffect(() => {
     const fetchDataAndCreateMap = async () => {
       try {
@@ -195,7 +183,20 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   // };
 
   return (
-    <div className="w-full h-screen overflow-y-scroll pb-12" ref={scrollRef}>
+    <div
+      className="relative w-full h-screen overflow-y-scroll pb-12"
+      ref={scrollRef}
+    >
+      <Image
+        src={goToBack}
+        width={16}
+        alt="뒤로가기 버튼"
+        quality={10}
+        className="absolute left-4 top-11"
+        onClick={() => {
+          history.back();
+        }}
+      />
       <SearchBar origin="detail" category={null} region={null} />
       <div className="flex justify-center">
         <WeatherWithLatLon lat={location.regionLat} lon={location.regionLon} />
