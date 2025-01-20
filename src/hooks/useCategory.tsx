@@ -6,20 +6,18 @@ const useCategory = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const selectedCategoryValue =
+    selectedCategory === '전체' ? null : selectedCategory;
 
   useEffect(() => {
-    const category = searchParams.get('category');
-    setSelectedCategory(category || '전체');
+    const category = searchParams.get('category') || '전체';
+    setSelectedCategory(category);
   }, [searchParams]);
 
   const setSelectedCategoryValue = useCallback(
     (category: string) => {
-      if (category === '전체') {
-        updateQueryString({ category: null });
-      } else {
-        updateQueryString({ category });
-      }
+      updateQueryString({ category: category === '전체' ? null : category });
     },
     [pathname]
   );
@@ -36,6 +34,7 @@ const useCategory = () => {
     selectedCategory,
     handleCategorySelected,
     setSelectedCategory,
+    selectedCategoryValue,
   };
 };
 

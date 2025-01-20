@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { useRef } from 'react';
 import { getIconPath } from '@/utils/getIconPath';
 
 interface Category {
@@ -35,88 +34,38 @@ const Category = ({
   selectedCategory,
   onCategorySelected: handleCategoryClick,
 }: CategoryProps) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    isDragging.current = true;
-    startX.current = e.pageX - (scrollRef.current?.offsetLeft || 0);
-    scrollLeft.current = scrollRef.current?.scrollLeft || 0;
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging.current) return;
-    e.preventDefault();
-    const x = e.pageX - (scrollRef.current?.offsetLeft || 0);
-    const walk = x - startX.current;
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollLeft.current - walk;
-    }
-  };
-
-  const handleMouseUp = () => {
-    isDragging.current = false;
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    isDragging.current = true;
-    startX.current = e.touches[0].pageX - (scrollRef.current?.offsetLeft || 0);
-    scrollLeft.current = scrollRef.current?.scrollLeft || 0;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging.current) return;
-    const x = e.touches[0].pageX - (scrollRef.current?.offsetLeft || 0);
-    const walk = x - startX.current;
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollLeft.current - walk;
-    }
-  };
-
-  const handleTouchEnd = () => {
-    isDragging.current = false;
-  };
-
   return (
     <div className="w-full">
-      <div
-        ref={scrollRef}
-        className="flex overflow-x-auto whitespace-nowrap scroll-smooth"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {categories.map((category) => (
-          <div
-            key={category.name}
-            onClick={() => handleCategoryClick(category.name)}
-            className={`flex flex-col min-w-max items-center justify-center cursor-pointer px-2 pb-2 rounded-lg transition`}
-          >
-            <Image
-              src={getIconPath(
-                category.iconName,
-                selectedCategory === category.name
-              )}
-              alt={category.name}
-              width={24}
-              height={24}
-              quality={5}
-            />
-            <span
-              className={`text-[12px] ${
-                selectedCategory === category.name ? 'text-Green' : 'text-Gray'
-              }`}
+      <div className="flex overflow-x-auto scrollbar-hide whitespace-nowrap scroll-smooth">
+        {categories.map((category) => {
+          const isSelected =
+            selectedCategory === '전체'
+              ? category.name === '전체'
+              : selectedCategory === category.name;
+
+          return (
+            <div
+              key={category.name}
+              onClick={() => handleCategoryClick(category.name)}
+              className={`flex flex-col min-w-max items-center justify-center cursor-pointer px-2 pb-2 rounded-lg transition`}
             >
-              {category.name}
-            </span>
-          </div>
-        ))}
+              <Image
+                src={getIconPath(category.iconName, isSelected)}
+                alt={category.name}
+                width={24}
+                height={24}
+                quality={5}
+              />
+              <span
+                className={`text-[12px] ${
+                  isSelected ? 'text-Green' : 'text-Gray'
+                }`}
+              >
+                {category.name}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
