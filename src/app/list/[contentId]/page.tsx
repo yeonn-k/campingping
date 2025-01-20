@@ -283,7 +283,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
         {campData.bizrno || campData.manageSttus || campData.homepage ? (
           <div className="space-y-1 mb-8">
             <p className="mb-1 ">기본정보</p>
-            <div className="grid grid-cols-[1fr,2fr] gap-1 text-description">
+            <div className="w-full grid grid-cols-[1fr_2fr] gap-1 text-description">
               {campData.bizrno && (
                 <>
                   <div>사업자 정보</div>
@@ -317,7 +317,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
                         : `https://${campData.homepage}`
                     }
                     target="_blank"
-                    className="text-Gray"
+                    className="text-Gray col-span-2"
                   >
                     {campData.homepage}
                   </a>
