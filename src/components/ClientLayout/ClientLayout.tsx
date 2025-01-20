@@ -54,7 +54,7 @@ export default function ClientLayout({
       <ToastContainer
         position="top-center"
         draggable
-        className="fixed top-0 max-w-[90%] left-1/2 -translate-x-1/2 mt-9"
+        className="fixed left-1/2 -translate-x-1/2 mt-16 z-50 max-w-[90%]"
       />
       <div className="flex h-screen justify-center items-center">
         <DesktopUi />
@@ -63,8 +63,12 @@ export default function ClientLayout({
           {pathname !== '/sign-in' && (
             <OpenTheChats
               onClick={() => {
-                userState ? setChatState(true) : router.push('/sign-in');
-                toast.error('로그인이 필요한 기능이에요');
+                if (userState) {
+                  setChatState(true);
+                } else {
+                  router.push('/sign-in');
+                  toast.error('로그인이 필요한 기능이에요');
+                }
               }}
             />
           )}

@@ -11,9 +11,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
+import goToBack from '@icons/goToBack.svg';
 
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
-import axios from 'axios';
+
 import SearchBar from '@/components/SearchBar/SearchBar';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
@@ -143,19 +144,6 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
     }
   }, [campData, mapScriptLoaded]);
 
-  // useEffect(() => {
-  //   const fetchMockData = async () => {
-  //     try {
-  //       const res = await axios.get('/data/mock.json');
-  //       setCampData(res.data[parseInt(contentId) - 1]);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchMockData();
-  // }, []);
-
   useEffect(() => {
     const fetchDataAndCreateMap = async () => {
       try {
@@ -195,7 +183,20 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   // };
 
   return (
-    <div className="w-full h-screen overflow-y-scroll pb-12" ref={scrollRef}>
+    <div
+      className="relative w-full h-screen overflow-y-scroll pb-12"
+      ref={scrollRef}
+    >
+      <Image
+        src={goToBack}
+        width={16}
+        alt="뒤로가기 버튼"
+        quality={10}
+        className="absolute left-4 top-11"
+        onClick={() => {
+          history.back();
+        }}
+      />
       <SearchBar origin="detail" category={null} region={null} />
       <div className="flex justify-center">
         <WeatherWithLatLon lat={location.regionLat} lon={location.regionLon} />
@@ -283,7 +284,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
         {campData.bizrno || campData.manageSttus || campData.homepage ? (
           <div className="space-y-1 mb-8">
             <p className="mb-1 ">기본정보</p>
-            <div className="grid grid-cols-[1fr,2fr] gap-1 text-description">
+            <div className="w-full grid grid-cols-[1fr_2fr] gap-1 text-description">
               {campData.bizrno && (
                 <>
                   <div>사업자 정보</div>
@@ -317,7 +318,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
                         : `https://${campData.homepage}`
                     }
                     target="_blank"
-                    className="text-Gray"
+                    className="text-Gray col-span-2"
                   >
                     {campData.homepage}
                   </a>

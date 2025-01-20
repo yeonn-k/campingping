@@ -25,16 +25,14 @@ const Card = ({
   return (
     <Link href={`/list/${itemId}`} className="w-full flex justify-center">
       <div className="w-10.5/12 rounded overflow-hidden">
-        <div className="relative">
+        <div className="relative w-full h-56">
           {imgSrc ? (
             <Image
               src={imgSrc}
               alt="캠핑장 이미지"
-              width="100"
-              height="67"
-              layout="responsive"
-              className="rounded"
-              quality={30}
+              fill
+              className="rounded object-cover"
+              quality={60}
             />
           ) : (
             <DefaultImg />

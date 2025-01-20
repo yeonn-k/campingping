@@ -82,6 +82,7 @@ const SignIn = () => {
         height={100}
         alt="배경이미지"
         className="absolute inset-0 w-full h-full object-cover"
+        quality={60}
       />
       <Image
         src={LogoWhite}
