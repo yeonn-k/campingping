@@ -42,8 +42,6 @@ const List = () => {
         { name: 'region', value: regionQuery },
       ]);
 
-      console.log(apiUrl);
-
       const response = await api.get(apiUrl);
       const camps = response.data.data.result;
       const nextCursor = response.data.data.nextCursor;
@@ -77,7 +75,7 @@ const List = () => {
   }, [fetchCampingData, nextCursorRef]);
 
   return (
-    <div className="w-full flex flex-col  ">
+    <div className="w-full flex flex-col pb-20 h-screen" ref={scrollRef}>
       <SearchBar
         origin="list"
         category={selectedCategoryValue}
@@ -87,10 +85,7 @@ const List = () => {
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />
-      <div
-        className="flex flex-col space-y-8 scroll-smooth p-4 mx-* pb-20 h-screen"
-        ref={scrollRef}
-      >
+      <div className="flex flex-col space-y-8  p-4 mx-* pb-20 ">
         {campingData?.length ? (
           campingData.map((camp) => (
             <Card
