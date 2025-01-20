@@ -68,7 +68,7 @@ const Search = () => {
       >
         <Image src={closeIcon} width={10} height={10} alt="닫기 아이콘" />
       </div>
-      <h1 className="mt-20 mb-7 text-title">지역으로 검색해보세요</h1>
+      <h1 className="mt-20 mb-4 text-title">지역으로 검색해보세요</h1>
       <div className="bg-LightGray w-full h-[1px] mb-2" />
       <div className="grid grid-cols-2 w-10/12 h-2/3 place-items-center">
         {regions.map((regionName) => {

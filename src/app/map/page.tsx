@@ -83,7 +83,7 @@ const Map = () => {
         { name: 'lat', value: userLat },
         { name: 'lon', value: userLon },
       ]);
-      console.log(apiUrl);
+
       const res = await api.get(apiUrl);
 
       setCampList(res.data.data);
@@ -106,14 +106,17 @@ const Map = () => {
 
       const res = await api.get(apiUrl);
       const data = res.data.data.result || [];
-      console.log(apiUrl);
 
       setHasMore(res.data.data.nextCursor !== null);
       setNextCursor(res.data.data.nextCursor || null);
 
       setCampList((prev) => {
-        if (!Array.isArray(prev)) return data;
-        return [...prev, ...data];
+        const existingIds = new Set(prev.map((camp) => camp.contentId));
+        const newData = data.filter(
+          (camp: { contentId: string }) => !existingIds.has(camp.contentId)
+        );
+
+        return [...prev, ...newData];
       });
     } catch (error) {
       console.error('Error fetching campings:', error);

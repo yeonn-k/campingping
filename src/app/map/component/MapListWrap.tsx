@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Card from '@/components/Card/Card';
 import chevron from '@icons/chevron_gray.svg';
@@ -16,6 +16,12 @@ interface MapProps {
 
 export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
   const [isOpenList, setIsOpenList] = useState(false);
+  const [localCampList, setLocalCampList] = useState<CampMap[]>(campList);
+
+  useEffect(() => {
+    setLocalCampList(campList);
+  }, [campList]);
+
   const handleList = () => {
     setIsOpenList((prev) => !prev);
   };
@@ -25,7 +31,7 @@ export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
   return (
     <div
       ref={scrollRef}
-      className={`bg-white absolute bottom-0 w-full ${isOpenList ? 'h-full overflow-auto' : 'h-32 pt-5 rounded-t-2xl overflow-hidden'} flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
+      className={`bg-white absolute bottom-0 w-full ${isOpenList ? 'h-full overflow-auto' : 'h-32 pt-5 rounded-t-2xl overflow-hidden'} pb-20 flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
     >
       {isOpenList ? (
         <Image
@@ -46,16 +52,15 @@ export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
           onClick={handleList}
         />
       )}
-      {campList.length > 0 ? (
-        campList.map((camp, idx) => {
+      {localCampList.length > 0 ? (
+        localCampList.map((camp, idx) => {
           return (
             <div
               className="w-full flex justify-center"
-              key={camp.id}
-              ref={idx === campList.length - 1 ? lastItemRef : null}
+              key={camp.contentId}
+              ref={idx === localCampList.length - 1 ? lastItemRef : null}
             >
               <Card
-                key={camp.contentId}
                 itemId={camp.contentId}
                 name={camp.facltNm}
                 liked={camp.favorite}
