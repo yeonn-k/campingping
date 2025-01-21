@@ -1,9 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { errorInterceptor, successInterceptor } from './interceptors';
-import { BASE_URL } from '@/config/config';
+import { API_URL } from '@/config/config';
 
 const axiosRequestConfig: AxiosRequestConfig = {
-  baseURL: BASE_URL,
+  baseURL: API_URL,
   responseType: 'json',
   withCredentials: true,
   headers: {
