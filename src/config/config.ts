@@ -1,2 +1,4 @@
-// export const BASE_URL = 'https://kdt-react-node-1-team03.elicecoding.com/api';
-export const BASE_URL = 'http://13.124.176.190/api';
+const BASE_URL = '13.124.176.190';
+
+export const API_URL = `https://${BASE_URL}/api`;
+export const CHAT_URL = `wss://${BASE_URL}/chats`;
