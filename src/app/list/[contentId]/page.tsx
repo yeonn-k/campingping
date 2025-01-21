@@ -106,8 +106,6 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
     getRegion();
   }, [campData]);
 
-  console.log(location);
-
   useEffect(() => {
     if (mapScriptLoaded && campData) {
       window.kakao.maps.load(() => {

@@ -24,8 +24,8 @@ interface UserProfile {
 const MyPage = () => {
   const [profileImage, setProfileImage] = useState<string>(profile); // 기본 프로필 이미지 설정
   const [response, setResponse] = useState<UserProfile | null>(null); // API 응답 저장 변수 선언
-  console.log(response);
-  console.log(response?.data.user.email);
+  // console.log(response);
+  // console.log(response?.data.user.email);
 
   useEffect(() => {
     const token = localStorage.getItem('token'); // localStorage에서 token 가져오기
@@ -76,7 +76,7 @@ const MyPage = () => {
         if (res.status === 201) {
           const newImageUrl = res.data.data.user.image.url;
           setProfileImage(newImageUrl);
-          console.log('프로필 이미지 변경 성공', newImageUrl);
+          // console.log('프로필 이미지 변경 성공', newImageUrl);
           getProfileImage(token); // 변경된 이미지를 다시 가져옴
         }
       } catch (error) {
