@@ -44,7 +44,7 @@ export default function ClientLayout({
   }, [isGeoLocationGranted, updateLocation]);
 
   return (
-    <>
+    <div className="relative">
       <Script
         src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
         onLoad={() => {
@@ -72,11 +72,11 @@ export default function ClientLayout({
               }}
             />
           )}
-          <Nav />
 
           {chatState && <Chat />}
+          <Nav />
         </div>
       </div>
-    </>
+    </div>
   );
 }
