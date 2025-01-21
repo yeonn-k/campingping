@@ -104,8 +104,6 @@ const Map = () => {
         { name: 'region', value: regionQuery },
       ]);
 
-      console.log(apiUrl);
-
       const res = await api.get(apiUrl);
       const data = res.data.data.result || [];
 

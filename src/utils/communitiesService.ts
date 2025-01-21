@@ -18,7 +18,7 @@ export const createPost = async (postData: {
       ...postData,
     };
 
-    console.log('Create Post Data:', formattedPostData);
+    // console.log('Create Post Data:', formattedPostData);
 
     const response = await axios.post(
       `${BASE_URL}/communities`,
@@ -26,7 +26,7 @@ export const createPost = async (postData: {
       {}
     );
 
-    console.log('Create Post Response:', response.data);
+    // console.log('Create Post Response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error while creating a post:', error);
@@ -70,21 +70,21 @@ export const getMyPosts = async (limit: number = 10, cursor?: number) => {
 // 특정 게시글 조회
 export const getPostById = async (id: string) => {
   const response = await axios.get(`${BASE_URL}/communities/${id}`);
-  console.log('Get Post Response:', response.data);
+  // console.log('Get Post Response:', response.data);
   return response.data;
 };
 
 // 게시글 수정
 export const updatePost = async (id: string, postData: any) => {
   try {
-    console.log('Update Post Data:', postData);
+    // console.log('Update Post Data:', postData);
 
     const response = await axios.patch(
       `${BASE_URL}/communities/${id}`,
       postData
     );
 
-    console.log('Update Post Response:', response.data);
+    // console.log('Update Post Response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error while updating a post:', error);
@@ -97,7 +97,7 @@ export const deletePost = async (id: string) => {
   try {
     const response = await axios.delete(`${BASE_URL}/communities/${id}`, {});
 
-    console.log('Delete Post Response:', response.data);
+    // console.log('Delete Post Response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error while deleting post:', error);
