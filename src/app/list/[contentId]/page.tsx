@@ -22,6 +22,7 @@ import { categories } from '@/components/Category/Category';
 import { getIconPath } from '@/utils/getIconPath';
 import { regionCoordinates } from '@/hooks/useLocation';
 import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
+import NotFound from '@/app/not-found';
 
 interface Facility {
   name: string;
@@ -171,7 +172,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   }, [contentId]);
 
   if (!campData) {
-    return <p>Loading...</p>;
+    return <NotFound />;
   }
 
   const facilities = !!campData.sbrsCl ? campData.sbrsCl.split(',') : null;
