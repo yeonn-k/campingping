@@ -15,6 +15,7 @@ import OpenTheChats from '../OpenTheChats/OpenTheChats';
 import { chattingStore } from '@/stores/chattingState';
 import Chat from '../Chat/Chat';
 import { userStore } from '@/stores/userState';
+import React from 'react';
 
 export default function ClientLayout({
   children,
