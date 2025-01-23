@@ -18,6 +18,8 @@ import SymbolImg from '@images/campingping.png';
 import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 
 import { api } from '@/utils/axios';
+import { API_URL } from '@/config/config';
+import { useEffect } from 'react';
 
 interface FormData {
   email: string;
@@ -62,8 +64,9 @@ const SignIn = () => {
   const kakaoSignIn = async () => {
     try {
       const res = await api.get('/auth/kakao-login');
+
       if (res.status === 200) {
-        setUserState(res.data.email);
+        setUserState(res.data.data.email);
         router.push('/list');
       }
     } catch (error) {
@@ -122,21 +125,18 @@ const SignIn = () => {
           </div>
           <Button width={'w-10/12'}>로그인</Button>
         </form>
-        <Link
-          href="https://kdt-react-node-1-team03.elicecoding.com/api/auth/kakao-login"
-          className="w-10/12"
+        {/* <Link href={`${API_URL}/auth/kakao-login`} className="w-10/12"> */}
+        <Button
+          width={'w-10/12'}
+          bgcolor={'bg-kakaoYellow'}
+          onClick={kakaoSignIn}
         >
-          <Button
-            width={'w-full'}
-            bgcolor={'bg-kakaoYellow'}
-            onClick={kakaoSignIn}
-          >
-            <div className="flex justify-center">
-              <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
-              <span className="ml-1">카카오 로그인</span>
-            </div>
-          </Button>
-        </Link>
+          <div className="flex justify-center">
+            <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
+            <span className="ml-1">카카오 로그인</span>
+          </div>
+        </Button>
+        {/* </Link> */}
         <button className="mt-2" onClick={moveToSignUp}>
           회원가입
         </button>
