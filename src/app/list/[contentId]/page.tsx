@@ -23,6 +23,7 @@ import { getIconPath } from '@/utils/getIconPath';
 import { regionCoordinates } from '@/hooks/useLocation';
 import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 import NotFound from '@/app/not-found';
+import LoadingSpinner from '@/components/Button/LoadingSpinner';
 
 interface Facility {
   name: string;
@@ -53,6 +54,8 @@ const KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 const ListDetail = ({ params }: { params: { contentId: string } }) => {
   const { contentId } = params;
   const [campData, setCampData] = useState<CampDetail | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
   const { mapScriptLoaded } = useGlobalStore();
   const [location, setLocation] = useState<Location>({
     regionLat: 0,
@@ -60,6 +63,30 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   });
 
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const fetchCampData = async () => {
+    try {
+      const res = await api.get(`/campings/lists/${contentId}`);
+      setCampData(res.data.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCampData();
+
+    return () => {
+      const script = document.querySelector(
+        `script[src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_APP_KEY}"]`
+      );
+      if (script) {
+        script.remove();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!campData) return;
@@ -171,15 +198,18 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
     };
   }, [contentId]);
 
-  if (!campData) {
-    return <NotFound />;
-  }
-
-  const facilities = !!campData.sbrsCl ? campData.sbrsCl.split(',') : null;
+  const facilities = campData?.sbrsCl ? campData.sbrsCl.split(',') : null;
 
   // const handleWishlist = (event: MouseEvent): void => {
   //   useWishlist().addOrRemoveWishlist();
   // };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+  if (!campData) {
+    return <NotFound />;
+  }
 
   return (
     <div
@@ -201,71 +231,67 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
         <WeatherWithLatLon lat={location.regionLat} lon={location.regionLon} />
       </div>
       <div className="flex flex-col grow p-5 ">
-        <div className="relative mb-4">
-          {campData.firstImageUrl ? (
+        {campData?.firstImageUrl && (
+          <div className="relative w-full h-56">
             <Image
-              className=" rounded-[5px] justify-items-stretch "
               src={campData.firstImageUrl}
-              alt={`${campData.facltNm} 사진`}
-              width={380}
-              height={320}
+              alt="캠핑장 이미지"
+              fill
+              className="rounded object-cover"
+              quality={60}
             />
-          ) : (
-            <DefaultImg />
-          )}
 
-          <Image
-            src={campData.favorite ? myWishIcon : notMyWishIcon}
-            alt="위시리스트"
-            width={20}
-            height={19}
-            className="absolute top-2.5 right-2.5"
-            style={{ margin: '0px' }}
-            // onClick={handleWishlist}
-          />
+            <Image
+              src={campData.favorite ? myWishIcon : notMyWishIcon}
+              alt="위시리스트"
+              width={20}
+              height={19}
+              className="absolute top-3 right-3"
+            />
+          </div>
+        )}
 
-          <div className="flex justify-between">
-            <div>
-              <h2 className="text-subTitle mt-4">{campData.facltNm}</h2>
-              <p className="text-description text-Gray ">{campData.addr1}</p>
-              <p className="text-description text-Gray mt-1 ">
-                {campData.lineIntro}
-              </p>
-            </div>
-            <div>
-              {campData.induty || campData.lccl ? (
-                <div className="flex flex-col items-center mt-5">
-                  {categories.map((category) => {
-                    if (
-                      campData.induty?.includes(category.name) ||
-                      campData.lccl?.includes(category.name)
-                    ) {
-                      const iconPath = getIconPath(category.iconName, false);
-                      return (
-                        <div className="flex flex-wrap justify-center">
-                          <Image
-                            key={category.name}
-                            src={iconPath}
-                            alt={`${category.name} 아이콘`}
-                            width={24}
-                            height={24}
-                            className="m-1.5"
-                          />
-                        </div>
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
-              ) : (
-                ''
-              )}
-            </div>
+        <div className="flex justify-between">
+          <div>
+            <h2 className="text-subTitle mt-4">{campData?.facltNm}</h2>
+            <p className="text-description text-Gray ">{campData?.addr1}</p>
+            <p className="text-description text-Gray mt-1 ">
+              {campData?.lineIntro}
+            </p>
+          </div>
+          <div>
+            {campData?.induty || campData?.lccl ? (
+              <div className="flex flex-col items-center mt-5">
+                {categories.map((category) => {
+                  if (
+                    campData.induty?.includes(category.name) ||
+                    campData.lccl?.includes(category.name)
+                  ) {
+                    const iconPath = getIconPath(category.iconName, false);
+                    return (
+                      <div className="flex flex-wrap justify-center">
+                        <Image
+                          key={category.name}
+                          src={iconPath}
+                          alt={`${category.name} 아이콘`}
+                          width={24}
+                          height={24}
+                          className="m-1.5"
+                        />
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         </div>
         <hr className="mb-4" />
 
-        {campData.intro && (
+        {campData?.intro && (
           <>
             <div className="space-y-1 mb-2">
               <p className="text-content ">캠핑장 소개</p>
@@ -280,7 +306,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
           </>
         )}
 
-        {campData.bizrno || campData.manageSttus || campData.homepage ? (
+        {campData?.bizrno || campData?.manageSttus || campData?.homepage ? (
           <div className="space-y-1 mb-8">
             <p className="mb-1 ">기본정보</p>
             <div className="w-full grid grid-cols-[1fr_2fr] gap-1 text-description">
@@ -363,10 +389,10 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
           </div>
         )}
 
-        {(campData.posblFcltyCl ||
-          campData.themaEnvrnCl ||
-          campData.eqpmnLendCl ||
-          campData.animalCmgCl) && (
+        {(campData?.posblFcltyCl ||
+          campData?.themaEnvrnCl ||
+          campData?.eqpmnLendCl ||
+          campData?.animalCmgCl) && (
           <>
             <div className="space-y-1 mb-8">
               <p className="mb-1">추가정보</p>
@@ -419,8 +445,8 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
               height={24}
             />
             <span className="text-Gray text-description align-middle">
-              {campData.addr1}
-              {!!campData.addr2 && ` ${campData.addr2}`}
+              {campData?.addr1}
+              {!!campData?.addr2 && ` ${campData.addr2}`}
             </span>
           </div>
           <div className="flex space-x-1 ">
@@ -432,7 +458,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
               height={24}
             />
             <span className="text-Gray text-description align-middle">
-              {campData.tel}
+              {campData?.tel}
             </span>
           </div>
 
