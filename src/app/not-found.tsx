@@ -1,19 +1,7 @@
-// 'use client';
-
-// import { notFound } from 'next/navigation';
-
 import Image from 'next/image';
 import logo from '@images/campingping.png';
-// import { useFetchCampDetail } from '@/hooks/useFetchCampDetail';
 
 const NotFound = () => {
-  // { params }: { params: { id: string } }
-  //   const data = await useFetchCampDetail(params.id);
-
-  //   if (!data) {
-  //     notFound();
-  //   }
-
   return (
     <div className="flex flex-col justify-center items-center ">
       <Image src={logo} alt="symbol" width={60} height={60} priority />
