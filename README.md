@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Project oreore
 
-## Getting Started
+## 🧚‍♂️ 개발 기간 및 인원
 
-First, run the development server:
+- 개발 기간 : 2024/12/17 ~ 2025/01/08
+- 개발 인원 : 프론트엔드 2명(김지연, 최준영) / 백엔드 2명(백기준, 김영현)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🪴 서비스 소개
+- 서비스명 : campingping( 캠핑핑 )
+  - 캠핑을 즐기는 사람들에게 최적의 캠핑장 정보를 제공하고, 위치를 기반으로 사람들과 연결할 수 있는 플랫폼
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ 구현 기능
+### 🚀 sign up/ sign in
+1) 
+   - 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
+### 🗺️ map
+1) 
+   - 
+   
+---
+### 🔍 search
+1) 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
+### 💬 chat
+1) 
+   -
 
-## Learn More
+---
+### 🎨 desktop UI
+1) 
+   - 
 
-To learn more about Next.js, take a look at the following resources:
+---
+### 💡 components
+1) input component
+   - 
+2) button component
+   - 
+3) card component
+   - 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
+### ♻️ refactoring
+1) Detail Page
+   - 
+2) category component
+   -
+3) Default Image
+   -
+4) Client Layout
+   -
+5) Nav
+   -
+6) Desktop UI
+   - 
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+---
+### 📢 toast
+1) 
+   - 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📚 기술 스택
+|TypeScript|Next.js|tailwindCSS|ESLint|Prettier|Zustand|Socket.io|GitLab|GitHub|Notion|Figma|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|<img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white">|<img src="https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white">|<img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white">|<img src="https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white">|<img src="https://img.shields.io/badge/prettier-%23F7B93E.svg?style=for-the-badge&logo=prettier&logoColor=black">||<img src="https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101">|<img src="https://img.shields.io/badge/gitlab-%23181717.svg?style=for-the-badge&logo=gitlab&logoColor=white">|<img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white">|<img src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white">|<img src="https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white">|
