@@ -1,4 +1,5 @@
-# Project campingping
+![waving](https://capsule-render.vercel.app/api?type=waving&height=200&fontAlignY=40&text=campingping&color=gradient)
+
 
 ## 🧚‍♂️ 개발 기간 및 인원
 
