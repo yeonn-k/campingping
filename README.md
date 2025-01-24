@@ -1,4 +1,4 @@
-# Project campingping
+# Project campingping
 
 ## 🧚‍♂️ 개발 기간 및 인원
 
@@ -13,8 +13,10 @@
 ### 🚀 sign up/ sign in
 1) input component( 공용 컴포넌트 )
    - 
-1) 
-   - 
+2) button component( 공용 컴포넌트 )
+   -
+
+3) 
 
 ---
 ### 🗺️ map
@@ -38,8 +40,7 @@
 ---
 ### 💡 components
 
-2) button component
-   - 
+2) 
 3) card component
    - 
 
@@ -60,9 +61,6 @@
 
 
 ---
-### 📢 toast
-1) 
-   - 
 
 ## 📚 기술 스택
 <div style="display: flex; gap: 12px;">
