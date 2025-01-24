@@ -44,3 +44,47 @@
   <img src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white">
   <img src="https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white">
 </div>
+
+---
+
+<details markdown="1">
+  
+  <summary><h2>✨ 김지연: 구현 기능</h2></summary>
+      <h3>🚀 sign up/ sign in/ sign out</h3>
+        <ul>
+          <li>📍sign up</li>
+            <ul>
+              <li>이메일 인증 기능: 유저가 입력한 이메일로 인증 코드 발송, 해당 코드를 입력 받아 이메일 인증</li>
+              <li>입력 폼에 대한 유효성 검사</li>
+                <ul>
+                  <li>이메일: 이메일 형식 체크</li>
+                  <li>비밀번호: 최소 8자리, 영문/숫자/특수문자 포함된 형식 검사, 비밀번호 확인과 일치 여부 체크</li>
+                  <li>닉네임: 필수 요소</li>
+                </ul>
+            </ul>
+          <li>📍sign in</li>
+            <ul>
+              <li>로컬 로그인: 유저의 이메일과 비밀번호를 입력받아 api 호출, 성공시 유저의 이메일을 userStore 상태 저장, `/list` 페이지로 리다이렉트</li>
+              <li>카카오 로그인: 카카오 로그인 api 호출, 성공시 유저의 이메일을 userStore 상태 저장, `/list` 페이지로 리다이렉트</li>
+              <li>회원가입 버튼: sign-up 페이지로 리다이렉트</li>
+            </ul>
+          <li>📍sign out</li>
+            <ul>
+              <li>로그아웃: 로그아웃 api 호출, userStore 상태 초기화</li>
+            </ul>
+          <li>📍`toast` 알림으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선</li>
+        </ul>
+      <h3>🗺️ map</h3>
+      <h3>🔍 search</h3>
+      <h3>💬 chat</h3>
+      <h3>🎨 desktop UI</h3>
+      <h3>💡components</h3>
+        <ul>
+          <li>input component</li>
+          <li>button component</li>
+          <li>card component</li>
+        </ul>
+      <h3>♻️refactoring</h3>
+
+  </div>
+</details>
