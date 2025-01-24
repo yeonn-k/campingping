@@ -52,7 +52,7 @@
   <summary><h2>✨ 김지연: 구현 기능</h2></summary>
       <h3>🚀 sign up/ sign in/ sign out</h3>
         <ul>
-          <li>📍sign up</li>
+          <li><b>📍sign up</b></li>
             <ul>
               <li>이메일 인증 기능: 유저가 입력한 이메일로 인증 코드 발송, 해당 코드를 입력 받아 이메일 인증</li>
               <li>입력 폼에 대한 유효성 검사</li>
@@ -62,17 +62,17 @@
                   <li>닉네임: 필수 요소</li>
                 </ul>
             </ul>
-          <li>📍sign in</li>
+          <li><b>📍sign in</b></li>
             <ul>
               <li>로컬 로그인: 유저의 이메일과 비밀번호를 입력받아 api 호출, 성공시 유저의 이메일을 userStore 상태 저장, `/list` 페이지로 리다이렉트</li>
               <li>카카오 로그인: 카카오 로그인 api 호출, 성공시 유저의 이메일을 userStore 상태 저장, `/list` 페이지로 리다이렉트</li>
               <li>회원가입 버튼: sign-up 페이지로 리다이렉트</li>
             </ul>
-          <li>📍sign out</li>
+          <li><b>📍sign out</b></li>
             <ul>
               <li>로그아웃: 로그아웃 api 호출, userStore 상태 초기화</li>
             </ul>
-          <li>📍`toast` 알림으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선</li>
+          <li><b>📍toast 알림</b>으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선</li>
         </ul>
       <h3>🗺️ map</h3>
       <h3>🔍 search</h3>
