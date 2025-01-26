@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import logo1 from '@images/campingping_orange.svg';
 import profile from '@images/profile.svg';
-
-import axios from 'axios';
+import { getProfile, updateProfileImage } from '../../utils/profileService';
 
 interface UserProfile {
   data: {
@@ -22,29 +21,21 @@ interface UserProfile {
 }
 
 const MyPage = () => {
-  const [profileImage, setProfileImage] = useState<string>(profile); // 기본 프로필 이미지 설정
-  const [response, setResponse] = useState<UserProfile | null>(null); // API 응답 저장 변수 선언
-  // console.log(response);
-  // console.log(response?.data.user.email);
-  const token = localStorage.getItem('token'); // localStorage에서 token 가져오기
+  const [profileImage, setProfileImage] = useState<string>(profile);
+  const [response, setResponse] = useState<UserProfile | null>(null);
+  const token = localStorage.getItem('token');
+
   useEffect(() => {
     if (token) {
-      getProfileImage(token); // token 존재 시 프로필 이미지 조회 호출
+      getProfileImage(token);
     }
   }, []);
 
   const getProfileImage = async (token: string) => {
     try {
-      const res = await axios.get(
-        'https://kdt-react-node-1-team03.elicecoding.com/api/user/profile',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setResponse(res.data); // 응답 데이터를 상태에 저장
-      setProfileImage(res.data.data.user.image.url || profile); // 기본 프로필 이미지로 fallback 설정
+      const data = await getProfile(token);
+      setResponse(data);
+      setProfileImage(data.data.user.image.url || profile);
     } catch (error) {
       console.error('프로필 이미지 조회 실패', error);
     }
@@ -55,30 +46,13 @@ const MyPage = () => {
   ) => {
     if (event.target.files) {
       const file = event.target.files[0];
-      setProfileImage(URL.createObjectURL(file)); // 선택한 이미지 미리보기 설정
-
-      // API 요청 로직
-      const formData = new FormData();
-      formData.append('file', file); // 요청 본문 변경
+      setProfileImage(URL.createObjectURL(file));
 
       try {
-        const res = await axios.post(
-          'https://kdt-react-node-1-team03.elicecoding.com/api/user/profile',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-
-        if (res.status === 201) {
-          const newImageUrl = res.data.data.user.image.url;
-          if (token) {
-            setProfileImage(newImageUrl);
-            // console.log('프로필 이미지 변경 성공', newImageUrl);
-            getProfileImage(token); // 변경된 이미지를 다시 가져옴
-          }
+        const data = await updateProfileImage(file);
+        if (token) {
+          setProfileImage(data.data.user.image.url);
+          getProfileImage(token);
         }
       } catch (error) {
         console.error('프로필 이미지 변경 실패', error);
@@ -88,15 +62,12 @@ const MyPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Header Section */}
       <div className="flex justify-center mt-4 gap-1">
         <Image src={logo1} alt="로고 이미지" width={100} height={100} />
       </div>
 
-      {/* Profile Section */}
       <main className="flex-grow bg-white p-6 mt-4 rounded-lg">
         <div className="flex items-center">
-          {/* Profile Image */}
           <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
             <Image
               src={profileImage || profile}
@@ -106,7 +77,6 @@ const MyPage = () => {
               className="rounded-full"
             />
           </div>
-          {/* User Info */}
           <div className="ml-4">
             <p className="font-bold text-lg">{response?.data.user.nickName}</p>
             <p className="text-gray-500">{response?.data.user.email}</p>
