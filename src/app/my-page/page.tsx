@@ -26,9 +26,8 @@ const MyPage = () => {
   const [response, setResponse] = useState<UserProfile | null>(null); // API 응답 저장 변수 선언
   // console.log(response);
   // console.log(response?.data.user.email);
-
+  const token = localStorage.getItem('token'); // localStorage에서 token 가져오기
   useEffect(() => {
-    const token = localStorage.getItem('token'); // localStorage에서 token 가져오기
     if (token) {
       getProfileImage(token); // token 존재 시 프로필 이미지 조회 호출
     }
@@ -54,8 +53,8 @@ const MyPage = () => {
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files[0];
-    if (file) {
+    if (event.target.files) {
+      const file = event.target.files[0];
       setProfileImage(URL.createObjectURL(file)); // 선택한 이미지 미리보기 설정
 
       // API 요청 로직
@@ -75,9 +74,11 @@ const MyPage = () => {
 
         if (res.status === 201) {
           const newImageUrl = res.data.data.user.image.url;
-          setProfileImage(newImageUrl);
-          // console.log('프로필 이미지 변경 성공', newImageUrl);
-          getProfileImage(token); // 변경된 이미지를 다시 가져옴
+          if (token) {
+            setProfileImage(newImageUrl);
+            // console.log('프로필 이미지 변경 성공', newImageUrl);
+            getProfileImage(token); // 변경된 이미지를 다시 가져옴
+          }
         }
       } catch (error) {
         console.error('프로필 이미지 변경 실패', error);

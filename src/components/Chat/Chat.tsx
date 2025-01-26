@@ -14,8 +14,7 @@ import { ChatRooms } from '@/types/Chatting';
 import { chattingStore } from '@/stores/chattingState';
 
 import { api } from '@/utils/axios';
-import { useTimeFormat } from '@utils/TimeFormat';
-
+import { timeFormat } from '@/utils/timeFormat';
 const Chat = () => {
   const [, setIsConnected] = useState(false);
   const [, setTransport] = useState('N/A');
@@ -116,7 +115,7 @@ const Chat = () => {
                       roomId={chat.roomId}
                       nickname={chat.users[0].nickname}
                       lastMsg={chat.lastMessage}
-                      createdAt={useTimeFormat(chat.createdAt)}
+                      createdAt={timeFormat(chat.createdAt)}
                     />
                   </div>
                 );

@@ -1,4 +1,4 @@
-import { useTimeFormat } from '@/utils/timeFormat';
+import { timeFormat } from '@/utils/timeFormat';
 
 interface MyChatMsgProps {
   message: string;
@@ -13,9 +13,7 @@ const MyChatMsg = ({ message, createdAt }: MyChatMsgProps) => {
         <p className="w-full">나</p>
         <p className="w-full">{message}</p>
       </div>
-      <p className="text-description text-Gray mr-6">
-        {useTimeFormat(createdAt)}
-      </p>
+      <p className="text-description text-Gray mr-6">{timeFormat(createdAt)}</p>
     </div>
   );
 };
