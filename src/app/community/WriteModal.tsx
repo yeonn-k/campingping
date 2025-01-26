@@ -15,20 +15,22 @@ const WriteModal = ({
 }) => {
   const handleSubmit = async () => {
     const title = (document.querySelector('#title') as HTMLInputElement).value;
-    const startDate = (document.querySelector('#startDate') as HTMLInputElement)
-      .value;
-    const endDate = (document.querySelector('#endDate') as HTMLInputElement)
-      .value;
+    const startDate = new Date(
+      (document.querySelector('#startDate') as HTMLInputElement).value
+    );
+    const endDate = new Date(
+      (document.querySelector('#endDate') as HTMLInputElement).value
+    );
     const location = (document.querySelector('#location') as HTMLInputElement)
       .value;
-    const people = (document.querySelector('#people') as HTMLInputElement)
-      .value;
+    const people = parseInt(
+      (document.querySelector('#people') as HTMLInputElement).value
+    );
     const content = (document.querySelector('#content') as HTMLTextAreaElement)
       .value;
 
     if (title && startDate && endDate && location && people && content) {
       try {
-        // 현재 위치 가져오기
         navigator.geolocation.getCurrentPosition(
           async (position) => {
             const newPost = {
@@ -38,8 +40,8 @@ const WriteModal = ({
               location,
               people,
               content,
-              lat: position.coords.latitude, // 위도
-              lon: position.coords.longitude, // 경도
+              lat: position.coords.latitude,
+              lon: position.coords.longitude,
             };
 
             await createPost(newPost);

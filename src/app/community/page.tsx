@@ -5,7 +5,6 @@ import Image from 'next/image';
 import ModalBox from '@/components/ModalBox/ModalBox';
 import WriteModal from './WriteModal';
 import PostDetailModal from './PostDetailModal';
-import chevron from '@icons/chevron_green.svg';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
 import logo1 from '@images/campingping_orange.svg';
@@ -16,8 +15,17 @@ import { useLocationStore } from '@/stores/locationState';
 import { api } from '@/utils/axios';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
+interface P {
+  id: string;
+  title: string;
+  location: string;
+  people: number;
+  content: string;
+  startDate: Date;
+  endDate: Date;
+}
+
 interface Post {
-  data: any;
   id: string;
   title: string;
   location: string;
@@ -54,7 +62,7 @@ const CommunityPage = () => {
     if (activeTab === 'myPosts') {
       const data = await getMyPosts();
       if (data) {
-        const postsWithDates = data.map((post: any) => ({
+        const postsWithDates = data.map((post: P) => ({
           ...post,
           startDate: new Date(post.startDate),
           endDate: new Date(post.endDate),
@@ -66,7 +74,7 @@ const CommunityPage = () => {
     const data = await getPosts(userLat, userLon);
 
     if (data) {
-      const postsWithDates = data.map((post: any) => ({
+      const postsWithDates = data.map((post: P) => ({
         ...post,
         startDate: new Date(post.startDate),
         endDate: new Date(post.endDate),
@@ -81,7 +89,7 @@ const CommunityPage = () => {
     if (tab === 'myPosts') {
       const data = await getMyPosts();
       if (data) {
-        const postsWithDates = data.map((post: any) => ({
+        const postsWithDates = data.map((post: P) => ({
           ...post,
           startDate: new Date(post.startDate),
           endDate: new Date(post.endDate),
@@ -92,7 +100,7 @@ const CommunityPage = () => {
       const data = await getPosts(userLat, userLon);
 
       if (data) {
-        const postsWithDates = data.map((post: any) => ({
+        const postsWithDates = data.map((post: P) => ({
           ...post,
           startDate: new Date(post.startDate),
           endDate: new Date(post.endDate),
@@ -113,21 +121,14 @@ const CommunityPage = () => {
     setSelectedPost(null);
     setIsDetailModalOpen(false);
   };
-  const scrollToTop = () => {
-    if (ref.current !== null) {
-      ref.current.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-  };
+
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const renderPosts = async () => {
       if (isDetailModalOpen === false) {
         const data = await getMyPosts();
         if (data) {
-          const postsWithDates = data.map((post: any) => ({
+          const postsWithDates = data.map((post: P) => ({
             ...post,
             startDate: new Date(post.startDate),
             endDate: new Date(post.endDate),
@@ -141,10 +142,10 @@ const CommunityPage = () => {
 
   useEffect(() => {
     const fetchInitialPosts = async () => {
-      const data = await getMyPosts(); // 초기에는 내 게시물로 설정
+      const data = await getMyPosts();
 
       if (data) {
-        const postsWithDates = data.map((post: any) => ({
+        const postsWithDates = data.map((post: P) => ({
           ...post,
           startDate: new Date(post.startDate),
           endDate: new Date(post.endDate),
@@ -249,11 +250,9 @@ const CommunityPage = () => {
       ref={ref}
     >
       <div className="sticky top-0 bg-white shadow-md">
-        {/* 로고 */}
         <div className="flex justify-center mt-4 gap-1">
           <Image src={logo1} alt="로고 이미지" width={100} height={100} />
         </div>
-        {/* 버튼 */}
         <div className="flex justify-center border-b border-gray-200">
           <button
             className={`flex-1 p-3 ${
