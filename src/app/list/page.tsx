@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
 import { Camp } from '@/types/Camp';
@@ -31,7 +30,7 @@ const List = () => {
 
   useEffect(() => {
     setRegionQuery(new URLSearchParams(window.location.search).get('region'));
-  });
+  }, []);
 
   const fetchCampingData = useCallback(async () => {
     try {
@@ -50,7 +49,7 @@ const List = () => {
       console.error(error);
       return { camps: [], nextCursor: 0 };
     }
-  }, [LIMIT, createApiUrl, currentCursor, selectedCategoryValue, regionQuery]);
+  }, [LIMIT, currentCursor, selectedCategoryValue, regionQuery]);
 
   useEffect(() => {
     setCampingData([]);
