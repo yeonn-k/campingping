@@ -1,9 +1,11 @@
-export const filterWeatherData = (data: any[]) => {
+import { WeatherType } from '@/types/WeatherType';
+
+export const filterWeatherData = (data: WeatherType[]) => {
   const today = new Date();
   const formattedToday = formatDateAsKey(today);
 
   const filteredData = data
-    .filter((item: any) => {
+    .filter((item: WeatherType) => {
       const itemDate = item.date;
       return itemDate >= formattedToday;
     })

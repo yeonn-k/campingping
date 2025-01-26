@@ -5,7 +5,7 @@ interface ChatBox {
   createdAt: string;
 }
 
-const ChatBox = ({ roomId, nickname, createdAt, lastMsg }: ChatBox) => {
+const ChatBox = ({ nickname, createdAt, lastMsg }: ChatBox) => {
   return (
     <div className="w-11/12 border border-Green px-4 py-3 rounded-md flex justify-between items-center">
       <div className="w-9/12">

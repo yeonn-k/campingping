@@ -8,7 +8,7 @@ interface RegionState {
 
 export const regionStore = create<RegionState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       coloredState: null,
       setColoredState: (v: string | null) => {
         if (v === null) {

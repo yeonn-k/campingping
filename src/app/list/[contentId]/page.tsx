@@ -13,8 +13,6 @@ import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
 import goToBack from '@icons/goToBack.svg';
 
-import DefaultImg from '@/components/DefaultImg/DefaultImg';
-
 import SearchBar from '@/components/SearchBar/SearchBar';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
@@ -86,7 +84,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
         script.remove();
       }
     };
-  }, []);
+  });
 
   useEffect(() => {
     if (!campData) return;
@@ -269,7 +267,10 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
                   ) {
                     const iconPath = getIconPath(category.iconName, false);
                     return (
-                      <div className="flex flex-wrap justify-center">
+                      <div
+                        className="flex flex-wrap justify-center"
+                        key={category.name}
+                      >
                         <Image
                           key={category.name}
                           src={iconPath}
