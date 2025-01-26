@@ -1,12 +1,8 @@
 import { api } from './axios';
 
-export const getProfile = async (token: string) => {
+export const getProfile = async () => {
   try {
-    const res = await api.get(`/user/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await api.get(`/user/profile`);
     return res.data;
   } catch (error) {
     console.error('프로필 이미지 조회 실패', error);
