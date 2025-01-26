@@ -1,5 +1,4 @@
 import { api } from './axios';
-const token = localStorage.getItem('token');
 
 export const createPost = async (postData: {
   id?: string;
@@ -16,11 +15,7 @@ export const createPost = async (postData: {
     const formattedPostData = {
       ...postData,
     };
-    const response = await api.post(`/communities`, formattedPostData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post(`/communities`, formattedPostData, {});
 
     return response.data;
   } catch (error) {
@@ -38,9 +33,6 @@ export const getPosts = async (
   try {
     const response = await api.get(`/communities`, {
       params: { lon, lat, limit, cursor },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
 
     return response.data.data.result;
@@ -54,9 +46,6 @@ export const getMyPosts = async (limit: number = 10, cursor?: number) => {
   try {
     const response = await api.get(`/communities/myposts`, {
       params: { limit, cursor },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
 
     return response.data.data.result;
@@ -67,7 +56,7 @@ export const getMyPosts = async (limit: number = 10, cursor?: number) => {
 };
 
 export const getPostById = async (id: string) => {
-  const response = await api.get(`/communities/${id}`);
+  const response = await api.get(`/communities/${id}`, {});
   return response.data;
 };
 
@@ -86,7 +75,7 @@ export const updatePost = async (
   }
 ) => {
   try {
-    const response = await api.patch(`/communities/${id}`, postData);
+    const response = await api.patch(`/communities/${id}`, postData, {});
     return response.data;
   } catch (error) {
     console.error('Error while updating a post:', error);
