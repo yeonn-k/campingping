@@ -19,14 +19,13 @@ interface User {
 }
 
 interface Post {
-  data: any;
   id: string;
   title: string;
   location: string;
   people: number;
   content: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: Date;
+  endDate: Date;
   lat: number;
   lon: number;
 }
@@ -53,7 +52,6 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editedFields, setEditedFields] = useState<Partial<Post>>({});
 
-  // chat
   const { setChatRoomId, setChatState } = chattingStore();
 
   useEffect(() => {
@@ -121,21 +119,39 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     if (!currentPost) return;
 
     try {
-      const { title, content, location, people, startDate, endDate, lon, lat } =
-        editedFields;
-
-      const payload = {
-        title,
-        content,
-        location,
-        people,
-        startDate,
-        endDate,
-        lon,
-        lat,
+      // 필수 속성을 보장하도록 editedFields와 currentPost를 병합
+      const payload: Post = {
+        id: currentPost.id, // currentPost의 id를 사용하여 undefined 방지
+        title: editedFields.title ?? currentPost.title,
+        content: editedFields.content ?? currentPost.content,
+        location: editedFields.location ?? currentPost.location,
+        people: editedFields.people ?? currentPost.people,
+        startDate: editedFields.startDate ?? currentPost.startDate,
+        endDate: editedFields.endDate ?? currentPost.endDate,
+        lat: editedFields.lat ?? currentPost.lat,
+        lon: editedFields.lon ?? currentPost.lon,
       };
+
+      // 수정된 게시글 데이터 서버에 전송
       await updatePost(currentPost.id, payload);
-      setCurrentPost((prev) => ({ ...prev, ...editedFields }));
+      setCurrentPost((prev) => {
+        if (!prev) return null; // prev가 null인 경우 반환
+
+        // 모든 필드를 병합하여 Post 형식을 보장
+        return {
+          ...prev,
+          ...editedFields,
+          id: prev.id,
+          title: editedFields.title ?? prev.title, // undefined인 경우 이전 값 유지
+          location: editedFields.location ?? prev.location,
+          people: editedFields.people ?? prev.people,
+          content: editedFields.content ?? prev.content,
+          startDate: editedFields.startDate ?? prev.startDate,
+          endDate: editedFields.endDate ?? prev.endDate,
+          lat: editedFields.lat ?? prev.lat,
+          lon: editedFields.lon ?? prev.lon,
+        };
+      });
       setIsEditingPost(false);
     } catch (error) {
       console.error('Error updating post:', error);
@@ -193,10 +209,10 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     setEditingContent(currentContent);
   };
 
-  const handleEditSubmit = () => {
-    if (!editingContent.trim()) return;
-    handleCommentAction('update', editingCommentId!, editingContent.trim());
-  };
+  // const handleEditSubmit = () => {
+  //   if (!editingContent.trim()) return;
+  //   handleCommentAction('update', editingCommentId!, editingContent.trim());
+  // };
 
   // chatting
   const createNewChat = (email: string) => {
@@ -208,7 +224,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   useEffect(() => {
     const handleRoomCreated = (data: { roomId: number; message: string }) => {
       const { roomId } = data;
-      setChatState();
+      setChatState(true);
       setChatRoomId(roomId);
     };
 
