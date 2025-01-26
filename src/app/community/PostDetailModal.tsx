@@ -233,6 +233,8 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     return () => {
       socket.off('roomCreated', handleRoomCreated);
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

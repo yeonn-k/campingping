@@ -2,14 +2,22 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { errorInterceptor, successInterceptor } from './interceptors';
 import { API_URL } from '@/config/config';
 
+const token = localStorage.getItem('token');
+
+const headers: Record<string, string> = {
+  'Content-Type': 'application/json;charset=utf-8',
+  'Access-Control-Allow-Origin': '*',
+};
+
+if (token) {
+  headers['Authorization'] = `Bearer ${token}`;
+}
+
 const axiosRequestConfig: AxiosRequestConfig = {
   baseURL: API_URL,
   responseType: 'json',
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json;charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-  },
+  headers,
 };
 
 export const api: AxiosInstance = axios.create(axiosRequestConfig);
