@@ -24,6 +24,11 @@ import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 
 const LIMIT = 10;
 
+const NoSSRCategory = dynamic(
+  () => import('../../components/Category/Category'),
+  { ssr: false }
+);
+
 const Map = () => {
   const searchParams = useSearchParams();
 
@@ -33,11 +38,6 @@ const Map = () => {
   const [nextCursor, setNextCursor] = useState(0);
 
   const isGeoLocationGranted = useGeoLocationPermission();
-
-  const NoSSRCategory = dynamic(
-    () => import('../../components/Category/Category'),
-    { ssr: false }
-  );
 
   const { selectedCategoryValue, selectedCategory, handleCategorySelected } =
     useCategory();
