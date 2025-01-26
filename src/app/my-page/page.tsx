@@ -7,15 +7,13 @@ import profile from '@images/profile.svg';
 import { getProfile, updateProfileImage } from '../../utils/profileService';
 
 interface UserProfile {
-  data: {
-    user: {
-      email: string;
-      nickName: string;
-      userType: string;
-      image: {
-        id: number;
-        url: string;
-      };
+  user: {
+    email: string;
+    nickName: string;
+    userType: string;
+    image: {
+      id: number;
+      url: string;
     };
   };
 }
@@ -23,18 +21,15 @@ interface UserProfile {
 const MyPage = () => {
   const [profileImage, setProfileImage] = useState<string>(profile);
   const [response, setResponse] = useState<UserProfile | null>(null);
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    if (token) {
-      getProfileImage(token);
-    }
+    getProfileImage();
   }, []);
 
-  const getProfileImage = async (token: string) => {
+  const getProfileImage = async () => {
     try {
-      const data = await getProfile(token);
-      setResponse(data);
+      const data = await getProfile();
+      setResponse(data.data);
       setProfileImage(data.data.user.image.url || profile);
     } catch (error) {
       console.error('프로필 이미지 조회 실패', error);
@@ -50,10 +45,8 @@ const MyPage = () => {
 
       try {
         const data = await updateProfileImage(file);
-        if (token) {
-          setProfileImage(data.data.user.image.url);
-          getProfileImage(token);
-        }
+        setProfileImage(data.data.user.image.url);
+        getProfileImage();
       } catch (error) {
         console.error('프로필 이미지 변경 실패', error);
       }
@@ -78,8 +71,8 @@ const MyPage = () => {
             />
           </div>
           <div className="ml-4">
-            <p className="font-bold text-lg">{response?.data.user.nickName}</p>
-            <p className="text-gray-500">{response?.data.user.email}</p>
+            <p className="font-bold text-lg">{response?.user.nickName}</p>
+            <p className="text-gray-500">{response?.user.email}</p>
           </div>
         </div>
 
