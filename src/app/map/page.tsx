@@ -192,8 +192,8 @@ const Map = () => {
   }, [lat, lon, regionQuery, selectedCategoryValue]);
 
   useEffect(() => {
-    if (!kakaoMap || campList.length === 0) return;
-    const positions = campList.map((camp) => ({
+    if (!kakaoMap || campList?.length === 0) return;
+    const positions = campList?.map((camp) => ({
       id: camp.contentId,
       title: camp.facltNm,
       latlng: new window.kakao.maps.LatLng(
@@ -203,7 +203,7 @@ const Map = () => {
       address: camp.addr1,
     }));
 
-    positions.forEach((position) => {
+    positions?.forEach((position) => {
       const marker = new window.kakao.maps.Marker({
         map: kakaoMap,
         position: position.latlng,

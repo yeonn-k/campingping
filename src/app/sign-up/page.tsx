@@ -122,7 +122,7 @@ const SignUp = () => {
         height={50}
         alt="logo"
         priority
-        className="absolute top-24"
+        className="absolute top-20"
       />
       <div className="absolute bg-white w-[346px] h-[612px] rounded-lg flex justify-center items-center flex-col">
         <form

@@ -1,8 +1,9 @@
 'use client';
 
-// import Link from 'next/link';
+import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { API_URL } from '@/config/config';
 
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
@@ -18,6 +19,7 @@ import SymbolImg from '@images/campingping.png';
 import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 
 import { api } from '@/utils/axios';
+import { useEffect } from 'react';
 
 interface FormData {
   email: string;
@@ -28,6 +30,8 @@ const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 const SignIn = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const { setUserState } = userStore();
   const { register, handleSubmit } = useForm<FormData>();
 
@@ -49,7 +53,6 @@ const SignIn = () => {
       });
 
       if (res.status === 200) {
-        console.log(res);
         setUserState(email);
         router.push('/list');
       } else {
@@ -60,19 +63,19 @@ const SignIn = () => {
     }
   };
 
-  const kakaoSignIn = async () => {
-    try {
-      const res = await api.get('/auth/kakao-login');
-
-      if (res.status === 200) {
-        console.log(res);
-        setUserState(res.data.email);
+  useEffect(() => {
+    const email = searchParams.get('email');
+    const fromKaKao = searchParams.has('fromKaKao');
+    if (fromKaKao) {
+      if (email) {
+        setUserState(email);
         router.push('/list');
+      } else {
+        router.push('/sign-in');
+        toast.error('카카오 로그인에 실패했습니다.');
       }
-    } catch (error) {
-      console.error(error);
     }
-  };
+  }, [searchParams]);
 
   const moveToSignUp = () => {
     router.push('/sign-up');
@@ -93,7 +96,7 @@ const SignIn = () => {
         height={50}
         alt="logo"
         priority
-        className="absolute top-36"
+        className="absolute top-32"
       />
       <div className="absolute bg-white w-[346px] h-[494px] rounded-lg flex justify-center items-center flex-col">
         <Image
@@ -125,18 +128,14 @@ const SignIn = () => {
           </div>
           <Button width={'w-10/12'}>로그인</Button>
         </form>
-        {/* <Link href={`${API_URL}/auth/kakao-login`} className="w-10/12"> */}
-        <Button
-          width={'w-10/12'}
-          bgcolor={'bg-kakaoYellow'}
-          onClick={kakaoSignIn}
-        >
-          <div className="flex justify-center">
-            <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
-            <span className="ml-1">카카오 로그인</span>
-          </div>
-        </Button>
-        {/* </Link> */}
+        <Link href={`${API_URL}/auth/kakao-login`} className="w-10/12">
+          <Button width={'w-full'} bgcolor={'bg-kakaoYellow'}>
+            <div className="flex justify-center">
+              <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
+              <span className="ml-1">카카오 로그인</span>
+            </div>
+          </Button>
+        </Link>
         <button className="mt-2" onClick={moveToSignUp}>
           회원가입
         </button>
