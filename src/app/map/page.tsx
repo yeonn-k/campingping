@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 
 import { createRoot } from 'react-dom/client';
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import SearchBar from '@/components/SearchBar/SearchBar';
 
@@ -263,38 +263,36 @@ const Map = () => {
         region={regionQuery}
       />
 
-      <Suspense fallback={<LoadingSpinner />}>
-        {regionQuery && (
-          <NoSSRCategory
-            selectedCategory={selectedCategory}
-            onCategorySelected={handleCategorySelected}
-          />
+      {regionQuery && (
+        <NoSSRCategory
+          selectedCategory={selectedCategory}
+          onCategorySelected={handleCategorySelected}
+        />
+      )}
+
+      <div className="relative w-full h-full flex justify-center">
+        <WeatherWithLatLon lat={lat} lon={lon} />
+
+        {isGeoLocationGranted && !lat && !lon ? (
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="flex flex-wrap justify-center pb-28">
+              <LoadingSpinner />
+              <p className="w-full text-Gray text-center mt-2">
+                지도를 불러오는 중 입니다
+              </p>
+            </div>
+          </div>
+        ) : lat && lon ? (
+          <div ref={mapRef} className="w-full h-full">
+            <MapListWrap campList={campList} lastItemRef={lastItemRef} />
+          </div>
+        ) : (
+          <div className="h-5/6 flex flex-col justify-center items-center">
+            <p>위치를 기반으로 하는 페이지 입니다.</p>
+            <p>위치 권한을 확인해주세요</p>
+          </div>
         )}
-
-        <div className="relative w-full h-full flex justify-center">
-          <WeatherWithLatLon lat={lat} lon={lon} />
-
-          {isGeoLocationGranted && !lat && !lon ? (
-            <div className="w-full h-full flex justify-center items-center">
-              <div className="flex flex-wrap justify-center pb-28">
-                <LoadingSpinner />
-                <p className="w-full text-Gray text-center mt-2">
-                  지도를 불러오는 중 입니다
-                </p>
-              </div>
-            </div>
-          ) : lat && lon ? (
-            <div ref={mapRef} className="w-full h-full">
-              <MapListWrap campList={campList} lastItemRef={lastItemRef} />
-            </div>
-          ) : (
-            <div className="h-5/6 flex flex-col justify-center items-center">
-              <p>위치를 기반으로 하는 페이지 입니다.</p>
-              <p>위치 권한을 확인해주세요</p>
-            </div>
-          )}
-        </div>
-      </Suspense>
+      </div>
     </>
   );
 };

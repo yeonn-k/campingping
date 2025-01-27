@@ -49,6 +49,7 @@ const SignIn = () => {
       });
 
       if (res.status === 200) {
+        console.log(res);
         setUserState(email);
         router.push('/list');
       } else {
