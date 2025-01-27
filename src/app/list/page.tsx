@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import Category from '@/components/Category/Category';
 import Card from '@/components/Card/Card';
 import { Camp } from '@/types/Camp';
@@ -12,6 +12,7 @@ import { createApiUrl } from '@/utils/createApiUrl';
 
 import useCategory from '@/hooks/useCategory';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
+import { useSearchParams } from 'next/navigation';
 
 const List = () => {
   const { selectedCategoryValue, selectedCategory, handleCategorySelected } =
@@ -28,9 +29,13 @@ const List = () => {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const searchParams = useSearchParams();
+
   useEffect(() => {
-    setRegionQuery(new URLSearchParams(window.location.search).get('region'));
-  }, []);
+    if (searchParams) {
+      setRegionQuery(searchParams.get('region'));
+    }
+  }, [searchParams]);
 
   const fetchCampingData = useCallback(async () => {
     try {
@@ -74,45 +79,47 @@ const List = () => {
   }, [fetchCampingData, nextCursorRef]);
 
   return (
-    <div className="w-full flex flex-col pb-20 h-screen" ref={scrollRef}>
-      <SearchBar
-        origin="list"
-        category={selectedCategoryValue}
-        region={regionQuery}
-      />
-      <Category
-        selectedCategory={selectedCategory}
-        onCategorySelected={handleCategorySelected}
-      />
-      <div className="flex flex-col space-y-8  p-4 mx-* pb-20 ">
-        {campingData?.length ? (
-          campingData.map((camp) => (
-            <Card
-              key={camp.contentId}
-              itemId={camp.contentId}
-              liked={camp.favorite}
-              imgSrc={camp.firstImageUrl}
-              name={camp.facltNm ? camp.facltNm : ''}
-              address={
-                camp.addr1
-                  ? camp.addr2
-                    ? `${camp.addr1} ${camp.addr2}`
-                    : camp.addr1
-                  : ''
-              }
-              description={camp.lineIntro || ''}
-            />
-          ))
-        ) : (
-          <p>검색 결과가 없습니다</p>
-        )}
-      </div>
-      <div ref={loadMoreRef} className="h-[100px]">
-        {isLoading && <LoadingSpinner />}
-      </div>
+    <Suspense fallback={<LoadingSpinner />}>
+      <div className="w-full flex flex-col pb-20 h-screen" ref={scrollRef}>
+        <SearchBar
+          origin="list"
+          category={selectedCategoryValue}
+          region={regionQuery}
+        />
+        <Category
+          selectedCategory={selectedCategory}
+          onCategorySelected={handleCategorySelected}
+        />
+        <div className="flex flex-col space-y-8  p-4 mx-* pb-20 ">
+          {campingData?.length ? (
+            campingData.map((camp) => (
+              <Card
+                key={camp.contentId}
+                itemId={camp.contentId}
+                liked={camp.favorite}
+                imgSrc={camp.firstImageUrl}
+                name={camp.facltNm ? camp.facltNm : ''}
+                address={
+                  camp.addr1
+                    ? camp.addr2
+                      ? `${camp.addr1} ${camp.addr2}`
+                      : camp.addr1
+                    : ''
+                }
+                description={camp.lineIntro || ''}
+              />
+            ))
+          ) : (
+            <p>검색 결과가 없습니다</p>
+          )}
+        </div>
+        <div ref={loadMoreRef} className="h-[100px]">
+          {isLoading && <LoadingSpinner />}
+        </div>
 
-      <ScrollToTop scrollRef={scrollRef} />
-    </div>
+        <ScrollToTop scrollRef={scrollRef} />
+      </div>
+    </Suspense>
   );
 };
 

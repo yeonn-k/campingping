@@ -1,9 +1,10 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 
 import { createRoot } from 'react-dom/client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import SearchBar from '@/components/SearchBar/SearchBar';
 
@@ -13,14 +14,13 @@ import Overlay from './component/Overlay';
 import { CampMap } from '@/types/Camp';
 import { useLocationStore } from '@/stores/locationState';
 
-import { api } from '@/utils/axios';
 import useLocation from '@/hooks/useLocation';
 import useCategory from '@/hooks/useCategory';
-import { createApiUrl } from '@/utils/createApiUrl';
-import { useSearchParams } from 'next/navigation';
-import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
+import { api } from '@/utils/axios';
+import { createApiUrl } from '@/utils/createApiUrl';
 import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
+import LoadingSpinner from '@/components/Button/LoadingSpinner';
 
 const LIMIT = 10;
 
@@ -55,7 +55,10 @@ const Map = () => {
   const [campList, setCampList] = useState<CampMap[]>([]);
 
   useEffect(() => {
-    setRegionQuery(new URLSearchParams(window.location.search).get('region'));
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      setRegionQuery(searchParams.get('region'));
+    }
   }, []);
 
   const location = useLocation(regionQuery);
@@ -260,36 +263,38 @@ const Map = () => {
         region={regionQuery}
       />
 
-      {regionQuery && (
-        <NoSSRCategory
-          selectedCategory={selectedCategory}
-          onCategorySelected={handleCategorySelected}
-        />
-      )}
-
-      <div className="relative w-full h-full flex justify-center">
-        <WeatherWithLatLon lat={lat} lon={lon} />
-
-        {isGeoLocationGranted && !lat && !lon ? (
-          <div className="w-full h-full flex justify-center items-center">
-            <div className="flex flex-wrap justify-center pb-28">
-              <LoadingSpinner />
-              <p className="w-full text-Gray text-center mt-2">
-                지도를 불러오는 중 입니다
-              </p>
-            </div>
-          </div>
-        ) : lat && lon ? (
-          <div ref={mapRef} className="w-full h-full">
-            <MapListWrap campList={campList} lastItemRef={lastItemRef} />
-          </div>
-        ) : (
-          <div className="h-5/6 flex flex-col justify-center items-center">
-            <p>위치를 기반으로 하는 페이지 입니다.</p>
-            <p>위치 권한을 확인해주세요</p>
-          </div>
+      <Suspense fallback={<LoadingSpinner />}>
+        {regionQuery && (
+          <NoSSRCategory
+            selectedCategory={selectedCategory}
+            onCategorySelected={handleCategorySelected}
+          />
         )}
-      </div>
+
+        <div className="relative w-full h-full flex justify-center">
+          <WeatherWithLatLon lat={lat} lon={lon} />
+
+          {isGeoLocationGranted && !lat && !lon ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <div className="flex flex-wrap justify-center pb-28">
+                <LoadingSpinner />
+                <p className="w-full text-Gray text-center mt-2">
+                  지도를 불러오는 중 입니다
+                </p>
+              </div>
+            </div>
+          ) : lat && lon ? (
+            <div ref={mapRef} className="w-full h-full">
+              <MapListWrap campList={campList} lastItemRef={lastItemRef} />
+            </div>
+          ) : (
+            <div className="h-5/6 flex flex-col justify-center items-center">
+              <p>위치를 기반으로 하는 페이지 입니다.</p>
+              <p>위치 권한을 확인해주세요</p>
+            </div>
+          )}
+        </div>
+      </Suspense>
     </>
   );
 };

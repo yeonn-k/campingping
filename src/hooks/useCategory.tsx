@@ -11,8 +11,10 @@ const useCategory = () => {
     selectedCategory === '전체' ? null : selectedCategory;
 
   useEffect(() => {
-    const category = searchParams.get('category') || '전체';
-    setSelectedCategory(category);
+    if (searchParams) {
+      const category = searchParams.get('category') || '전체';
+      setSelectedCategory(category);
+    }
   }, [searchParams]);
 
   const setSelectedCategoryValue = useCallback(
