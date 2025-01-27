@@ -64,7 +64,8 @@ const SignIn = () => {
       const res = await api.get('/auth/kakao-login');
 
       if (res.status === 200) {
-        setUserState(res.data.data.email);
+        console.log(res);
+        setUserState(res.data.email);
         router.push('/list');
       }
     } catch (error) {
