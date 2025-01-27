@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 
 import { createRoot } from 'react-dom/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -13,14 +14,13 @@ import Overlay from './component/Overlay';
 import { CampMap } from '@/types/Camp';
 import { useLocationStore } from '@/stores/locationState';
 
-import { api } from '@/utils/axios';
 import useLocation from '@/hooks/useLocation';
 import useCategory from '@/hooks/useCategory';
-import { createApiUrl } from '@/utils/createApiUrl';
-import { useSearchParams } from 'next/navigation';
-import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
+import { api } from '@/utils/axios';
+import { createApiUrl } from '@/utils/createApiUrl';
 import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
+import LoadingSpinner from '@/components/Button/LoadingSpinner';
 
 const LIMIT = 10;
 
@@ -55,7 +55,10 @@ const Map = () => {
   const [campList, setCampList] = useState<CampMap[]>([]);
 
   useEffect(() => {
-    setRegionQuery(new URLSearchParams(window.location.search).get('region'));
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      setRegionQuery(searchParams.get('region'));
+    }
   }, []);
 
   const location = useLocation(regionQuery);
@@ -189,8 +192,8 @@ const Map = () => {
   }, [lat, lon, regionQuery, selectedCategoryValue]);
 
   useEffect(() => {
-    if (!kakaoMap || campList.length === 0) return;
-    const positions = campList.map((camp) => ({
+    if (!kakaoMap || campList?.length === 0) return;
+    const positions = campList?.map((camp) => ({
       id: camp.contentId,
       title: camp.facltNm,
       latlng: new window.kakao.maps.LatLng(
@@ -200,7 +203,7 @@ const Map = () => {
       address: camp.addr1,
     }));
 
-    positions.forEach((position) => {
+    positions?.forEach((position) => {
       const marker = new window.kakao.maps.Marker({
         map: kakaoMap,
         position: position.latlng,

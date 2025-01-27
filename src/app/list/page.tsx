@@ -12,6 +12,7 @@ import { createApiUrl } from '@/utils/createApiUrl';
 
 import useCategory from '@/hooks/useCategory';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
+import { useSearchParams } from 'next/navigation';
 
 const List = () => {
   const { selectedCategoryValue, selectedCategory, handleCategorySelected } =
@@ -28,9 +29,13 @@ const List = () => {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const searchParams = useSearchParams();
+
   useEffect(() => {
-    setRegionQuery(new URLSearchParams(window.location.search).get('region'));
-  }, []);
+    if (searchParams) {
+      setRegionQuery(searchParams.get('region'));
+    }
+  }, [searchParams]);
 
   const fetchCampingData = useCallback(async () => {
     try {

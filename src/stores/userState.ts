@@ -14,7 +14,7 @@ export const userStore = create<UserState>()(
       userEmail: null,
       setUserState: (v: string | null) =>
         set((state: UserState) => ({
-          userState: !state.userState,
+          userState: v !== null,
           userEmail: v,
         })),
     }),

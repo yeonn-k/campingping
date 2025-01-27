@@ -52,7 +52,7 @@ export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
           onClick={handleList}
         />
       )}
-      {localCampList.length > 0 ? (
+      {localCampList?.length > 0 ? (
         localCampList.map((camp, idx) => {
           return (
             <div

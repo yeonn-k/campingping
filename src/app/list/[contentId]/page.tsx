@@ -84,7 +84,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
         script.remove();
       }
     };
-  });
+  }, []);
 
   useEffect(() => {
     if (!campData) return;
