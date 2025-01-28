@@ -4,6 +4,7 @@ import { API_URL } from '@/config/config';
 
 const token =
   typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
 const headers: Record<string, string> = {
   'Content-Type': 'application/json;charset=utf-8',
   'Access-Control-Allow-Origin': '*',

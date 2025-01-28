@@ -238,7 +238,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[19]">
       <div className="bg-white rounded-lg w-[90%] h-[80%] max-w-md overflow-auto">
         <div className="flex items-center justify-between mb-4">
           <button onClick={onClose}>
