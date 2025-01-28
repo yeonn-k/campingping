@@ -94,26 +94,26 @@
 - 유저 위치 기반일 경우 유저의 위치에 해당하는 위도와 경도 값을 전달하여 현재 위치의 날씨 제공
 - 지역 검색 시 검색한 지역에 해당하는 위도와 경도 값을 전달하여 해당하는 지역의 날씨 제공
 
-### 🔍 search
+## 🔍 search
 - `searchBar` 컴포넌트를 통해 `origin`, `category`, `region`을  `query`로 전달받음
 - `origin`
   - `map` 이나 `list` 페이지에서 접근 시 `origin` 을 그대로 저장해서 기존 페이지로 기존 카테고리와 지역에 대한 정보를 전달
   - `detail`이나 외부 페이지에서 url을 입력해서 접근했을 경우 `origin`을 기본 값인 `map`으로 대체, `map` 페이지에서 지역 검색의 결과를 보여줌
  
   - query에서는 '서울시', '부산시' 등의 형태로 사용되나 렌더링 시에는 '서울특별시', '부산특별시' 등의 형태로 사용
-  - `useRegion` 훅을 통해 새로운 지역이 선택되면 검색을 위해 필요한 형태로 형태를 변환하여 query에 업데이트하고 regionStore에는 선택된 버튼 색상 관리와 값 비교를 그대로 값 저장
+  - `useRegion` 훅을 통해 새로운 지역이 선택되면 검색을 위해 필요한 형태로 형태를 변환하여 query에 업데이트하고 regionStore에는 선택된 값 비교와 선택된 버튼 색상 관리를 그대로 값 저장
   - 선택된 값이 기존의 `regionStore`에 저장된 값과 같은 경우, 쿼리 및 상태 관리 초기화
   - nav를 통해 페이지 이동 시 `regionStore` 상태 값 초기화
    
-### 💬 chat
-### 🎨 desktop UI
-### 💡components
-        <ul>
-          <li>input component</li>
-          <li>button component</li>
-          <li>card component</li>
-        </ul>
-      <h3>♻️refactoring</h3>
-### 📍toast 알림</b>으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선
-  </div>
-</details>
+## 💬 chat
+- 
+
+## 🎨 desktop UI
+## 💡components
+- input component
+- button component
+- card component
+
+## ♻️refactoring
+
+## 📍toast 알림</b>으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선
