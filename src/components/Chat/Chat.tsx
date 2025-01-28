@@ -16,8 +16,8 @@ import { chattingStore } from '@/stores/chattingState';
 import { api } from '@/utils/axios';
 import { timeFormat } from '@/utils/timeFormat';
 const Chat = () => {
-  const [isConneted, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState('N/A');
+  const [, setIsConnected] = useState(false);
+  const [, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
 
   const {

@@ -25,7 +25,6 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
   const { userEmail } = userStore();
   const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
-  const [chatMsg] = useState<sendMessage>();
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useIsMobile();
