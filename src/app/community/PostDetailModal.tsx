@@ -233,8 +233,6 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     return () => {
       socket.off('roomCreated', handleRoomCreated);
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -339,10 +337,14 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
               <div
                 key={comment.id}
                 className="flex justify-between items-center mb-2"
-                onClick={() => createNewChat(comment.user.email)}
               >
                 <div>
-                  <p className="text-subTitle">{comment.user.nickname}</p>
+                  <p
+                    className="text-subTitle cursor-pointer"
+                    onClick={() => createNewChat(comment.user.email)}
+                  >
+                    {comment.user.nickname}
+                  </p>
                   {editingCommentId === comment.id ? (
                     <>
                       <input

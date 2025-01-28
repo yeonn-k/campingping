@@ -15,6 +15,7 @@ import { ChatMsgs, sendMessage } from '@/types/Chatting';
 import { userStore } from '@/stores/userState';
 import { chattingStore } from '@/stores/chattingState';
 import useInputValue from '@/hooks/useInputValue';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface ChatRoomProps {
   roomId: number;
@@ -27,6 +28,25 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
   const [chatMsg] = useState<sendMessage>();
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const { isMobile } = useIsMobile();
+
+  const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (inputValue && chatRoomId !== null) {
+        if (e.nativeEvent.isComposing) {
+          e.stopPropagation();
+          return;
+        }
+
+        const messageToSend = inputValue;
+
+        sendChatMsg(messageToSend, chatRoomId);
+
+        resetInput();
+      }
+    }
+  };
 
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
@@ -61,18 +81,14 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
       const { sender, message, createdAt } = data;
 
       setChatMsgs((prev) => {
-        if (!prev) {
+        if (!prev)
           return [
             {
-              message: message,
-              createdAt: createdAt,
-              author: {
-                email: sender.email,
-                nickname: sender.nickname,
-              },
+              message,
+              createdAt,
+              author: { email: sender.email, nickname: sender.nickname },
             },
           ];
-        }
 
         const isDuplicate = prev.some((msg) => msg.createdAt === createdAt);
         if (isDuplicate) return prev;
@@ -80,12 +96,9 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
         return [
           ...prev,
           {
-            message: message,
-            createdAt: createdAt,
-            author: {
-              email: sender.email,
-              nickname: sender.nickname,
-            },
+            message,
+            createdAt,
+            author: { email: sender.email, nickname: sender.nickname },
           },
         ];
       });
@@ -96,7 +109,7 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
     return () => {
       socket.off('newMessage', handleChatting);
     };
-  }, [chatMsgs]);
+  }, [chatRoomId]); //chatMsgs, chatMsg
 
   useEffect(() => {
     const handleGetChatting = (data: ChatMsgs[]) => {
@@ -110,53 +123,6 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
   }, []);
 
   useEffect(() => {
-    const handleChatting = (data: sendMessage) => {
-      const { message, createdAt, sender } = data;
-      setChatMsgs((prev) => {
-        if (!prev)
-          return [
-            {
-              message: message,
-              createdAt: createdAt,
-              author: {
-                email: sender.email,
-                nickname: sender.nickname,
-              },
-            },
-          ];
-
-        const isDuplicate = prev.some((msg) => msg.createdAt === createdAt);
-        if (isDuplicate) return prev;
-
-        return [
-          ...prev,
-          {
-            message: message,
-            createdAt: createdAt,
-            author: {
-              email: sender.email,
-              nickname: sender.nickname,
-            },
-          },
-        ];
-      });
-    };
-
-    socket.on('newMessage', handleChatting);
-
-    return () => {
-      socket.off('newMessage', handleChatting);
-    };
-  }, [chatMsg]);
-
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
-    }
-  }, []);
-
-  useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
         top: chatContainerRef.current.scrollHeight,
@@ -167,8 +133,8 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
 
   return (
     <div className="relative h-full flex flex-col">
-      <div className="mt-6 ">
-        <div className="px-6 pt-6 pb-2 flex gap-1 justify-between border-b border-Green">
+      <div className="mt-1 ">
+        <div className="px-6 pt-1 pb-2 flex gap-1 justify-between border-b border-Green">
           <div className="flex gap-1">
             <Image
               src={profileGreen}
@@ -185,7 +151,10 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
           <button className="text-Green">대화 나가기</button>
         </div>
       </div>
-      <div className="overflow-auto h-[55%]" ref={chatContainerRef}>
+      <div
+        className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'}`}
+        ref={chatContainerRef}
+      >
         {chatMsgs?.map((chat) => {
           return chat.author.email === userEmail ? (
             <MyChatMsg
@@ -203,12 +172,15 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
           );
         })}
       </div>
-      <div className="border-t border-Green w-full h-40 flex justify-center items-center">
+      <div
+        className={`border-t border-Green w-full  ${isMobile ? 'h-32' : 'h-40'} flex justify-center items-center p-4`}
+      >
         <textarea
           placeholder="채팅을 입력하세요"
-          className="w-64 h-36 outline-none	pt-2 pr-3"
+          className={`w-full  ${isMobile ? 'h-24' : 'h-36'} outline-none	pt-2 pr-3 resize-none `}
           value={inputValue}
           onChange={handleInputChange}
+          onKeyDown={handleEnter}
         ></textarea>
         <Button height="h-24" onClick={handleSendMessage}>
           전송
