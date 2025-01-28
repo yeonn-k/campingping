@@ -49,11 +49,15 @@ const Nav = () => {
     const res = await api.post('/auth/logout');
     if (res.status === 200) {
       setUserState(null);
+      setChatState(false);
+      setChatRoomId(null);
+      setChatNick('');
+      setColoredState(null);
     }
   };
 
   return (
-    <div className="fixed bottom-0 w-full md:max-w-[450px] bg-white py-1 z-zBottomNav">
+    <div className="fixed bottom-0 w-full max-w-[450px] bg-white py-1 z-zNav">
       <div className="flex w-full justify-around">
         {navItems.map((navItem) => (
           <div

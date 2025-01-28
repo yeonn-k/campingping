@@ -59,7 +59,9 @@ export default function ClientLayout({
       />
       <div className="flex h-screen justify-center items-center">
         <DesktopUi />
-        <div className="relative w-full md:max-w-[450px] h-full flex justify-center overflow-auto">
+        <div
+          className={`relative w-full md:max-w-[450px] h-full flex justify-center ${chatState ? 'overflow-hidden' : 'overflow-auto'}`}
+        >
           {children}
           {pathname !== '/sign-in' && (
             <OpenTheChats

@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { socket } from '../../socket';
 
 import ChatBox from './ChatBox';
@@ -16,8 +16,8 @@ import { chattingStore } from '@/stores/chattingState';
 import { api } from '@/utils/axios';
 import { timeFormat } from '@/utils/timeFormat';
 const Chat = () => {
-  const [, setIsConnected] = useState(false);
-  const [, setTransport] = useState('N/A');
+  const [isConneted, setIsConnected] = useState(false);
+  const [transport, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
 
   const {
@@ -33,9 +33,12 @@ const Chat = () => {
     setIsConnected(true);
     setTransport(socket.io.engine.transport.name);
 
-    socket.io.engine.on('upgrade', (transport) => {
-      setTransport(transport.name);
-    });
+    socket.io.engine.on(
+      'upgrade',
+      (transport: { name: SetStateAction<string> }) => {
+        setTransport(transport.name);
+      }
+    );
   };
 
   const onDisconnect = () => {
@@ -57,6 +60,18 @@ const Chat = () => {
     };
   }, []);
 
+  const getChatHistory = () => {
+    socket.emit('getChatHistory', {
+      roomId: chatRoomId,
+      page: 1,
+      limit: 100,
+    });
+  };
+
+  useEffect(() => {
+    getChatHistory();
+  }, []);
+
   const getChats = async () => {
     try {
       const res = await api.get('/chats/rooms');
@@ -72,7 +87,7 @@ const Chat = () => {
 
   return (
     <div
-      className={`bg-white absolute bottom-0 w-full ${chatState ? 'h-[90%]' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
+      className={`bg-white fixed bottom-0 w-full max-w-[450px] ${chatState ? 'h-5/6' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
     >
       <div className="relative flex justify-center ">
         <Image
@@ -116,6 +131,7 @@ const Chat = () => {
                       nickname={chat.users[0].nickname}
                       lastMsg={chat.lastMessage}
                       createdAt={timeFormat(chat.createdAt)}
+                      isRead={chat.isRead}
                     />
                   </div>
                 );
