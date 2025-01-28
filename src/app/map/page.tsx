@@ -181,7 +181,6 @@ const Map = () => {
         map.setZoomable(false);
 
         if (!regionQuery) {
-          map.setDraggable(false);
           getNearByCampings();
         }
 

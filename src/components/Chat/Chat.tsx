@@ -72,7 +72,7 @@ const Chat = () => {
 
   return (
     <div
-      className={`bg-white absolute bottom-0 w-full ${chatState ? 'h-[92%]' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
+      className={`bg-white absolute bottom-0 w-full ${chatState ? 'h-[90%]' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
     >
       <div className="relative flex justify-center ">
         <Image
