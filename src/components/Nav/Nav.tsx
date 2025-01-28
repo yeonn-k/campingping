@@ -26,7 +26,7 @@ const Nav = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { userState, setUserState } = userStore();
+  const { userState, userEmail, setUserState } = userStore();
   const { setChatState, setChatRoomId, setChatNick } = chattingStore();
   const { setColoredState } = regionStore();
 
@@ -46,13 +46,23 @@ const Nav = () => {
   };
 
   const signOut = async () => {
-    const res = await api.post('/auth/logout');
-    if (res.status === 200) {
-      setUserState(null);
-      setChatState(false);
-      setChatRoomId(null);
-      setChatNick('');
-      setColoredState(null);
+    try {
+      let res;
+
+      if (userEmail && userEmail.includes('kakao')) {
+        res = await api.get('/auth/kakao-logout');
+      } else {
+        res = await api.post('/auth/logout');
+      }
+      if (res.status === 200) {
+        setUserState(null);
+        setChatState(false);
+        setChatRoomId(null);
+        setChatNick('');
+        setColoredState(null);
+      }
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error);
     }
   };
 
