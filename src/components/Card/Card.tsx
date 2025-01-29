@@ -6,7 +6,7 @@ import notMyWishIcon from '@icons/not-liked.svg';
 import DefaultImg from '../DefaultImg/DefaultImg';
 
 interface CardProps {
-  itemId?: string;
+  itemId: string;
   liked: boolean;
   imgSrc: string | null;
   name: string;

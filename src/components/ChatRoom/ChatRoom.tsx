@@ -29,24 +29,6 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useIsMobile();
 
-  const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (inputValue && chatRoomId !== null) {
-        if (e.nativeEvent.isComposing) {
-          e.stopPropagation();
-          return;
-        }
-
-        const messageToSend = inputValue;
-
-        sendChatMsg(messageToSend, chatRoomId);
-
-        resetInput();
-      }
-    }
-  };
-
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
@@ -72,6 +54,24 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
       resetInput();
     } else {
       console.error('Chat room ID is null.');
+    }
+  };
+
+  const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (inputValue && chatRoomId !== null) {
+        if (e.nativeEvent.isComposing) {
+          e.stopPropagation();
+          return;
+        }
+
+        const messageToSend = inputValue;
+
+        sendChatMsg(messageToSend, chatRoomId);
+
+        resetInput();
+      }
     }
   };
 
