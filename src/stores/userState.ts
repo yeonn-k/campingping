@@ -12,11 +12,15 @@ export const userStore = create<UserState>()(
     (set) => ({
       userState: false,
       userEmail: null,
-      setUserState: (v: string | null) =>
-        set(() => ({
-          userState: v !== null,
-          userEmail: v,
-        })),
+      setUserState: (v: string | null) => {
+        if (v === null) {
+          set({ userState: false, userEmail: null });
+          localStorage.removeItem('user-storage');
+          window.location.reload();
+        } else {
+          set({ userState: true, userEmail: v });
+        }
+      },
     }),
     {
       name: 'user-storage',
