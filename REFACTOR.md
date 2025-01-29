@@ -1,3 +1,5 @@
+![waving](https://capsule-render.vercel.app/api?type=waving&height=200&fontAlignY=40&text=Refactoring&color=gradient)
+
 # 🛠️ 리팩토링 기록
 
 ## 캠핑장 상세페이지
