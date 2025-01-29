@@ -72,12 +72,6 @@ const Nav = () => {
     }
   };
 
-  useEffect(() => {
-    if (!userState) {
-      router.push('/sign-in');
-    }
-  }, [userState, router]);
-
   return (
     <div className="fixed bottom-0 w-full max-w-[450px] bg-white py-1 z-zNav">
       <div className="flex w-full justify-around">
