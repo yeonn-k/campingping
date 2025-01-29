@@ -9,7 +9,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { chattingStore } from '@/stores/chattingState';
 import { regionStore } from '@/stores/regionState';
-import { useEffect } from 'react';
 
 interface NavItem {
   name: string;
