@@ -22,7 +22,7 @@ export default function RootLayout({
       <body>
         <Script
           strategy="beforeInteractive"
-          src={`http://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
+          src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
         />
         <ClientLayout>{children}</ClientLayout>
       </body>
