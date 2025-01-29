@@ -106,14 +106,45 @@
   - nav를 통해 페이지 이동 시 `regionStore` 상태 값 초기화
    
 ## 💬 chat
-- 
+- Socket.io를 활용한 실시간 채팅 기능 구현
+  - 유저의 참여 채팅방 리스트 표시( http 요청 )
+  - 특정 채팅방 선택 시 ChatRoomId 상태 업데이트를 통해 입장하고 메시지 입력시 `socket.emit`을 통해 서버로 이벤트 전송
+  - 저장된 유저의 이메일을 활용하여 내가 보낸 메세지와 상대방이 보낸 메세지를 구분하여 표시
+  - `useRef`를 활용한 스크롤
+    - ScrollHeight`: 요소 전체의 스크롤 가능한 높이 = 맨 아래 메세지 까지의 총 높이
+    - `top: chatContainerRef.current.scrollHeight` 설정을 통해 스크롤을 가장 아래로 이동시키는 효과
+    - 의존성 배열에 chatMsgs를 설정함으로써 채팅이 추가될 때 마다 실행시켜 새 메세지가 도착하면 자동으로 맨 아래로 스크롤
 
 ## 🎨 desktop UI
+- 모바일 퍼스트 웹으로 `userAgent` 로 유저의 디바이스를 구분하여 모바일이 아닐 경우 추가로 desktop ui를 렌더링한다.
 ## 💡components
-- input component
-- button component
-- card component
-
-## ♻️refactoring
+### input component
+- `react-hook-form` 사용
+- react-hook-form과 함께 사용하 폼 검증 가능
+- `hasError`로 에러 발생시 `true` 설정이 되고 이 경우 설정된 `errorMessage`가 출력
+- Tailwind CSS로 스타일 확장 가능
+  ```
+    <Input
+      placeholder="비밀번호를 입력해주세요"
+      type="password"
+      {...register('password', {
+        required: '비밀번호를 입력해주세요',
+        pattern: {
+          value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
+          message: '영문, 숫자, 특수문자 포함 8자리 이상이어야 합니다.',
+        },
+      })}
+      hasError={!!errors.password}
+      errorMessage={errors.password?.message}
+    />
+  ```
+### button component
+- 비동기 함수 지원
+- 로딩 시 로딩 스피너 표시 가능
+- Tailwind CCSS 스타일 확장 가능
+### card component
+- 캠핑장 정보를 표시하는 카드 공용 컴포넌트
+- 이미지 등의 기본적으로 표시되는 내용이 없을 경우 지정 된 '기본값'을 보여줍니다.
+- 클릭 시 해당 아이템 상세 페이지로 이동
 
 ## 📍toast 알림</b>으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선
