@@ -464,7 +464,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
           </div>
 
           <div className="flex jsutify-center mb-24">
-            <div className="w-[350px] h-[250px]" id="map"></div>
+            <div className="w-full h-[250px] m-2" id="map"></div>
           </div>
         </div>
       </div>
