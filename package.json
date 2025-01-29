@@ -10,7 +10,6 @@
     "export": "next export"
   },
   "dependencies": {
-    "@tailwindcss/line-clamp": "^0.4.4",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
