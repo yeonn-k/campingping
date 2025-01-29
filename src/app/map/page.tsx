@@ -21,6 +21,7 @@ import { api } from '@/utils/axios';
 import { createApiUrl } from '@/utils/createApiUrl';
 import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
+import Move from './component/Move';
 
 const LIMIT = 10;
 
@@ -230,7 +231,8 @@ const Map = () => {
         return overlayContent;
       };
 
-      const closeOverlay = () => {
+      const closeOverlay = (e: React.MouseEvent<HTMLImageElement>) => {
+        e.stopPropagation();
         overlay.setMap(null);
       };
 
@@ -284,7 +286,8 @@ const Map = () => {
             </div>
           </div>
         ) : lat && lon ? (
-          <div ref={mapRef} className="w-full h-full">
+          <div ref={mapRef} className="relative w-full h-full">
+            <Move />
             <MapListWrap campList={campList} lastItemRef={lastItemRef} />
           </div>
         ) : (
