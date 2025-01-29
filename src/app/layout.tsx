@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './globals.css';
 
 import ClientLayout from '@/components/ClientLayout/ClientLayout';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Campingping',
@@ -19,6 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Script
+          strategy="beforeInteractive"
+          src={`http://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
+        />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

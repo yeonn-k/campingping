@@ -3,8 +3,7 @@
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DesktopUi from './DesktopUi';
-import Script from 'next/script';
-import { useGlobalStore } from '@/stores/globalState';
+
 import { useEffect } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
@@ -22,7 +21,6 @@ export default function ClientLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { setMapScriptLoaded } = useGlobalStore();
   const { updateLocation } = useLocationStore();
   const { chatState, setChatState } = chattingStore();
   const { userState } = userStore();
@@ -47,10 +45,6 @@ export default function ClientLayout({
 
   return (
     <div className="relative">
-      <Script
-        strategy="beforeInteractive"
-        src={`http://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
-      />
       <ToastContainer
         position="top-center"
         draggable
