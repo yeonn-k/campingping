@@ -1,10 +1,8 @@
-// list> [contentId] > page.tsx
 'use client';
 
 import { CampDetail } from '@/types/Camp';
 import Carousel from '@/components/Carousel/Carousel';
 
-import { useGlobalStore } from '@/stores/globalState';
 import { api } from '@/utils/axios';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -51,11 +49,11 @@ const facilityIcons: Facility[] = [
 const KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
 const ListDetail = ({ params }: { params: { contentId: string } }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
   const { contentId } = params;
   const [campData, setCampData] = useState<CampDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { mapScriptLoaded } = useGlobalStore();
   const [location, setLocation] = useState<Location>({
     regionLat: 0,
     regionLon: 0,
@@ -134,40 +132,42 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   }, [campData]);
 
   useEffect(() => {
-    if (mapScriptLoaded && campData) {
-      window.kakao.maps.load(() => {
-        if (campData.location) {
-          const { coordinates } = campData.location;
+    if (!mapRef.current || !campData) return;
 
-          if (coordinates) {
-            const container = document.getElementById('map') as HTMLElement;
-            const options = {
-              center: new window.kakao.maps.LatLng(
-                coordinates[1],
-                coordinates[0]
-              ),
-              level: 3,
-            };
+    window.kakao?.maps.load(() => {
+      if (campData.location) {
+        const { coordinates } = campData.location;
 
-            const map = new window.kakao.maps.Map(container, options);
-
-            const markerPosition = new window.kakao.maps.LatLng(
+        if (coordinates) {
+          const options = {
+            center: new window.kakao.maps.LatLng(
               coordinates[1],
               coordinates[0]
-            );
-            const marker = new window.kakao.maps.Marker({
-              position: markerPosition,
-            });
-            marker.setMap(map);
-          } else {
-            console.error('');
-          }
+            ),
+            level: 3,
+            disableDoubleClick: true,
+          };
+
+          const map = new window.kakao.maps.Map(mapRef.current, options);
+          map.setZoomable(false);
+          map.setDraggable(false);
+
+          const markerPosition = new window.kakao.maps.LatLng(
+            coordinates[1],
+            coordinates[0]
+          );
+          const marker = new window.kakao.maps.Marker({
+            position: markerPosition,
+          });
+          marker.setMap(map);
         } else {
-          console.error('No location data available for this camp');
+          console.error('');
         }
-      });
-    }
-  }, [campData, mapScriptLoaded]);
+      } else {
+        console.error('No location data available for this camp');
+      }
+    });
+  }, [campData]);
 
   useEffect(() => {
     const fetchDataAndCreateMap = async () => {
@@ -186,15 +186,6 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
     };
 
     fetchDataAndCreateMap();
-
-    return () => {
-      const script = document.querySelector(
-        `script[src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_APP_KEY}"]`
-      );
-      if (script) {
-        script.remove();
-      }
-    };
   }, [contentId]);
 
   const facilities = campData?.sbrsCl ? campData.sbrsCl.split(',') : null;
@@ -467,7 +458,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
           </div>
 
           <div className="flex jsutify-center mb-24">
-            <div className="w-full h-[250px] m-2" id="map"></div>
+            <div ref={mapRef} className=" w-full h-[250px] m-2 rounded-md" />
           </div>
         </div>
       </div>

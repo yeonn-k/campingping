@@ -1,3 +1,4 @@
+// carousel
 'use client';
 import React from 'react';
 import Slider from 'react-slick';
@@ -33,17 +34,19 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
   };
 
   return (
-    <div className="slider-container w-full rounded-[5px]">
+    <div className="slider-container w-full rounded-md">
       {isSliderEnabled ? (
         <Slider {...settings}>
           {validImages.map((image, index) => (
-            <div key={image.id || `default-${index}`}>
+            <div
+              key={image.id || `default-${index}`}
+              className="relative w-full h-56 rounded-md"
+            >
               {image.url ? (
                 <Image
-                  className="rounded-[5px] justify-items-stretch"
+                  className="rounded-md justify-items-stretch"
                   src={image.url}
-                  width={350}
-                  height={350}
+                  fill
                   alt="Camp Image"
                 />
               ) : (
@@ -54,11 +57,9 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
         </Slider>
       ) : validImages.length === 1 && validImages[0].url ? (
         <Image
-          className="rounded-[5px] justify-items-stretch"
           key={validImages[0].id || 'default'}
           src={validImages[0].url}
-          width={350}
-          height={350}
+          fill
           alt="Camp Image"
         />
       ) : (
