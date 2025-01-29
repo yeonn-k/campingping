@@ -168,3 +168,5 @@
 - 클릭 시 해당 아이템 상세 페이지로 이동
 
 ## 📍toast 알림</b>으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선
+
+[리팩토링 기록](https://github.com/yeonn-k/campingping/blob/dev/REFACTOR.md)
