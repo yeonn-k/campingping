@@ -242,7 +242,9 @@ const Map = () => {
       window.kakao.maps.event.addListener(marker, 'click', () => {
         const markerPosition = marker.getPosition();
         const adjustedPosition = new window.kakao.maps.LatLng(
-          markerPosition.getLat() + 0.1,
+          regionQuery
+            ? markerPosition.getLat() + 0.1
+            : markerPosition.getLat() + 0.012,
           markerPosition.getLng()
         );
 
