@@ -9,6 +9,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { chattingStore } from '@/stores/chattingState';
 import { regionStore } from '@/stores/regionState';
+import { useEffect } from 'react';
 
 interface NavItem {
   name: string;
@@ -49,6 +50,11 @@ const Nav = () => {
     try {
       let res;
 
+      setChatState(false);
+      setChatRoomId(null);
+      setChatNick('');
+      setColoredState(null);
+
       if (userEmail && userEmail.includes('kakao')) {
         res = await api.get('/auth/kakao-logout');
       } else {
@@ -56,15 +62,21 @@ const Nav = () => {
       }
       if (res.status === 200) {
         setUserState(null);
-        setChatState(false);
-        setChatRoomId(null);
-        setChatNick('');
-        setColoredState(null);
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       }
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error);
     }
   };
+
+  useEffect(() => {
+    if (!userState) {
+      router.push('/sign-in');
+    }
+  }, [userState, router]);
 
   return (
     <div className="fixed bottom-0 w-full max-w-[450px] bg-white py-1 z-zNav">
