@@ -22,6 +22,7 @@ import { regionCoordinates } from '@/hooks/useLocation';
 import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 import NotFound from '@/app/not-found';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
+import DefaultImg from '@/components/DefaultImg/DefaultImg';
 
 interface Facility {
   name: string;
@@ -229,7 +230,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
         <WeatherWithLatLon lat={location.regionLat} lon={location.regionLon} />
       </div>
       <div className="flex flex-col grow p-5 ">
-        {campData?.firstImageUrl && (
+        {campData?.firstImageUrl ? (
           <div className="relative w-full h-56">
             <Image
               src={campData.firstImageUrl}
@@ -247,6 +248,8 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
               className="absolute top-3 right-3"
             />
           </div>
+        ) : (
+          <DefaultImg />
         )}
 
         <div className="flex justify-between">
