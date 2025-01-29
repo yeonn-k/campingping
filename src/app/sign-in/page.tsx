@@ -32,7 +32,7 @@ const SignIn = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { setUserState } = userStore();
+  const { userState, setUserState } = userStore();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
@@ -54,7 +54,10 @@ const SignIn = () => {
 
       if (res.status === 200) {
         setUserState(email);
-        router.push('/list');
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       } else {
         toast.error('이메일 또는 비밀번호가 잘못되었습니다.');
       }
@@ -62,6 +65,12 @@ const SignIn = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (userState) {
+      router.push('/list');
+    }
+  }, [userState, router]);
 
   useEffect(() => {
     const email = searchParams.get('email');
