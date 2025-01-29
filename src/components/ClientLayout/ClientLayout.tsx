@@ -1,4 +1,3 @@
-// app/components/ClientLayout.tsx
 'use client';
 
 import { toast, ToastContainer } from 'react-toastify';
@@ -16,6 +15,7 @@ import { chattingStore } from '@/stores/chattingState';
 import Chat from '../Chat/Chat';
 import { userStore } from '@/stores/userState';
 import React from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function ClientLayout({
   children,
@@ -27,6 +27,7 @@ export default function ClientLayout({
   const { chatState, setChatState } = chattingStore();
   const { userState } = userStore();
   const isGeoLocationGranted = useGeoLocationPermission();
+  const { isMobile } = useIsMobile();
 
   const pathname = usePathname();
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function ClientLayout({
   useEffect(() => {
     if (isGeoLocationGranted) {
       updateLocation();
-    } else {
+    } else if (!isMobile) {
       toast.warn(
         '위치 권한을 설정하지 않으면 사용하지 못하는 기능이 있어요 !',
         {
@@ -47,10 +48,8 @@ export default function ClientLayout({
   return (
     <div className="relative">
       <Script
-        src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
-        onLoad={() => {
-          setMapScriptLoaded(true);
-        }}
+        strategy="beforeInteractive"
+        src={`http://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
       />
       <ToastContainer
         position="top-center"
