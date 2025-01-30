@@ -179,7 +179,6 @@ const Map = () => {
         };
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
-        map.setZoomable(false);
 
         if (!regionQuery) {
           getNearByCampings();
@@ -241,14 +240,13 @@ const Map = () => {
       const overlay = new window.kakao.maps.CustomOverlay({
         content: createContent(closeOverlay),
         position: marker.getPosition(),
+        yAnchor: 1.25,
       });
 
       window.kakao.maps.event.addListener(marker, 'click', () => {
         const markerPosition = marker.getPosition();
         const adjustedPosition = new window.kakao.maps.LatLng(
-          regionQuery
-            ? markerPosition.getLat() + 0.1
-            : markerPosition.getLat() + 0.012,
+          markerPosition.getLat(),
           markerPosition.getLng()
         );
 
