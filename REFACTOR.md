@@ -2,7 +2,7 @@
 
 # 🛠️ 리팩토링 기록
 
-## 캠핑장 상세페이지
+## 📍 캠핑장 상세페이지
 
 - 변경 전
 
@@ -21,21 +21,54 @@
 
   - src/app/list/[contentId]/page.tsx
 
-## Category component / hook
+## 📍 카카오 map Script
+
+- 변경 전
+  - 카카오 맵 스크립트 로드를 위해 `useEffect`와 `zustand` 사용
+  - Script 컴포넌트에서 onLoad 이벤트를 통해 스크립트 로드 후 상태 업데이트 방식
+  - `rootLayout`에 'use client' 사용 필요
+
+- 변경 후
+  - `beforeInteractive` 전략 사용: 페이지 렌더링 전에 스크립트를 로드하므로 페이지 로딩 속도를 향상시켜 사용자 경험 향상
+  - `autoload=false`: 카카오 맵 SDK가 자동으로 로드되지 않아 스크립트 로드 후 필요 시점에 맵을 초기화할 수 있어 맵 로딩을 제어할 수 있도록 함
+  - 불필요한 상태 관리 제거
+  - `rootLayout`에서 'use client' 제거
+
+  ### 🔧 변경된 파일
+
+  - src/app/layout.tsx
+  - src/stores/globalState.ts
+ 
+  - ## 📍 RootLayout
 
 - 변경 전
 
-  - 카테고리의 기능이 list 페이지에 녹아 있는 문제
+  - `RootLayout`에 `useEffect`, `useState` 등 때문에 `Metadata`를 활용하지 못함
+
+- 변경 후
+
+  - `ClientLayout` 컴포넌트를 만들어서 클라이언트 관련 코드를 분리하고 RootLayout에 `Metadata` 작성
+
+  ### 🔧 변경된 파일
+
+  - src/app/layout.tsx
+  - src/components/ClientLayout/ClientLayout.tsx
+
+## 📍 Category component / hook
+
+- 변경 전
+
+  - 카테고리 기능이 리스트 페이지와 결합되어 있어 코드가 복잡해지고 재사용성이 떨어짐.
   - 카테고리 '전체' 가 아이콘 색상 변화를 위해 함께 관리되다 보니 카테고리 선택을 하지 않았을 때 'category=전체'검색이 되는 문제
   - list 페이지의 경우 새로고침 시 카테고리가 유지 되지 않음
-  - 커스텀 드래그 구현으로 일부 아이콘이 드랍은 되지 않지만 따로 드래그가 되는 현상 발생
+  - 커스텀 드래그 구현으로 일부 아이콘이 드래그되지 않으나, 다른 아이콘은 드래그 되는 문제 발생
 
 - 변경 후
 
   - 카테고리 hook 분리 및 재사용( useCategory.tsx ): map/list page
   - useCategory 훅을 통해서 선택된 카테고리가 '전체'로 되어있을 경우 null 을 반환하여 query가 업데이트 되지 않도록 변경( updateQueyString utill 활용 )
   - `searchParams.get()` 하여 카테고리 값을 업데이트 해주어 새로고침 시에도 값 유지
-  - 커스텀 드래그 코드 제거
+  - 불필요한 커스텀 드래그 코드를 제거하여 가독성 향상
 
   ### 🔧 변경된 파일
 
@@ -44,7 +77,7 @@
   - src/hooks/useCategory.tsx
   - src/utils/updateQueryString.tsx
 
-## DefaultImg component
+## 📍 DefaultImg component
 
 - 변경 전
 
@@ -60,26 +93,13 @@
 
   - src/components/DefaultImg/DefaultImg.tsx
 
-## not-found.tsx
+## 📍 not-found.tsx
 
 - 일치하는 경로가 없을 경우 보여줄 페이지 작성
 
-## RootLayout
 
-- 변경 전
 
-  - `RootLayout`에 `useEffect`, `useState` 등 때문에 `Metadata`를 활용하지 못함
-
-- 변경 후
-
-  - `ClientLayout` 컴포넌트를 만들어서 클라이언트 관련 코드를 분리하고 RootLayout에 `Metadata` 작성
-
-  ### 🔧 변경된 파일
-
-  - src/app/layout.tsx
-  - src/components/ClientLayout/ClientLayout.tsx
-
-## 컴포넌트 분리 및 재사용
+## 📍 컴포넌트 분리 및 재사용
 
 - 일부 페이지 안에 들어 있던 컴포넌트를 분리하여 여러 페이지에서 재사용할 수 있도록 함
 
@@ -89,6 +109,6 @@
 - src/components/ScrollToTop/ScrollToTop.tsx
 - src/components/OpenTheChats/OpenTheChats.tsx
 
-## createApiUrl.ts
+## 📍 createApiUrl.ts
 
 - API 요청시 필요한 파라미터를 동적으로 생성하고 URL에 필요에 따라 쿼리 스트링을 추가/제거
