@@ -63,12 +63,12 @@ const Search = () => {
   return (
     <div className="relative w-full flex flex-col items-center">
       <div
-        className="absolute left-5 top-5 flex justify-center items-center w-9 h-9 shadow-iconShadow rounded-full"
+        className="absolute left-5 top-5 flex justify-center items-center w-7 h-7 shadow-iconShadow rounded-full"
         onClick={closeSearch}
       >
         <Image src={closeIcon} width={10} height={10} alt="닫기 아이콘" />
       </div>
-      <h1 className="mt-20 mb-4 text-title">지역으로 검색해보세요</h1>
+      <h1 className="mt-7 mb-4 text-title">지역으로 검색해보세요</h1>
       <div className="bg-LightGray w-full h-[1px] mb-2" />
       <div className="grid grid-cols-2 w-10/12 h-2/3 place-items-center">
         {regions.map((regionName) => {
@@ -87,7 +87,7 @@ const Search = () => {
       </div>
       <div className="bg-LightGray w-full h-[1px] mt-3" />
       <button
-        className="w-3/5 h-10 bg-Green rounded-full text-white mt-5"
+        className="w-3/5 h-12 bg-Green rounded-full text-white mt-5"
         onClick={handleSearch}
       >
         확인
