@@ -201,6 +201,7 @@ const Map = () => {
         camp.location.coordinates[0]
       ),
       address: camp.addr1,
+      imgSrc: camp.firstImageUrl,
     }));
 
     positions?.forEach((position) => {
@@ -223,6 +224,7 @@ const Map = () => {
           <Overlay
             id={position.id}
             name={position.title}
+            imgSrc={position.imgSrc}
             address={position.address}
             onClick={closeHandler}
           />

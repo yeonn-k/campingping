@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 
 import noImg from '@images/noImg.png';
@@ -8,10 +10,11 @@ interface OverlayProps {
   onClick: React.MouseEventHandler<HTMLImageElement>;
   id: string;
   name: string;
+  imgSrc: string | null;
   address: string;
 }
 
-const Overlay = ({ id, name, address, onClick }: OverlayProps) => {
+const Overlay = ({ id, name, imgSrc, address, onClick }: OverlayProps) => {
   const handleCloseClick = (e: React.MouseEvent<HTMLImageElement>) => {
     e.stopPropagation();
     e.preventDefault();
@@ -30,12 +33,19 @@ const Overlay = ({ id, name, address, onClick }: OverlayProps) => {
             src={closeBtn}
             alt="닫기 버튼"
             width={12}
+            height={12}
             onClick={handleCloseClick}
             className="absolute right-2"
           />
         </div>
         <div className="flex space-between w-48 gap-1 mt-7 z-10">
-          <Image src={noImg} width={100} alt="캠핑장 미리보기" quality={20} />
+          <Image
+            src={imgSrc ? imgSrc : noImg}
+            width={100}
+            height={70}
+            alt="캠핑장 미리보기"
+            quality={5}
+          />
           <p className="w-20 h-10 text-description text-Gray overflow-hidden text-ellipsis whitespace-nowrap">
             {address}
           </p>

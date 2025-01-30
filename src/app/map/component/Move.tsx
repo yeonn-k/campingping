@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import moveIcon from '@icons/move.svg';
 import { useEffect, useState } from 'react';

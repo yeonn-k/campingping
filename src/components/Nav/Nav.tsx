@@ -9,6 +9,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { chattingStore } from '@/stores/chattingState';
 import { regionStore } from '@/stores/regionState';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface NavItem {
   name: string;
@@ -29,6 +30,8 @@ const Nav = () => {
   const { userState, userEmail, setUserState } = userStore();
   const { setChatState, setChatRoomId, setChatNick } = chattingStore();
   const { setColoredState } = regionStore();
+
+  const { isMobile } = useIsMobile();
 
   const handleNavClick = (navItem: NavItem) => {
     if (navItem.url) {
@@ -72,7 +75,9 @@ const Nav = () => {
   };
 
   return (
-    <div className="fixed bottom-0 w-full max-w-[450px] bg-white py-1 z-zNav">
+    <div
+      className={`fixed bottom-0 w-full max-w-[450px] bg-white ${isMobile ? '' : 'py-1'} z-zNav`}
+    >
       <div className="flex w-full justify-around">
         {navItems.map((navItem) => (
           <div
