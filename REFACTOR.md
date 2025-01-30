@@ -39,7 +39,7 @@
   - src/app/layout.tsx
   - src/stores/globalState.ts
  
-  - ## 📍 RootLayout
+## 📍 RootLayout
 
 - 변경 전
 
