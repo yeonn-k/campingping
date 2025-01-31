@@ -20,6 +20,7 @@ import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 
 import { api } from '@/utils/axios';
 import { useEffect } from 'react';
+import { userTokenStore } from '@/stores/userTokenState';
 
 interface FormData {
   email: string;
@@ -33,6 +34,7 @@ const SignIn = () => {
   const searchParams = useSearchParams();
 
   const { userState, setUserState } = userStore();
+  const { setToken } = userTokenStore();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
@@ -44,6 +46,7 @@ const SignIn = () => {
     }
     if (!emailRegex.test(email)) {
       toast.error('올바른 이메일을 입력해주세요');
+      return;
     }
 
     try {
@@ -53,14 +56,14 @@ const SignIn = () => {
       });
 
       if (res.status === 200) {
-        setUserState(email);
-
         const authHeader = res.headers['authorization'];
 
         if (authHeader) {
           const token = authHeader.replace('Bearer ', '');
-          localStorage.setItem('token', token);
+          setToken(token);
         }
+
+        setUserState(email);
 
         setTimeout(() => {
           window.location.reload();
