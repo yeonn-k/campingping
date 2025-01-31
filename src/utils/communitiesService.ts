@@ -1,17 +1,21 @@
 import { api } from './axios';
 
-export const createPost = async (postData: {
-  id?: string;
-  title: string;
-  location: string;
-  people: number;
-  content: string;
-  startDate: Date;
-  endDate: Date;
-  lat: number;
-  lon: number;
-}) => {
+export const createPost = async (
+  postData: {
+    id?: string;
+    title: string;
+    location: string;
+    people: number;
+    content: string;
+    startDate: Date;
+    endDate: Date;
+    lat: number;
+    lon: number;
+  },
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   try {
+    setIsLoading(true);
     const formattedPostData = {
       ...postData,
     };
@@ -21,6 +25,8 @@ export const createPost = async (postData: {
   } catch (error) {
     console.error('Error while creating a post:', error);
     throw error;
+  } finally {
+    setIsLoading(false);
   }
 };
 

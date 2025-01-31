@@ -5,6 +5,7 @@ import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import Image from 'next/image';
 import closeIcon from '@icons/close.svg';
+import { useState } from 'react';
 
 const WriteModal = ({
   onClose,
@@ -13,6 +14,7 @@ const WriteModal = ({
   onClose: () => void;
   onPostSubmit: VoidFunction;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async () => {
     const title = (document.querySelector('#title') as HTMLInputElement).value;
     const startDate = new Date(
@@ -44,7 +46,7 @@ const WriteModal = ({
               lon: position.coords.longitude,
             };
 
-            await createPost(newPost);
+            await createPost(newPost, setIsLoading);
             onPostSubmit();
             onClose();
           },
@@ -112,6 +114,7 @@ const WriteModal = ({
             bgcolor="bg-Green"
             fontsize="content"
             onClick={handleSubmit}
+            isLoading={isLoading}
           >
             등록
           </Button>
