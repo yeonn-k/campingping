@@ -14,6 +14,9 @@ import { useLocationStore } from '@/stores/locationState';
 
 import { api } from '@/utils/axios';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
+import { userStore } from '@/stores/userState';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 interface P {
   id: string;
@@ -44,13 +47,17 @@ const CommunityPage = () => {
   const [nextCursor, setNextCursor] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>('myPosts');
+  const [activeTab, setActiveTab] = useState<'myPosts' | 'allPosts'>(
+    'allPosts'
+  );
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [myPosts, setMyPosts] = useState<Post[]>([]);
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const { userLat, userLon } = useLocationStore();
+  const { userState } = userStore();
+  const router = useRouter();
 
   useEffect(() => {
     if (userLat && userLon) {
@@ -59,7 +66,7 @@ const CommunityPage = () => {
   }, [userLat, userLon]);
 
   const handleGetPosts = async () => {
-    if (activeTab === 'myPosts') {
+    if (activeTab === 'myPosts' && userState) {
       const data = await getMyPosts();
       if (data) {
         const postsWithDates = data.map((post: P) => ({
@@ -87,6 +94,11 @@ const CommunityPage = () => {
     setActiveTab(tab);
 
     if (tab === 'myPosts') {
+      if (!userState) {
+        router.push('/sign-in');
+        toast.error('로그인이 필요한 페이지에요');
+        return;
+      }
       const data = await getMyPosts();
       if (data) {
         const postsWithDates = data.map((post: P) => ({
