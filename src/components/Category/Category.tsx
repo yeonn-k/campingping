@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { getIconPath } from '@/utils/getIconPath';
+import { useRef, useState } from 'react';
 
 interface Category {
   name: string;
@@ -34,9 +35,42 @@ const Category = ({
   selectedCategory,
   onCategorySelected: handleCategoryClick,
 }: CategoryProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   return (
     <div className="w-full">
-      <div className="flex overflow-x-auto scrollbar-hide whitespace-nowrap scroll-smooth">
+      <div
+        ref={scrollRef}
+        className={`flex overflow-x-auto scrollbar-hide whitespace-nowrap scroll-smooth  ${
+          isDragging ? 'cursor-grabbing' : 'cursor-grab'
+        }`}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      >
         {categories.map((category) => {
           const isSelected =
             selectedCategory === '전체'
