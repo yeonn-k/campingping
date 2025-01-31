@@ -16,6 +16,7 @@ export const userStore = create<UserState>()(
         if (v === null) {
           set({ userState: false, userEmail: null });
           localStorage.removeItem('user-storage');
+          localStorage.removeItem('token');
         } else {
           set({ userState: true, userEmail: v });
         }
