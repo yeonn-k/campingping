@@ -2,24 +2,22 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface RegionState {
-  coloredState: string | null;
-  setColoredState: (v: string | null) => void;
+  coloredRegion: string | null;
+  coloredCity: string | null;
+  setColoredRegion: (v: string | null) => void;
+  setColoredCity: (v: string | null) => void;
 }
 
 export const regionStore = create<RegionState>()(
   persist(
     (set) => ({
-      coloredState: null,
-      setColoredState: (v: string | null) => {
-        if (v === null) {
-          set(() => ({
-            coloredState: null,
-          }));
-        } else {
-          set(() => ({
-            coloredState: v,
-          }));
-        }
+      coloredRegion: null,
+      coloredCity: null,
+      setColoredRegion: (v: string | null) => {
+        set({ coloredRegion: v });
+      },
+      setColoredCity: (v: string | null) => {
+        set({ coloredCity: v });
       },
     }),
     {
