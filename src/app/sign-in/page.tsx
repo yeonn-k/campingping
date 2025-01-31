@@ -55,6 +55,13 @@ const SignIn = () => {
       if (res.status === 200) {
         setUserState(email);
 
+        const authHeader = res.headers['authorization'];
+
+        if (authHeader) {
+          const token = authHeader.replace('Bearer ', '');
+          localStorage.setItem('token', token);
+        }
+
         setTimeout(() => {
           window.location.reload();
         }, 1000);
