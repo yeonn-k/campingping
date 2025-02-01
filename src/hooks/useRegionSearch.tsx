@@ -51,7 +51,8 @@ export const useRegionSearch = () => {
 
             setSelected(formattedRegion);
             setColoredRegion(value);
-            updateQueryString({ region: formattedRegion });
+            setColoredCity(null);
+            updateQueryString({ region: formattedRegion, city: null });
           }
         }
       }
