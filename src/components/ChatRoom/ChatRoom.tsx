@@ -16,12 +16,15 @@ import { userStore } from '@/stores/userState';
 import { chattingStore } from '@/stores/chattingState';
 import useInputValue from '@/hooks/useInputValue';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { api } from '@/utils/axios';
+import { toast } from 'react-toastify';
 
 interface ChatRoomProps {
   roomId: number;
+  setChatRoomId: (v: number | null) => void;
   nickname: string;
 }
-const ChatRoom = ({ nickname }: ChatRoomProps) => {
+const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const { userEmail } = userStore();
   const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
@@ -72,6 +75,16 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
 
         resetInput();
       }
+    }
+  };
+
+  const getOutFromRoom = async () => {
+    const res = await api.delete(`/chats/rooms/${chatRoomId}`);
+
+    if (res.status === 200) {
+      toast.success('채팅방이 삭제되었습니다 🚪');
+
+      setChatRoomId(null);
     }
   };
 
@@ -147,7 +160,9 @@ const ChatRoom = ({ nickname }: ChatRoomProps) => {
             </div>
           </div>
 
-          <button className="text-Green">대화 나가기</button>
+          <button className="text-Green" onClick={getOutFromRoom}>
+            대화 나가기
+          </button>
         </div>
       </div>
       <div

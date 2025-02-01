@@ -83,7 +83,7 @@ const Chat = () => {
 
   useEffect(() => {
     getChats();
-  }, []);
+  }, [chatRoomId]);
 
   return (
     <div
@@ -144,7 +144,11 @@ const Chat = () => {
           </div>
         </div>
       ) : (
-        <ChatRoom roomId={chatRoomId} nickname={chatNick} />
+        <ChatRoom
+          roomId={chatRoomId}
+          setChatRoomId={setChatRoomId}
+          nickname={chatNick}
+        />
       )}
     </div>
   );
