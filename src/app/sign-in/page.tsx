@@ -20,7 +20,7 @@ import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 
 import { api } from '@/utils/axios';
 import { useEffect } from 'react';
-import { userTokenStore } from '@/stores/userTokenState';
+// import { userTokenStore } from '@/stores/userTokenState';
 
 interface FormData {
   email: string;
@@ -34,7 +34,7 @@ const SignIn = () => {
   const searchParams = useSearchParams();
 
   const { userState, setUserState } = userStore();
-  const { setToken } = userTokenStore();
+  // const { setToken } = userTokenStore();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
@@ -56,12 +56,12 @@ const SignIn = () => {
       });
 
       if (res.status === 200) {
-        const authHeader = res.headers['authorization'];
+        // const authHeader = res.headers['authorization'];
 
-        if (authHeader) {
-          const token = authHeader.replace('Bearer ', '');
-          setToken(token);
-        }
+        // if (authHeader) {
+        //   const token = authHeader.replace('Bearer ', '');
+        //   setToken(token);
+        // }
 
         setUserState(email);
 
