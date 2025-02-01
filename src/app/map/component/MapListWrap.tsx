@@ -53,13 +53,9 @@ export const MapListWrap = ({ campList }: MapProps) => {
         />
       )}
       {localCampList?.length > 0 ? (
-        localCampList.map((camp, idx) => {
+        localCampList.map((camp) => {
           return (
-            <div
-              className="w-full flex justify-center"
-              key={camp.contentId}
-              // ref={idx === localCampList.length - 1 ? lastItemRef : null}
-            >
+            <div className="w-full flex justify-center" key={camp.contentId}>
               <Card
                 itemId={camp.contentId}
                 name={camp.facltNm}

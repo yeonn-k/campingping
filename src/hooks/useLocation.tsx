@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Location } from '@/types/Location';
-import { regionCoordinates } from 'public/data/region';
-import { CityCoordinates } from 'public/data/region';
+import { regionCoordinates, CityCoordinates } from 'public/data/region';
 
 const useLocation = (region: string | null, city?: string | null) => {
   const [location, setLocation] = useState<Location>();
