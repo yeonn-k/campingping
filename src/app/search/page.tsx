@@ -5,36 +5,22 @@ import Image from 'next/image';
 import closeIcon from '@icons/close.svg';
 
 import { useRouter } from 'next/navigation';
-import { useRegion } from '@/hooks/useRegion';
+import { useRegionSearch } from '@/hooks/useRegionSearch';
 import { regionStore } from '@/stores/regionState';
 import { useEffect, useState } from 'react';
 
-const regions = [
-  '서울특별시',
-  '부산광역시',
-  '대구광역시',
-  '인천광역시',
-  '광주광역시',
-  '대전광역시',
-  '울산광역시',
-  '세종특별자치시',
-  '경기도',
-  '강원도',
-  '충청북도',
-  '충청남도',
-  '전라북도',
-  '전라남도',
-  '경상북도',
-  '경상남도',
-  '제주특별자치도',
-];
+import { regions, regionsWithDistricts } from 'public/data/region';
 
 const Search = () => {
   const router = useRouter();
-  const { updateRegion } = useRegion();
-  const { coloredState } = regionStore();
+  const { updateRegion } = useRegionSearch();
+
+  const { coloredRegion, coloredCity } = regionStore();
   const [originPath, setOriginPath] = useState<string | null>('map');
   const [query, setQuery] = useState<string | null>(null);
+  const selectedRegion: string[] = coloredRegion
+    ? regionsWithDistricts[coloredRegion]
+    : [];
 
   const closeSearch = () => {
     router.back();
@@ -61,33 +47,56 @@ const Search = () => {
   };
 
   return (
-    <div className="relative w-full flex flex-col items-center">
+    <div className="relative w-full h-screen overflow-hidden flex flex-col items-center pb-14">
       <div
-        className="absolute left-5 top-5 flex justify-center items-center w-7 h-7 shadow-iconShadow rounded-full"
+        className="absolute left-5 top-5 flex justify-center items-center w-8 h-8 shadow-iconShadow rounded-full"
         onClick={closeSearch}
       >
         <Image src={closeIcon} width={10} height={10} alt="닫기 아이콘" />
       </div>
-      <h1 className="mt-7 mb-4 text-title">지역으로 검색해보세요</h1>
-      <div className="bg-LightGray w-full h-[1px] mb-2" />
-      <div className="grid grid-cols-2 w-10/12 h-2/3 place-items-center">
-        {regions.map((regionName) => {
-          return (
-            <div
-              key={regionName}
-              className={`flex justify-center items-center border  w-36 h-12 rounded-full ${coloredState === regionName ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
-              onClick={(e) => {
-                updateRegion(e);
-              }}
-            >
-              {regionName}
-            </div>
-          );
-        })}
+      <h1 className="mt-12 mb-4 text-title">지역으로 검색해보세요</h1>
+
+      <div className="bg-LightGray w-full h-[1px] " />
+
+      <div className="flex space-around px-4  gap-2 h-[70%]">
+        <div className="w-[35%] h-full gap-2 flex flex-wrap overflow-scroll scrollbar-hide py-3">
+          {regions.map((regionName) => {
+            return (
+              <div
+                key={regionName}
+                className={`flex flex-col justify-center items-center border w-36 h-12 rounded-full ${coloredRegion === regionName ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
+                onClick={(e) => {
+                  updateRegion(e, 'region');
+                }}
+              >
+                {regionName}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="h-full w-[1px] bg-LightGray" />
+
+        <div className="overflow-scroll w-[65%] h-full gap-2 flex flex-wrap content-start scrollbar-hide py-3 ml-4">
+          {selectedRegion.map((city) => {
+            return (
+              <div
+                key={city}
+                className={`flex flex-col justify-center items-center border w-[45%] h-12 rounded-full ${coloredCity === city ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
+                onClick={(e) => {
+                  updateRegion(e, 'city');
+                }}
+              >
+                {city}
+              </div>
+            );
+          })}
+        </div>
       </div>
-      <div className="bg-LightGray w-full h-[1px] mt-3" />
+
+      <div className="bg-LightGray w-full h-[1px] mb-3" />
       <button
-        className="w-3/5 h-12 bg-Green rounded-full text-white mt-5"
+        className="w-3/5 h-12 bg-Green rounded-full text-white mt-2"
         onClick={handleSearch}
       >
         확인
@@ -96,3 +105,7 @@ const Search = () => {
   );
 };
 export default Search;
+
+//   <div className="grid grid-cols-2 w-10/12 h-2/3 place-items-center">
+//
+//   </div>

@@ -7,15 +7,19 @@ interface SearchBarProps {
   origin: string;
   category: string | null;
   region: string | null;
+  city?: string | null;
 }
 
-const SearchBar = ({ origin, category, region }: SearchBarProps) => {
+const SearchBar = ({ origin, category, region, city }: SearchBarProps) => {
   const query: Record<string, string> = { origin };
   if (category) {
     query['category'] = category;
   }
   if (region) {
     query['region'] = region;
+  }
+  if (city) {
+    query['city'] = city;
   }
 
   return (
