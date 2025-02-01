@@ -16,20 +16,17 @@ import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 import { categories } from '@/components/Category/Category';
 import { getIconPath } from '@/utils/getIconPath';
-import { regionCoordinates } from '@/hooks/useLocation';
+import { regionCoordinates } from 'public/data/region';
+
 import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 import NotFound from '@/app/not-found';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
+import { Location } from '@/types/Location';
 
 interface Facility {
   name: string;
   iconName: string;
-}
-
-interface Location {
-  regionLat: number;
-  regionLon: number;
 }
 
 const facilityIcons: Facility[] = [
@@ -55,8 +52,8 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [location, setLocation] = useState<Location>({
-    regionLat: 0,
-    regionLon: 0,
+    lat: 0,
+    lon: 0,
   });
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -218,7 +215,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
       />
       <SearchBar origin="detail" category={null} region={null} />
       <div className="flex justify-center">
-        <WeatherWithLatLon lat={location.regionLat} lon={location.regionLon} />
+        <WeatherWithLatLon lat={location.lat} lon={location.lon} />
       </div>
       <div className="flex flex-col grow p-5 ">
         {campData?.firstImageUrl ? (

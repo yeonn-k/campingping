@@ -56,7 +56,8 @@ const Nav = () => {
       setChatState(false);
       setChatRoomId(null);
       setChatNick('');
-      setColoredState(null);
+      setColoredRegion(null);
+      setColoredCity(null);
 
       if (userEmail && userEmail.includes('kakao')) {
         res = await api.get('/auth/kakao-logout');
