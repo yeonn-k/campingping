@@ -1,5 +1,11 @@
+import {
+  PHASE_DEVELOPMENT_SERVER,
+  PHASE_PRODUCTION_BUILD,
+} from 'next/constants.js';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
   async redirects() {
     return [
       {
@@ -15,7 +21,6 @@ const nextConfig = {
       'campingping-image.s3.ap-northeast-2.amazonaws.com',
     ],
   },
-
   async rewrites() {
     return [
       {
@@ -26,4 +31,15 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const nextConfigFunction = async (phase) => {
+  if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
+    const withPWAPlugin = (await import('@ducanh2912/next-pwa')).default({
+      dest: 'public',
+      maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // 5MB로 설정
+    });
+    return withPWAPlugin(nextConfig);
+  }
+  return nextConfig;
+};
+
+export default nextConfigFunction;

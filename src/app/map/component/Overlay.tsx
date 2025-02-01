@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 
-import noImg from '@images/noImg.png';
 import closeBtn from '@icons/close_white.svg';
 import Link from 'next/link';
+import DefaultImg from '@/components/DefaultImg/DefaultImg';
 
 interface OverlayProps {
   onClick: React.MouseEventHandler<HTMLImageElement>;
@@ -39,13 +39,17 @@ const Overlay = ({ id, name, imgSrc, address, onClick }: OverlayProps) => {
           />
         </div>
         <div className="flex space-between w-48 gap-1 mt-7 z-10">
-          <Image
-            src={imgSrc ? imgSrc : noImg}
-            width={100}
-            height={70}
-            alt="캠핑장 미리보기"
-            quality={5}
-          />
+          {imgSrc ? (
+            <Image
+              src={imgSrc}
+              width={100}
+              height={70}
+              alt="캠핑장 미리보기"
+              quality={5}
+            />
+          ) : (
+            <DefaultImg />
+          )}
           <p className="w-20 h-10 text-description text-Gray overflow-hidden text-ellipsis whitespace-nowrap">
             {address}
           </p>

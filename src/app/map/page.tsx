@@ -149,6 +149,8 @@ const Map = () => {
   }, [lat, lon, regionQuery, selectedCategoryValue]);
 
   useEffect(() => {
+    if (window.kakao) return;
+
     if (!kakaoMap || campList?.length === 0) return;
     const positions = campList?.map((camp) => ({
       id: camp.contentId,
