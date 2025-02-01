@@ -1,0 +1,31 @@
+{
+  "name": "캠핑핑",
+  "short_name": "캠핑핑",
+  "icons": [
+    {
+      "purpose": "any",
+      "sizes": "128x128",
+      "src": "/images/maskable_icon_x128.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "192x192",
+      "src": "/images/maskable_icon_x192.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "/images/maskable_icon_x512.png",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#96E348",
+  "background_color": "#fff",
+  "start_url": "/",
+  "orientation": "any",
+  "display": "standalone",
+  "dir": "auto",
+  "lang": "ko-KR"
+}
