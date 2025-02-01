@@ -11,10 +11,10 @@ import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 interface MapProps {
   campList: CampMap[];
-  lastItemRef: (node: HTMLDivElement) => void;
+  // lastItemRef: (node: HTMLDivElement) => void;
 }
 
-export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
+export const MapListWrap = ({ campList }: MapProps) => {
   const [isOpenList, setIsOpenList] = useState(false);
   const [localCampList, setLocalCampList] = useState<CampMap[]>(campList);
 
@@ -58,7 +58,7 @@ export const MapListWrap = ({ campList, lastItemRef }: MapProps) => {
             <div
               className="w-full flex justify-center"
               key={camp.contentId}
-              ref={idx === localCampList.length - 1 ? lastItemRef : null}
+              // ref={idx === localCampList.length - 1 ? lastItemRef : null}
             >
               <Card
                 itemId={camp.contentId}

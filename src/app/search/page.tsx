@@ -77,7 +77,7 @@ const Search = () => {
 
         <div className="h-full w-[1px] bg-LightGray" />
 
-        <div className="overflow-scroll w-[65%] h-full gap-2 flex flex-wrap scrollbar-hide py-3">
+        <div className="overflow-scroll w-[65%] h-full gap-2 flex flex-wrap content-start scrollbar-hide py-3 ml-4">
           {selectedRegion.map((city) => {
             return (
               <div
@@ -94,9 +94,9 @@ const Search = () => {
         </div>
       </div>
 
-      <div className="bg-LightGray w-full h-[1px] mb-4" />
+      <div className="bg-LightGray w-full h-[1px] mb-3" />
       <button
-        className="w-3/5 h-12 bg-Green rounded-full text-white mt-5"
+        className="w-3/5 h-12 bg-Green rounded-full text-white mt-2"
         onClick={handleSearch}
       >
         확인

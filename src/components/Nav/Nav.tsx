@@ -29,7 +29,7 @@ const Nav = () => {
 
   const { userState, userEmail, setUserState } = userStore();
   const { setChatState, setChatRoomId, setChatNick } = chattingStore();
-  const { setColoredState } = regionStore();
+  const { setColoredRegion, setColoredCity } = regionStore();
 
   const { isMobile } = useIsMobile();
 
@@ -44,7 +44,8 @@ const Nav = () => {
       setChatState(false);
       setChatRoomId(null);
       setChatNick('');
-      setColoredState(null);
+      setColoredRegion(null);
+      setColoredCity(null);
     }
   };
 

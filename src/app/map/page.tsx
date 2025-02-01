@@ -23,8 +23,6 @@ import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import Move from './component/Move';
 
-const LIMIT = 10;
-
 const NoSSRCategory = dynamic(
   () => import('../../components/Category/Category'),
   { ssr: false }
@@ -34,9 +32,7 @@ const Map = () => {
   const searchParams = useSearchParams();
 
   const [regionQuery, setRegionQuery] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [nextCursor, setNextCursor] = useState(0);
+  const [cityQuery, setCityQuery] = useState<string | null>(null);
 
   const isGeoLocationGranted = useGeoLocationPermission();
 
@@ -51,28 +47,29 @@ const Map = () => {
   const [kakaoMap, setKakaoMap] = useState<unknown | null>(null);
   const [, setKakaoMarker] = useState<unknown | null>(null);
 
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
   const [campList, setCampList] = useState<CampMap[]>([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
       setRegionQuery(searchParams.get('region'));
+      setCityQuery(searchParams.get('city'));
     }
   }, []);
 
-  const location = useLocation(regionQuery);
+  const location = useLocation(regionQuery, cityQuery);
 
   useEffect(() => {
     const currentRegionQuery = searchParams.get('region');
+    const currentCityQuery = searchParams.get('city');
     setRegionQuery(currentRegionQuery);
+    setCityQuery(currentCityQuery);
   }, [searchParams]);
 
   useEffect(() => {
     if (regionQuery && location) {
-      setLat(location.regionLat);
-      setLon(location.regionLon);
+      setLat(location.lat);
+      setLon(location.lon);
     } else if (!regionQuery && userLat && userLon) {
       setLat(userLat);
       setLon(userLon);
@@ -97,37 +94,24 @@ const Map = () => {
   };
 
   const getCampingsByDoNm = useCallback(async () => {
-    if (isLoading || !regionQuery) return;
+    if (!regionQuery) return;
 
-    setIsLoading(true);
     try {
       const apiUrl = createApiUrl('/campings/lists', [
-        { name: 'limit', value: LIMIT },
-        { name: 'cursor', value: nextCursor },
         { name: 'category', value: selectedCategoryValue },
         { name: 'region', value: regionQuery },
+        { name: 'city', value: cityQuery },
       ]);
 
       const res = await api.get(apiUrl);
       const data = res.data.data.result || [];
 
-      setHasMore(res.data.data.nextCursor !== null);
-      setNextCursor(res.data.data.nextCursor || null);
-
-      setCampList((prev) => {
-        const existingIds = new Set(prev.map((camp) => camp.contentId));
-        const newData = data.filter(
-          (camp: { contentId: string }) => !existingIds.has(camp.contentId)
-        );
-
-        return [...prev, ...newData];
-      });
+      setCampList(data);
     } catch (error) {
       console.error('Error fetching campings:', error);
     } finally {
-      setIsLoading(false);
     }
-  }, [nextCursor, isLoading, selectedCategoryValue, regionQuery]);
+  }, [selectedCategoryValue, regionQuery]);
 
   useEffect(() => {
     if (regionQuery === null) {
@@ -139,33 +123,7 @@ const Map = () => {
 
   useEffect(() => {
     setCampList([]);
-    setNextCursor(0);
-    setHasMore(true);
   }, [selectedCategoryValue, regionQuery]);
-
-  const lastItemRef = useCallback(
-    (node: HTMLDivElement) => {
-      if (isLoading || !hasMore) return;
-
-      if (observerRef.current) observerRef.current.disconnect();
-
-      observerRef.current = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            if (regionQuery) {
-            }
-            getCampingsByDoNm();
-          } else getNearByCampings();
-        },
-        { threshold: 0.4 }
-      );
-
-      if (node) {
-        observerRef.current.observe(node);
-      }
-    },
-    [isLoading, hasMore, getCampingsByDoNm]
-  );
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -174,7 +132,7 @@ const Map = () => {
       window.kakao?.maps.load(() => {
         const options = {
           center: new window.kakao.maps.LatLng(lat, lon),
-          level: regionQuery ? 10 : 7,
+          level: cityQuery ? 8 : regionQuery ? 10 : 7,
           disableDoubleClick: true,
         };
 
@@ -264,6 +222,7 @@ const Map = () => {
         origin="map"
         category={selectedCategoryValue}
         region={regionQuery}
+        city={cityQuery}
       />
 
       {regionQuery && (
@@ -288,7 +247,7 @@ const Map = () => {
         ) : lat && lon ? (
           <div ref={mapRef} className="relative w-full h-full rounded-md">
             <Move />
-            <MapListWrap campList={campList} lastItemRef={lastItemRef} />
+            <MapListWrap campList={campList} />
           </div>
         ) : (
           <div className="h-5/6 flex flex-col justify-center items-center">
