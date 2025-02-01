@@ -21,14 +21,6 @@ const nextConfig = {
       'campingping-image.s3.ap-northeast-2.amazonaws.com',
     ],
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `https://${process.env.NEXT_PUBLIC_BASE_URL}/api/:path*`,
-      },
-    ];
-  },
 };
 
 const nextConfigFunction = async (phase) => {
