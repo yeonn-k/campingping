@@ -30,6 +30,28 @@
       "type": "image/png"
     }
   ],
+  "shortcuts": [
+    {
+      "name": "list",
+      "url": "/list"
+    },
+    {
+      "name": "map",
+      "url": "/map"
+    },
+    {
+      "name": "community",
+      "url": "/community"
+    },
+    {
+      "name": "my page",
+      "url": "/my-page"
+    },
+    {
+      "name": "sign in",
+      "url": "/sign-in"
+    }
+  ],
   "theme_color": "#96E348",
   "background_color": "#fff",
   "start_url": "/",
