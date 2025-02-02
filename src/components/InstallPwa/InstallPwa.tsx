@@ -2,7 +2,8 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import dropIcon from '@images/campingping.png';
+import logo from '@images/campingping.png';
+import { usePathname } from 'next/navigation';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => void;
@@ -10,6 +11,8 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const InstallPrompt = () => {
+  const pathname = usePathname();
+
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
 
@@ -46,14 +49,15 @@ const InstallPrompt = () => {
     });
   };
 
+  if (pathname === '/sign-in') return;
   return (
     <div>
       {deferredPrompt && (
         <button
-          className={`w-full h-12 flex justify-center items-center bg-lime-400 text-white `}
+          className={`fixed ${pathname === '/community' ? 'bottom-[19rem]' : 'bottom-56'} right-0 translate-x-[-14px] bg-lime-400 p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]`}
           onClick={installPWA}
         >
-          <Image src={dropIcon} alt="logo" width={30} height={3} /> PWA 설치하기
+          <Image src={logo} alt="logo" width={70} height={70} quality={20} />
         </button>
       )}
     </div>
