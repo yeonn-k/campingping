@@ -39,6 +39,11 @@
   - 사이트 접근 시 geoLocation으로 위치 권한 요청을 받아 `useLocationStore`에 유저의 위치를 저장
   - 위치 권한 요청 시 toast 알림으로 권한을 설정하지 않으면 사용하지 못하는 기능이 있음을 미리 알림
   - 위치 기반 검색의 경우 백엔드에 지정된 반경 내의 캠핑장만 검색
+  - **_📍 위치 상태 관리_**
+    - 최적화를 위해 위치를 한 번 가져오면 `zustand` 전역 상태로 관리
+      - `getCurrentLocation`함수는 비동기 함수여서 서버 컴포넌트에서 직접 호출할 수 없음
+      - 매번 API 호출 대신 한 번 호출하여 전역 상태로 관리함으로써 불필요한 로딩을 줄임
+    - `location.ts` 유틸을 활용해 유저의 `lat`, `lon`을 가져오고 정보가 없을 경우 `null` 반환
 
 - 지역 검색: 특정 지역에 해당하는 캠핑장 검색: query 업데이트/ API 호출
   - 지역 검색 시 카테고리 필터링 가능
@@ -58,25 +63,85 @@
 - 유저 위치 기반일 경우 유저의 위치에 해당하는 위도와 경도 값을 전달하여 현재 위치의 날씨 제공
 - 지역 검색 시 검색한 지역에 해당하는 위도와 경도 값을 전달하여 해당하는 지역의 날씨 제공
 
+- 관련 util
+
+  - createApiUrl
+
+    - 기본 base URL과 파라미터 목록을 받아 쿼리 스트링을 포함한 API 호출 URL을 생성
+      - baseUrl(API 요청 url), ParamsList(파라미터 목록)
+
+    ```typescript
+    // 사용 예시
+    const url = createApiUrl('https://morecodeplease.com/api/campings/lists', [
+      { name: 'region', value: '서울시' },
+      { name: 'city', value: '종로구' },
+    ]);
+
+    console.log(url);
+    // https://morecodeplease.com/api/campings/lists?region=서울시&city=종로구
+    ```
+
 ## 🔍 search
 
 - `searchBar` 컴포넌트를 통해 `origin`, `category`, `region`을 `query`로 전달받음
 - `origin`
 
   - `map` 이나 `list` 페이지에서 접근 시 `origin` 을 그대로 저장해서 기존 페이지로 기존 카테고리와 지역에 대한 정보를 전달
-  - `detail`이나 외부 페이지에서 url을 입력해서 접근했을 경우 `origin`을 기본 값인 `map`으로 대체, `map` 페이지에서 지역 검색의 결과를 보여줌
-  - query에서는 '서울시', '부산시' 등의 형태로 사용되나 렌더링 시에는 '서울특별시', '부산특별시' 등의 형태로 사용
-  - `useRegion` 훅을 통해 새로운 지역이 선택되면 검색을 위해 필요한 형태로 형태를 변환하여 query에 업데이트하고 regionStore에는 선택된 값 비교와 선택된 버튼 색상 관리를 그대로 값 저장
-  - 선택된 값이 기존의 `regionStore`에 저장된 값과 같은 경우, 쿼리 및 상태 관리 초기화
-  - nav를 통해 페이지 이동 시 `regionStore` 상태 값 초기화
+  - `detail`이나 외부 페이지에서 URL을 입력해서 접근했을 경우 `origin`을 기본 값인 `map`으로 설정, `map` 페이지에서 지역 검색의 결과를 보여줌
+  - `query`
+    - `type`으로 '지역'과 '시군구'를 구분하여 하나의 함수로 관리
+    - `useRegionSearch`를 통해 지역 선택 시 검색을 위한 형태로 변환
+      - 지역명 변환: '서울특별시' -> '서울시', '제주특별자치도' -> '제주시' ...
+        ```typescript
+        if (value.includes('특별자치')) {
+          formattedRegion = value.slice(0, 2) + value.slice(-1);
+        } else if (value.includes('광역시') || value.includes('특별시')) {
+          formattedRegion = value.slice(0, 2) + '시';
+        }
+        ```
+    - 선택 값이 기존 `regionStore` 값과 동일할 경우 쿼리 및 상태 초기화
+  - 페이지 이동 시 `regionStore` 상태 값 초기화
+    ```typescript
+    export const regionStore = create<RegionState>()(
+      persist(
+        (set) => ({
+          coloredRegion: null,
+          coloredCity: null,
+          setColoredRegion: (v: string | null) => {
+            set({ coloredRegion: v });
+          },
+          setColoredCity: (v: string | null) => {
+            set({ coloredCity: v });
+          },
+        }),
+        {
+          name: 'region-storage',
+        }
+      )
+    );
+    ```
+
+- 관련 util
+  - updateQueryString
+    - URL의 쿼리 스트링을 동적으로 업데이트하고 브라우저 히스토리 관리
+      - paramsToUpdate 객체: 쿼리 스트링을 업데이트 할 파라미터 객체 배열
+      - key(파라미터 이름), value(파라미터 값, `null`일 경우 파라미터 삭제)
+    ```typescript
+    // 사용 예시
+    updateQueryString({
+      origin: 'map',
+      category: '지역',
+      region: '서울시',
+    });
+    ```
 
 ## 💬 chat
 
 - Socket.io를 활용한 실시간 채팅 기능 구현
-  - 유저의 참여 채팅방 리스트 표시( http 요청 )
-  - 특정 채팅방 선택 시 ChatRoomId 상태 업데이트를 통해 입장하고 메시지 입력시 `socket.emit`을 통해 서버로 이벤트 전송
+  - 유저의 참여 중 채팅방 리스트 표시( restAPI 요청 )
+  - 특정 채팅방 선택 시 ChatRoomId 상태 업데이트를 통해 입장하고 메시지 입력시 `socket.emit`으로 서버로 이벤트 전송
   - 저장된 유저의 이메일을 활용하여 내가 보낸 메세지와 상대방이 보낸 메세지를 구분하여 표시
-  - `useRef`를 활용한 스크롤
+  - `useRef`를 활용한 자동 스크롤
     - ScrollHeight`: 요소 전체의 스크롤 가능한 높이 = 맨 아래 메세지 까지의 총 높이
     - `top: chatContainerRef.current.scrollHeight` 설정을 통해 스크롤을 가장 아래로 이동시키는 효과
     - 의존성 배열에 chatMsgs를 설정함으로써 채팅이 추가될 때 마다 실행시켜 새 메세지가 도착하면 자동으로 맨 아래로 스크롤
@@ -93,7 +158,8 @@
 - react-hook-form과 함께 사용하여 폼 검증 가능
 - `hasError`로 에러 발생시 `true` 설정이 되고 이 경우 설정된 `errorMessage`가 출력
 - Tailwind CSS로 스타일 확장 가능
-  ```
+
+  ```typescript
     <Input
       placeholder="비밀번호를 입력해주세요"
       type="password"
@@ -123,6 +189,12 @@
 
 ## 📍toast 알림</b>으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선
 
+## 🛜 EC2 배포
+
 ---
 
 ## 💡 [리팩토링 기록](https://github.com/yeonn-k/campingping/blob/dev/REFACTOR.md)
+
+```
+
+```
