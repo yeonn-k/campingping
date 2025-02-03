@@ -71,7 +71,7 @@ export const MapListWrap = ({ campList }: MapProps) => {
           <p>검색 결과가 없습니다.</p>
         </div>
       )}
-      {isOpenList && <ScrollToTop scrollRef={scrollRef} />}
+      <ScrollToTop scrollRef={scrollRef} />
     </div>
   );
 };

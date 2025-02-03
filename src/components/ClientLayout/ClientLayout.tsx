@@ -15,6 +15,9 @@ import Chat from '../Chat/Chat';
 import { userStore } from '@/stores/userState';
 import React from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import InstallPrompt from '@/components/InstallPwa/InstallPwa';
+import InstallModal from '../InstallPwaModal/InstallModal';
+import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 
 export default function ClientLayout({
   children,
@@ -26,6 +29,7 @@ export default function ClientLayout({
   const { userState } = userStore();
   const isGeoLocationGranted = useGeoLocationPermission();
   const { isMobile } = useIsMobile();
+  const { isPwaOpen, handleInstall, handleClose } = usePwaPrompt();
 
   const pathname = usePathname();
   const router = useRouter();
@@ -69,6 +73,10 @@ export default function ClientLayout({
             />
           )}
 
+          <InstallPrompt />
+          {isPwaOpen && (
+            <InstallModal onClick={handleInstall} onClose={handleClose} />
+          )}
           {chatState && <Chat />}
           <Nav />
         </div>
