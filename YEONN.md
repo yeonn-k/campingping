@@ -146,6 +146,12 @@
     - `top: chatContainerRef.current.scrollHeight` 설정을 통해 스크롤을 가장 아래로 이동시키는 효과
     - 의존성 배열에 chatMsgs를 설정함으로써 채팅이 추가될 때 마다 실행시켜 새 메세지가 도착하면 자동으로 맨 아래로 스크롤
 
+## 📲 PWA( Progressive Web App )
+
+- PWA 기능 지원을 통해 웹 애플리케이션을 네이티브 앱처럼 설치, 오프라인에서 사용할 수 있도록 지원
+- `manifest.json` 파일 설정으로 앱 아이콘, 시작 URL, shortcuts, 색상 등 설정
+- 유저가 웹 앱을 설치할 수 있도록 `beforeinstallprompt` 이벤트 활용
+
 ## 🎨 desktop UI
 
 - 모바일 퍼스트 웹으로 `userAgent` 로 유저의 디바이스를 구분하여 모바일이 아닐 경우 추가로 desktop ui를 렌더링
@@ -194,7 +200,3 @@
 ---
 
 ## 💡 [리팩토링 기록](https://github.com/yeonn-k/campingping/blob/dev/REFACTOR.md)
-
-```
-
-```
