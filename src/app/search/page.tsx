@@ -105,7 +105,3 @@ const Search = () => {
   );
 };
 export default Search;
-
-//   <div className="grid grid-cols-2 w-10/12 h-2/3 place-items-center">
-//
-//   </div>

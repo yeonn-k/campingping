@@ -11,7 +11,6 @@ import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 interface MapProps {
   campList: CampMap[];
-  // lastItemRef: (node: HTMLDivElement) => void;
 }
 
 export const MapListWrap = ({ campList }: MapProps) => {
