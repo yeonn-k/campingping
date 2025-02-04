@@ -28,12 +28,10 @@ export const usePwaPrompt = () => {
     setIsPwaOpen(true);
   };
 
-  // 모달에서 '확인' 클릭 시 실행되는 함수
   const handleInstall = async () => {
     if (!deferredPrompt) return;
-    setIsPwaOpen(false); // 모달 닫기
+    setIsPwaOpen(false);
 
-    // prompt() 호출해서 실제 PWA 설치 진행
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((result) => {
       if (result.outcome === 'accepted') {
@@ -41,13 +39,12 @@ export const usePwaPrompt = () => {
       } else {
         toast.error('설치가 취소되었습니다.');
       }
-      setDeferredPrompt(null); // prompt 후 deferredPrompt 리셋
+      setDeferredPrompt(null);
     });
   };
 
-  // 모달에서 '취소' 클릭 시 실행되는 함수
   const handleClose = async () => {
-    setIsPwaOpen(false); // 모달 닫기
+    setIsPwaOpen(false);
   };
 
   return {
