@@ -60,7 +60,8 @@ const SignIn = () => {
         // setTimeout(() => {
         //   window.location.reload();
         // }, 1000);
-      } else {
+      }
+      if (res.status === 401) {
         toast.error('이메일 또는 비밀번호가 잘못되었습니다.');
       }
     } catch (error) {
