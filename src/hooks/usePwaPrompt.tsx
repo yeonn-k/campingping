@@ -28,6 +28,7 @@ export const usePwaPrompt = () => {
     setIsPwaOpen(true);
   };
 
+  // 모달에서 '확인' 클릭 시 실행되는 함수
   const handleInstall = async () => {
     if (!deferredPrompt) return;
     setIsPwaOpen(false); // 모달 닫기
