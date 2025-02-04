@@ -89,6 +89,10 @@ const SignIn = () => {
     }
   }, [searchParams]);
 
+  const handleKakaoLogin = async () => {
+    window.location.href = `${API_URL}/auth/kakao-login;`;
+  };
+
   const moveToSignUp = () => {
     router.push('/sign-up');
   };
@@ -140,14 +144,17 @@ const SignIn = () => {
           </div>
           <Button width={'w-10/12'}>로그인</Button>
         </form>
-        <Link href={`${API_URL}/auth/kakao-login`} className="w-10/12">
-          <Button width={'w-full'} bgcolor={'bg-kakaoYellow'}>
-            <div className="flex justify-center">
-              <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
-              <span className="ml-1">카카오 로그인</span>
-            </div>
-          </Button>
-        </Link>
+        <Button
+          width={'w-full'}
+          bgcolor={'bg-kakaoYellow'}
+          onClick={handleKakaoLogin}
+        >
+          <div className="flex justify-center">
+            <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
+            <span className="ml-1">카카오 로그인</span>
+          </div>
+        </Button>
+
         <button className="mt-2" onClick={moveToSignUp}>
           회원가입
         </button>
