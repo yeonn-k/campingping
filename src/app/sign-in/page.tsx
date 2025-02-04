@@ -89,7 +89,7 @@ const SignIn = () => {
   }, [searchParams]);
 
   const handleKakaoLogin = async () => {
-    window.location.href = `${API_URL}/auth/kakao-login;`;
+    window.location.href = `${API_URL}/auth/kakao-login`;
   };
 
   const moveToSignUp = () => {
