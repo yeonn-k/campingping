@@ -67,9 +67,9 @@ const Nav = () => {
       if (res.status === 200) {
         setUserState(null);
 
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 100);
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       }
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error);
