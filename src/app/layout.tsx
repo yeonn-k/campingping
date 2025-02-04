@@ -5,7 +5,6 @@ import './globals.css';
 
 import ClientLayout from '@/components/ClientLayout/ClientLayout';
 import Script from 'next/script';
-import InstallPrompt from '@/components/InstallPwa/InstallPwa';
 
 const APP_NAME = '캠핑핑';
 const APP_DEFAULT_TITLE = '캠핑핑';
@@ -44,7 +43,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
           src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
         />
-        <InstallPrompt />
+
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

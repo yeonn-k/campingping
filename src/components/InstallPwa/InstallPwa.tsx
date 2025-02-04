@@ -1,9 +1,12 @@
 'use client';
+
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import logo from '@images/campingping.png';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
+
+import logo from '@images/campingping.png';
+
+import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => void;
@@ -12,9 +15,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 const InstallPrompt = () => {
   const pathname = usePathname();
-
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
+  const { setDeferredPrompt, deferredPrompt, installPWA } = usePwaPrompt();
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -35,29 +36,27 @@ const InstallPrompt = () => {
     };
   }, []);
 
-  const installPWA = () => {
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((result) => {
-      if (result.outcome === 'accepted') {
-        toast.success('PWA가 설치되었습니다! 🎉');
-      } else {
-        toast.error('설치가 취소되었습니다.');
-      }
-      setDeferredPrompt(null);
-    });
-  };
-
   if (pathname === '/sign-in') return;
   return (
-    <div>
+    <div
+      className={`fixed ${pathname === '/community' ? 'bottom-[19rem]' : 'bottom-56'} right-0 translate-x-[-14px] `}
+    >
       {deferredPrompt && (
         <button
-          className={`fixed ${pathname === '/community' ? 'bottom-[19rem]' : 'bottom-56'} right-0 translate-x-[-14px] bg-lime-400 p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]`}
+          className={`relative bg-lime-400 p-2 rounded-full shadow-shadowCustom w-14 h-14 z-[18] flex justify-center`}
           onClick={installPWA}
         >
-          <Image src={logo} alt="logo" width={70} height={70} quality={20} />
+          <Image
+            src={logo}
+            alt="logo"
+            width={90}
+            height={90}
+            quality={20}
+            className="opacity-50"
+          />
+          <div className="text-center text-white font-semibold absolute top-1/2 -translate-y-1/2">
+            APP
+          </div>
         </button>
       )}
     </div>
