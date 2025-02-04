@@ -20,7 +20,6 @@ import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 
 import { api } from '@/utils/axios';
 import { useEffect } from 'react';
-// import { userTokenStore } from '@/stores/userTokenState';
 
 interface FormData {
   email: string;
@@ -56,18 +55,11 @@ const SignIn = () => {
       });
 
       if (res.status === 200) {
-        // const authHeader = res.headers['authorization'];
-
-        // if (authHeader) {
-        //   const token = authHeader.replace('Bearer ', '');
-        //   setToken(token);
-        // }
-
         setUserState(email);
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1000);
       } else {
         toast.error('이메일 또는 비밀번호가 잘못되었습니다.');
       }
