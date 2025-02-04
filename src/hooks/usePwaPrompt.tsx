@@ -10,7 +10,7 @@ export const usePwaPrompt = () => {
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setIsPwaOpen(true);
+      setIsPwaOpen(false);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
