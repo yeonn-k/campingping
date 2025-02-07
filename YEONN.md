@@ -150,7 +150,13 @@
 
 - PWA 기능 지원을 통해 웹 애플리케이션을 네이티브 앱처럼 설치, 오프라인에서 사용할 수 있도록 지원
 - `manifest.json` 파일 설정으로 앱 아이콘, 시작 URL, shortcuts, 색상 등 설정
-- 유저가 웹 앱을 설치할 수 있도록 `beforeinstallprompt` 이벤트 활용
+- display: `standalone` 옵션을 통해 브라우저 없이 독립 실행 가능하도록 설정
+- 설치 프로세스 개선
+  - 유저가 웹 앱을 설치할 수 있도록 `beforeinstallprompt` 이벤트 활용
+  - usePwtPrompt 커스텀 훅을 통해 PWA 설치 프롬프트 상태를 전역에서 관리
+  - 설치/실패에 대해 toast 알림으로 UX 향상
+- 서비스 워커 및 캐싱을 활용한 성능 최적화
+  - `@ducanh2912/next-pwa`
 
 ## 🎨 desktop UI
 
