@@ -68,6 +68,11 @@ const Chat = () => {
     });
   };
 
+  const closeChats = () => {
+    setChatState(false);
+    setChatRoomId(null);
+  };
+
   useEffect(() => {
     getChatHistory();
   }, []);
@@ -96,7 +101,7 @@ const Chat = () => {
           width={16}
           quality={10}
           className="pb-2 mb-4 mt-3 origin-center rotate-180 "
-          onClick={() => setChatState(false)}
+          onClick={closeChats}
         />
 
         {chatRoomId && (
