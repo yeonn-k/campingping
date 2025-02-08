@@ -4,7 +4,6 @@ interface UrChatMsgProps {
   message: string;
   createdAt: string;
   nickname: string;
-  user: string;
 }
 
 const UrChatMsg = ({ nickname, message, createdAt }: UrChatMsgProps) => {
