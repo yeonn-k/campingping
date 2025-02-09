@@ -5,7 +5,7 @@ export const createPost = async (
     id?: string;
     title: string;
     location: string;
-    people: number;
+    peopleNum: number;
     content: string;
     startDate: Date;
     endDate: Date;

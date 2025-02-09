@@ -6,6 +6,16 @@ import Button from '../../components/Button/Button';
 import Image from 'next/image';
 import closeIcon from '@icons/close.svg';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+interface FormData {
+  peopleNum: number;
+  title: string;
+  startDate: Date;
+  endDate: Date;
+  location: string;
+  content: string;
+}
 
 const WriteModal = ({
   onClose,
@@ -14,24 +24,17 @@ const WriteModal = ({
   onClose: () => void;
   onPostSubmit: VoidFunction;
 }) => {
+  const { register, handleSubmit } = useForm<FormData>();
   const [isLoading, setIsLoading] = useState(false);
-  const handleSubmit = async () => {
-    const title = (document.querySelector('#title') as HTMLInputElement).value;
-    const startDate = new Date(
-      (document.querySelector('#startDate') as HTMLInputElement).value
-    );
-    const endDate = new Date(
-      (document.querySelector('#endDate') as HTMLInputElement).value
-    );
-    const location = (document.querySelector('#location') as HTMLInputElement)
-      .value;
-    const people = parseInt(
-      (document.querySelector('#people') as HTMLInputElement).value
-    );
+
+  const onSubmit = async (data: FormData) => {
+    const { peopleNum, title, startDate, endDate, location } = data;
+
     const content = (document.querySelector('#content') as HTMLTextAreaElement)
       .value;
 
-    if (title && startDate && endDate && location && people && content) {
+    console.log(title, startDate, endDate, location, peopleNum, content);
+    if (title && startDate && endDate && location && peopleNum && content) {
       try {
         navigator.geolocation.getCurrentPosition(
           async (position) => {
@@ -40,7 +43,7 @@ const WriteModal = ({
               startDate,
               endDate,
               location,
-              people,
+              peopleNum,
               content,
               lat: position.coords.latitude,
               lon: position.coords.longitude,
@@ -59,6 +62,7 @@ const WriteModal = ({
       }
     }
   };
+
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
     textarea.style.height = 'auto';
@@ -74,51 +78,68 @@ const WriteModal = ({
           </button>
           <h2 className="text-subTitle text-center w-full">게시글 작성</h2>
         </div>
-        <div className="mb-4 flex items-center space-x-2 ">
-          <span className="w-16 text-left">제목</span>
-          <Input id="title" placeholder={''} />
-        </div>
-        <div className="mb-4 flex items-center space-x-2 ">
-          <span className="w-16 text-left">시작일</span>
-          <Input type="datetime-local" id="startDate" placeholder={''} />
-        </div>
-        <div className="mb-4 flex items-center space-x-2 ">
-          <span className="w-16 text-left">종료일</span>
-          <Input type="datetime-local" id="endDate" placeholder={''} />
-        </div>
-        <div className="mb-4 flex items-center space-x-2">
-          <span className="w-16 text-left">장소</span>
-          <Input id="location" placeholder={''} />
-        </div>
-        <div className="mb-4 flex items-center space-x-2">
-          <span className="w-16 text-left">인원</span>
-          <Input id="people" placeholder={''} />
-        </div>
-        <div className="mb-4 flex items-center space-x-2 ">
-          <span className="w-16 text-left mb-2">기타</span>
-          <textarea
-            id="content"
-            onChange={handleContentChange}
-            className="w-[65.5%]  border border-lightGray rounded resize-none overflow-hidden focus:border-Green focus:outline-none"
-            style={{
-              minHeight: '40px',
-              lineHeight: '1.5',
-              maxHeight: '200px',
-            }}
-          />
-        </div>
-        <div className="flex justify-center mt-6">
-          <Button
-            width="w-36"
-            height="h-10"
-            bgcolor="bg-Green"
-            fontsize="content"
-            onClick={handleSubmit}
-            isLoading={isLoading}
-          >
-            등록
-          </Button>
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-4 flex items-center space-x-2 ">
+            <span className="w-16 text-left">제목</span>
+            <Input placeholder="제목을 입력해주세요" {...register('title')} />
+          </div>
+          <div className="mb-4 flex items-center space-x-2 ">
+            <span className="w-16 text-left">시작일</span>
+            <Input
+              type="datetime-local"
+              placeholder={''}
+              {...register('startDate')}
+            />
+          </div>
+          <div className="mb-4 flex items-center space-x-2 ">
+            <span className="w-16 text-left">종료일</span>
+            <Input
+              type="datetime-local"
+              placeholder={''}
+              {...register('endDate')}
+            />
+          </div>
+          <div className="mb-4 flex items-center space-x-2">
+            <span className="w-16 text-left">장소</span>
+            <Input
+              placeholder="장소를 입력해주세요"
+              {...register('location')}
+            />
+          </div>
+          <div className="mb-4 flex items-center space-x-2">
+            <span className="w-16 text-left">인원</span>
+            <Input
+              type="number"
+              placeholder={'숫자만 입력해주세요'}
+              {...register('peopleNum')}
+            />
+          </div>
+          <div className="mb-4 flex items-center space-x-2 ">
+            <span className="w-16 text-left mb-2">기타</span>
+            <textarea
+              id="content"
+              onChange={handleContentChange}
+              placeholder="기타 내용을 입력해주세요"
+              className="w-[65.5%]  border border-lightGray rounded resize-none overflow-hidden focus:border-Green focus:outline-none placeholder:text-LightGray"
+              style={{
+                minHeight: '40px',
+                lineHeight: '1.5',
+                maxHeight: '200px',
+              }}
+            />
+          </div>
+          <div className="flex justify-center mt-6">
+            <Button
+              width="w-36"
+              height="h-10"
+              bgcolor="bg-Green"
+              fontsize="content"
+              isLoading={isLoading}
+            >
+              등록
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
