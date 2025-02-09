@@ -49,8 +49,6 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       message: inputValue,
       room: chatRoomId,
     });
-
-    getChatHistory();
   };
 
   const handleSendMessage = async () => {
@@ -79,6 +77,45 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       }
     }
   };
+
+  socket.on('newMessage', () => {
+    getChatHistory();
+  });
+
+  // useEffect(() => {
+  //   const handleChatting = (data: sendMessage) => {
+  //     const { sender, message, createdAt } = data;
+
+  //     setChatMsgs((prev) => {
+  //       if (!prev)
+  //         return [
+  //           {
+  //             message,
+  //             createdAt,
+  //             author: { email: sender.email, nickname: sender.nickname },
+  //           },
+  //         ];
+
+  //       const isDuplicate = prev.some((msg) => msg.createdAt === createdAt);
+  //       if (isDuplicate) return prev;
+
+  //       return [
+  //         ...prev,
+  //         {
+  //           message,
+  //           createdAt,
+  //           author: { email: sender.email, nickname: sender.nickname },
+  //         },
+  //       ];
+  //     });
+  //   };
+
+  //   socket.on('newMessage', handleChatting);
+
+  //   return () => {
+  //     socket.off('newMessage', handleChatting);
+  //   };
+  // }, [chatRoomId]);
 
   const getOutFromRoom = async () => {
     const res = await api.delete(`/chats/rooms/${chatRoomId}`);
