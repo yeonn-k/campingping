@@ -3,7 +3,6 @@ import { timeFormat } from '@/utils/timeFormat';
 interface MyChatMsgProps {
   message: string;
   createdAt: string;
-  user: string;
 }
 
 const MyChatMsg = ({ message, createdAt }: MyChatMsgProps) => {
