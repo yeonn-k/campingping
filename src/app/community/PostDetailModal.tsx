@@ -338,9 +338,9 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
                 key={comment.id}
                 className="flex justify-between items-center mb-2"
               >
-                <div>
+                <div className="w-[80%]">
                   <p
-                    className="text-subTitle cursor-pointer"
+                    className="text-xl cursor-pointer"
                     onClick={() => createNewChat(comment.user.email)}
                   >
                     {comment.user.nickname}
@@ -370,7 +370,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
                     <p>{comment.content}</p>
                   )}
                 </div>
-                <div>
+                <div className="w-[20%]">
                   <button
                     className="mr-2 text-Green"
                     onClick={() => handleEditClick(comment.id, comment.content)}

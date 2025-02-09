@@ -19,7 +19,7 @@ export const createPost = async (
     const formattedPostData = {
       ...postData,
     };
-    const response = await api.post(`/communities`, formattedPostData, {});
+    const response = await api.post(`/communities`, formattedPostData);
 
     return response.data;
   } catch (error) {
