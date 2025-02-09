@@ -60,7 +60,7 @@ export default function ClientLayout({
           className={`relative w-full md:max-w-[450px] h-full flex justify-center ${chatState ? 'overflow-hidden' : 'overflow-auto'}`}
         >
           {children}
-          {pathname !== '/sign-in' && (
+          {pathname !== '/sign-in' && pathname !== '/search' && (
             <OpenTheChats
               onClick={() => {
                 if (userState) {
