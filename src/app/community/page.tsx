@@ -289,14 +289,10 @@ const CommunityPage = () => {
         </div>
       </div>
 
-      <div
-        className={`min-h-[calc(100vh-4rem)] ${
-          myPosts.length === 0 ? 'flex items-center justify-center' : ''
-        }`}
-      >
+      <div className={`min-h-[calc(100vh-4rem)] `}>
         {activeTab === 'myPosts' ? (
           myPosts.length > 0 ? (
-            <div className="flex flex-col space-y-4">
+            <div className="flex flex-col space-y-4 mb-14">
               {myPosts.map((post, index) => (
                 <div
                   key={index}
@@ -305,7 +301,7 @@ const CommunityPage = () => {
                   ref={index === myPosts.length - 1 ? lastItemRef : null}
                 >
                   <p className="ml-2 mt-2 flex justify-between">
-                    {post.title}
+                    제목 : {post.title}
                     <button
                       className="justify-end text-red-500 hover:text-red-700 whitespace-nowrap min-w-[50px]"
                       onClick={(e) => {
@@ -316,20 +312,18 @@ const CommunityPage = () => {
                       삭제
                     </button>
                   </p>
-
                   <hr className="my-2 border-t-1 border-Green" />
                   <p className="ml-2 mt-1">
-                    {new Date(post.startDate).toLocaleDateString()}
+                    시작일 : {new Date(post.startDate).toLocaleDateString()}
                     부터
                   </p>
-
                   <p className="ml-2 mt-1">
-                    {new Date(post.endDate).toLocaleDateString()}
+                    종료일 : {new Date(post.endDate).toLocaleDateString()}
                     까지
                   </p>
-                  <p className="ml-2 mt-1">{post.location}</p>
-                  <p className="ml-2 mt-1">{post.people}</p>
-                  <p className="ml-2 mt-1">{post.content}</p>
+                  <p className="ml-2 mt-1">장소 : {post.location}</p>
+                  <p className="ml-2 mt-1">인원 : {post.people}</p>
+                  <p className="ml-2 mt-1">기타 : {post.content}</p>
                 </div>
               ))}
             </div>
@@ -341,7 +335,7 @@ const CommunityPage = () => {
           )
         ) : activeTab === 'allPosts' ? (
           allPosts.length > 0 ? (
-            <div className="flex flex-col space-y-4">
+            <div className="flex flex-col space-y-4 mb-14">
               {allPosts.map((post, index) => (
                 <div
                   key={index}
@@ -349,19 +343,19 @@ const CommunityPage = () => {
                   onClick={() => openDetailModal(post)}
                   ref={index === allPosts.length - 1 ? lastItemRef : null}
                 >
-                  <p className="ml-2 mt-2">{post.title}</p>
+                  <p className="ml-2 mt-2">제목 : {post.title}</p>
                   <hr className="my-2 border-t-1 border-Green" />
                   <p className="ml-2 mt-1">
-                    {new Date(post.startDate).toLocaleDateString()}
+                    시작일 : {new Date(post.startDate).toLocaleDateString()}
                     부터
                   </p>
                   <p className="ml-2 mt-1">
-                    {new Date(post.endDate).toLocaleDateString()}
+                    종료일 : {new Date(post.endDate).toLocaleDateString()}
                     까지
                   </p>
-                  <p className="ml-2 mt-1">{post.location}</p>
-                  <p className="ml-2 mt-1">{post.people}</p>
-                  <p className="ml-2 mt-1">{post.content}</p>
+                  <p className="ml-2 mt-1">장소 : {post.location}</p>
+                  <p className="ml-2 mt-1">인원 : {post.people}</p>
+                  <p className="ml-2 mt-1">기타 : {post.content}</p>
                 </div>
               ))}
             </div>
