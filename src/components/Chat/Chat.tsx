@@ -88,6 +88,8 @@ const Chat = () => {
     getChatHistory();
   }, []);
 
+  socket.on('newMessage', getChatRooms);
+
   return (
     <div
       className={`bg-white fixed bottom-0 w-full max-w-[450px] ${chatState ? 'h-5/6' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
