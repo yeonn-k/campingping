@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DesktopUi from './DesktopUi';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
 import Nav from '../Nav/Nav';
@@ -15,9 +15,11 @@ import Chat from '../Chat/Chat';
 import { userStore } from '@/stores/userState';
 import React from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import InstallPrompt from '@/components/InstallPwa/InstallPwa';
-import InstallModal from '../InstallPwaModal/InstallModal';
+import InstallPrompt from '@/components/PWA/InstallPwa/InstallPwa';
+import InstallModal from '@/components/PWA/InstallPwaModal/InstallModal';
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
+import { usePushNotification } from '@/hooks/usePushNotification';
+import PwaAlarmPopUp from '../PWA/PwaAlarmPopUp/PwaAlarmPopUp';
 
 export default function ClientLayout({
   children,
@@ -28,8 +30,15 @@ export default function ClientLayout({
   const { chatState, setChatState } = chattingStore();
   const { userState } = userStore();
   const isGeoLocationGranted = useGeoLocationPermission();
+
   const { isMobile } = useIsMobile();
   const { isPwaOpen, handleInstall, handleClose } = usePwaPrompt();
+  const [isPwaAlarmOpen, setIsPwaAlarmOpen] = useState(false);
+
+  const { getPermission, denyPermission, askPushNotification } =
+    usePushNotification({
+      setIsPwaAlarmOpen,
+    });
 
   const pathname = usePathname();
   const router = useRouter();
@@ -46,6 +55,14 @@ export default function ClientLayout({
       );
     }
   }, [isGeoLocationGranted, updateLocation]);
+
+  useEffect(() => {
+    const requestPushPermission = async () => {
+      askPushNotification();
+    };
+
+    requestPushPermission();
+  }, []);
 
   return (
     <div className="relative">
@@ -76,6 +93,9 @@ export default function ClientLayout({
           <InstallPrompt />
           {isPwaOpen && (
             <InstallModal onClick={handleInstall} onClose={handleClose} />
+          )}
+          {isPwaAlarmOpen && (
+            <PwaAlarmPopUp onClick={getPermission} onClose={denyPermission} />
           )}
           {chatState && <Chat />}
           <Nav />

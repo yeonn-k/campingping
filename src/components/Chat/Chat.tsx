@@ -5,7 +5,7 @@ import { SetStateAction, useEffect, useState } from 'react';
 import { socket } from '../../socket';
 
 import ChatBox from './ChatBox';
-import ChatRoom from '../ChatRoom/ChatRoom';
+import ChatRoom from './ChatRoom/ChatRoom';
 
 import chevron from '@icons/chevron_gray.svg';
 import goToBack from '@icons/goToBack.svg';
