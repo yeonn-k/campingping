@@ -144,7 +144,7 @@ const SignIn = () => {
           <Button width={'w-10/12'}>로그인</Button>
         </form>
         <Button
-          width={'w-full'}
+          width={'w-10/12'}
           bgcolor={'bg-kakaoYellow'}
           onClick={handleKakaoLogin}
         >

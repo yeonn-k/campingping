@@ -39,7 +39,7 @@ const InstallPrompt = () => {
   if (pathname === '/sign-in') return;
   return (
     <div
-      className={`fixed ${pathname === '/community' ? 'bottom-[19rem]' : 'bottom-56'} right-0 translate-x-[-14px] `}
+      className={`fixed ${pathname === '/community' ? 'bottom-[19rem]' : 'bottom-56'} right-0 translate-x-[-14px] z-[18] `}
     >
       {deferredPrompt && (
         <button

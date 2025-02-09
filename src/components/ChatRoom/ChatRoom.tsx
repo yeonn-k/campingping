@@ -49,6 +49,8 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       message: inputValue,
       room: chatRoomId,
     });
+
+    getChatHistory();
   };
 
   const handleSendMessage = async () => {
@@ -87,41 +89,6 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       setChatRoomId(null);
     }
   };
-
-  useEffect(() => {
-    const handleChatting = (data: sendMessage) => {
-      const { sender, message, createdAt } = data;
-
-      setChatMsgs((prev) => {
-        if (!prev)
-          return [
-            {
-              message,
-              createdAt,
-              author: { email: sender.email, nickname: sender.nickname },
-            },
-          ];
-
-        const isDuplicate = prev.some((msg) => msg.createdAt === createdAt);
-        if (isDuplicate) return prev;
-
-        return [
-          ...prev,
-          {
-            message,
-            createdAt,
-            author: { email: sender.email, nickname: sender.nickname },
-          },
-        ];
-      });
-    };
-
-    socket.on('newMessage', handleChatting);
-
-    return () => {
-      socket.off('newMessage', handleChatting);
-    };
-  }, [chatRoomId]); //chatMsgs, chatMsg
 
   useEffect(() => {
     const handleGetChatting = (data: ChatMsgs[]) => {
@@ -171,14 +138,9 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       >
         {chatMsgs?.map((chat) => {
           return chat.author.email === userEmail ? (
-            <MyChatMsg
-              user={chat.author.email}
-              message={chat.message}
-              createdAt={chat.createdAt}
-            />
+            <MyChatMsg message={chat.message} createdAt={chat.createdAt} />
           ) : (
             <UrChatMsg
-              user={chat.author.email}
               message={chat.message}
               createdAt={chat.createdAt}
               nickname={chat.author.nickname}

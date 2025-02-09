@@ -9,7 +9,7 @@ export interface ChatRooms {
   ];
   lastMessage: string;
   lastMessageTime: string;
-  isRead: boolean;
+  unreadCount: number;
 }
 
 export interface sendMessage {

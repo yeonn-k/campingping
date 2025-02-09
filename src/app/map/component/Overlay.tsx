@@ -48,7 +48,7 @@ const Overlay = ({ id, name, imgSrc, address, onClick }: OverlayProps) => {
               quality={5}
             />
           ) : (
-            <DefaultImg />
+            <DefaultImg width="w-[70%]" height="h-[70%]" />
           )}
           <p className="w-20 h-10 text-description text-Gray overflow-hidden text-ellipsis whitespace-nowrap">
             {address}

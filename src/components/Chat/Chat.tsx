@@ -60,6 +60,18 @@ const Chat = () => {
     };
   }, []);
 
+  useEffect(() => {
+    getChatRooms();
+
+    socket.on('chatRooms', (rooms: ChatRooms[]) => {
+      setChats(rooms);
+    });
+  }, []);
+
+  const getChatRooms = () => {
+    socket.emit('getChatRooms');
+  };
+
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
@@ -68,22 +80,14 @@ const Chat = () => {
     });
   };
 
-  useEffect(() => {
-    getChatHistory();
-  }, []);
-
-  const getChats = async () => {
-    try {
-      const res = await api.get('/chats/rooms');
-      setChats(res.data.data);
-    } catch (error) {
-      console.error(error);
-    }
+  const closeChats = () => {
+    setChatState(false);
+    setChatRoomId(null);
   };
 
   useEffect(() => {
-    getChats();
-  }, [chatRoomId]);
+    getChatHistory();
+  }, []);
 
   return (
     <div
@@ -96,7 +100,7 @@ const Chat = () => {
           width={16}
           quality={10}
           className="pb-2 mb-4 mt-3 origin-center rotate-180 "
-          onClick={() => setChatState(false)}
+          onClick={closeChats}
         />
 
         {chatRoomId && (
@@ -131,7 +135,7 @@ const Chat = () => {
                       nickname={chat.users[0].nickname}
                       lastMsg={chat.lastMessage}
                       createdAt={timeFormat(chat.createdAt)}
-                      isRead={chat.isRead}
+                      unreadCount={chat.unreadCount}
                     />
                   </div>
                 );
