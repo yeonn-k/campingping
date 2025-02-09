@@ -29,4 +29,5 @@ export interface ChatMsgs {
     email: string;
     nickname: string;
   };
+  isRead: boolean;
 }
