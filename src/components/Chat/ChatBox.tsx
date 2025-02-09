@@ -9,7 +9,7 @@ interface ChatBox {
 const ChatBox = ({ nickname, createdAt, lastMsg, unreadCount }: ChatBox) => {
   return (
     <div
-      className={`w-11/12 border ${unreadCount > 0 ? 'border-Gray' : 'border-Green'} px-4 py-3 rounded-md flex justify-between items-center`}
+      className={`w-11/12 border ${unreadCount > 0 ? 'border-Green' : 'border-Gray'} px-4 py-3 rounded-md flex justify-between items-center`}
     >
       <div className="w-9/12">
         <p className="w-full text-[20px]">{nickname}</p>
