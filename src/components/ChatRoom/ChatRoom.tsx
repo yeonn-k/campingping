@@ -175,7 +175,11 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       >
         {chatMsgs?.map((chat) => {
           return chat.author.email === userEmail ? (
-            <MyChatMsg message={chat.message} createdAt={chat.createdAt} />
+            <MyChatMsg
+              message={chat.message}
+              createdAt={chat.createdAt}
+              isRead={chat.isRead}
+            />
           ) : (
             <UrChatMsg
               message={chat.message}
