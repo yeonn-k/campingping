@@ -32,7 +32,6 @@ const SignIn = () => {
   const searchParams = useSearchParams();
 
   const { userState, setUserState } = userStore();
-  // const { setToken } = userTokenStore();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {

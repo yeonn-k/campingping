@@ -16,9 +16,11 @@ const ChatBox = ({ nickname, createdAt, lastMsg, unreadCount }: ChatBox) => {
         <p>{lastMsg}</p>
         <p className="text-description text-Gray">{createdAt}</p>
       </div>
-      <div className="flex justify-center items-center w-7 h-7 rounded-full bg-Green text-white">
-        {unreadCount}
-      </div>
+      {unreadCount > 0 && (
+        <div className="flex justify-center items-center w-7 h-7 rounded-full bg-Green text-white">
+          {unreadCount}
+        </div>
+      )}
     </div>
   );
 };

@@ -24,15 +24,23 @@ const WriteModal = ({
   onPostSubmit: VoidFunction;
 }) => {
   const { register, handleSubmit } = useForm<FormData>();
+  const { register, handleSubmit } = useForm<FormData>();
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data: FormData) => {
+
+  const onSubmit = async (data: FormData) => {
+    const { peopleNum, title, startDate, endDate, location } = data;
+
     const content = (document.querySelector('#content') as HTMLTextAreaElement)
       .value;
     const { peopleNum, title, startDate, endDate, location } = data;
     const people = parseInt(peopleNum);
     console.log(title, startDate, endDate, location, people, content);
     if (title && startDate && endDate && location && people && content) {
+
+    console.log(title, startDate, endDate, location, peopleNum, content);
+    if (title && startDate && endDate && location && peopleNum && content) {
       try {
         navigator.geolocation.getCurrentPosition(
           async (position) => {
@@ -41,7 +49,7 @@ const WriteModal = ({
               startDate,
               endDate,
               location,
-              people,
+              peopleNum,
               content,
               lat: position.coords.latitude,
               lon: position.coords.longitude,
@@ -60,6 +68,7 @@ const WriteModal = ({
       }
     }
   };
+
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = e.target;
     textarea.style.height = 'auto';
@@ -127,7 +136,6 @@ const WriteModal = ({
           </div>
           <div className="flex justify-center mt-6">
             <Button
-              type="submit"
               width="w-36"
               height="h-10"
               bgcolor="bg-Green"

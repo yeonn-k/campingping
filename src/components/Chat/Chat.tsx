@@ -5,7 +5,7 @@ import { SetStateAction, useEffect, useState } from 'react';
 import { socket } from '../../socket';
 
 import ChatBox from './ChatBox';
-import ChatRoom from '../ChatRoom/ChatRoom';
+import ChatRoom from './ChatRoom/ChatRoom';
 
 import chevron from '@icons/chevron_gray.svg';
 import goToBack from '@icons/goToBack.svg';
@@ -52,6 +52,18 @@ const Chat = () => {
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+
+    const registerServiceWorker = async () => {
+      try {
+        const registration =
+          await navigator.serviceWorker.register('/service-worker.js');
+        console.log('서비스 워커 등록 성공:', registration);
+      } catch (error) {
+        console.error('서비스 워커 등록 실패:', error);
+      }
+    };
+
+    registerServiceWorker();
 
     return () => {
       socket.off('connect', onConnect);
