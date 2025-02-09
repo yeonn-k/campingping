@@ -5,7 +5,7 @@ export const createPost = async (
     id?: string;
     title: string;
     location: string;
-    peopleNum: number;
+    people: number;
     content: string;
     startDate: Date;
     endDate: Date;
@@ -19,7 +19,7 @@ export const createPost = async (
     const formattedPostData = {
       ...postData,
     };
-    const response = await api.post(`/communities`, formattedPostData, {});
+    const response = await api.post(`/communities`, formattedPostData);
 
     return response.data;
   } catch (error) {
