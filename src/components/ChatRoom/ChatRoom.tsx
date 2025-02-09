@@ -10,7 +10,7 @@ import UrChatMsg from './UrChatMsg';
 
 import profileGreen from '@icons/profile_green.svg';
 
-import { ChatMsgs, sendMessage } from '@/types/Chatting';
+import { ChatMsgs } from '@/types/Chatting';
 
 import { userStore } from '@/stores/userState';
 import { chattingStore } from '@/stores/chattingState';
