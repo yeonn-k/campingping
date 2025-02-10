@@ -2,6 +2,8 @@
 
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 import { API_URL } from '@/config/config';
 
 import { toast } from 'react-toastify';
@@ -18,7 +20,6 @@ import SymbolImg from '@images/campingping.png';
 import KakaoLogo from '@icons/KakaoTalk_logo.svg';
 
 import { api } from '@/utils/axios';
-import { useEffect } from 'react';
 
 interface FormData {
   email: string;
@@ -33,6 +34,7 @@ const SignIn = () => {
 
   const { userState, setUserState } = userStore();
   const { register, handleSubmit } = useForm<FormData>();
+  const [isKakaoLoading, setIsKakaoLoading] = useState(false);
 
   const onSubmit = async (data: FormData) => {
     const { email, password } = data;
@@ -88,6 +90,9 @@ const SignIn = () => {
   }, [searchParams]);
 
   const handleKakaoLogin = async () => {
+    if (isKakaoLoading) return;
+    setIsKakaoLoading(true);
+
     window.location.href = `${API_URL}/auth/kakao-login`;
   };
 
