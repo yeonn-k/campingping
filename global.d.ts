@@ -19,6 +19,8 @@ declare global {
   namespace kakao.maps {
     interface Map {
       getCenter(): LatLng;
+      getLevel(): number;
+      setLevel(level: number): void;
       addListener(event: string, callback: () => void): void;
       removeListener(event: string, callback: () => void): void;
     }

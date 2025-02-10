@@ -78,24 +78,25 @@ const Map = () => {
 
   useEffect(() => {
     if (!kakaoMap) return;
+    if (!regionQuery) {
+      const onMapCenterChanged = () => {
+        const center = kakaoMap.getCenter();
+        const updatedLat = center.getLat();
+        const updatedLon = center.getLng();
 
-    const onMapCenterChanged = () => {
-      const center = kakaoMap.getCenter();
-      const updatedLat = center.getLat();
-      const updatedLon = center.getLng();
+        setLat(updatedLat);
+        setLon(updatedLon);
 
-      setLat(updatedLat);
-      setLon(updatedLon);
+        getNearByCampings(updatedLat, updatedLon);
+      };
 
-      getNearByCampings(updatedLat, updatedLon);
-    };
+      kakaoMap.addListener('mouseup', onMapCenterChanged);
 
-    kakaoMap.addListener('mouseup', onMapCenterChanged);
-
-    // 컴포넌트 언마운트 시 리스너 제거
-    return () => {
-      kakaoMap.removeListener('mouseup', onMapCenterChanged);
-    };
+      // 컴포넌트 언마운트 시 리스너 제거
+      return () => {
+        kakaoMap.removeListener('mouseup', onMapCenterChanged);
+      };
+    }
   }, [kakaoMap]);
 
   const getNearByCampings = async (updatedLat: number, updatedLon: number) => {
@@ -159,15 +160,20 @@ const Map = () => {
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
 
+        regionQuery ? map.setZoomable(true) : map.setZoomable(false);
+
+        setKakaoMap(map);
+
+        if (kakaoMap) {
+          return;
+        }
+
         if (!regionQuery) {
           if (typeof lat === 'number' && typeof lon === 'number')
             getNearByCampings(lat, lon);
-
-          console.log(lat, lon);
         }
 
         getCampingsByDoNm();
-        setKakaoMap(map);
       });
     }
   }, [lat, lon, regionQuery, , cityQuery, selectedCategoryValue]);
