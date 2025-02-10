@@ -63,77 +63,19 @@
 - 유저 위치 기반일 경우 유저의 위치에 해당하는 위도와 경도 값을 전달하여 현재 위치의 날씨 제공
 - 지역 검색 시 검색한 지역에 해당하는 위도와 경도 값을 전달하여 해당하는 지역의 날씨 제공
 
-- 관련 util
-
-  - createApiUrl
-
-    - 기본 base URL과 파라미터 목록을 받아 쿼리 스트링을 포함한 API 호출 URL을 생성
-      - baseUrl(API 요청 url), ParamsList(파라미터 목록)
-
-    ```typescript
-    // 사용 예시
-    const url = createApiUrl('https://morecodeplease.com/api/campings/lists', [
-      { name: 'region', value: '서울시' },
-      { name: 'city', value: '종로구' },
-    ]);
-
-    console.log(url);
-    // https://morecodeplease.com/api/campings/lists?region=서울시&city=종로구
-    ```
-
 ## 🔍 search
 
-- `searchBar` 컴포넌트를 통해 `origin`, `category`, `region`을 `query`로 전달받음
-- `origin`
-
-  - `map` 이나 `list` 페이지에서 접근 시 `origin` 을 그대로 저장해서 기존 페이지로 기존 카테고리와 지역에 대한 정보를 전달
-  - `detail`이나 외부 페이지에서 URL을 입력해서 접근했을 경우 `origin`을 기본 값인 `map`으로 설정, `map` 페이지에서 지역 검색의 결과를 보여줌
-  - `query`
-    - `type`으로 '지역'과 '시군구'를 구분하여 하나의 함수로 관리
-    - `useRegionSearch`를 통해 지역 선택 시 검색을 위한 형태로 변환
-      - 지역명 변환: '서울특별시' -> '서울시', '제주특별자치도' -> '제주시' ...
-        ```typescript
-        if (value.includes('특별자치')) {
-          formattedRegion = value.slice(0, 2) + value.slice(-1);
-        } else if (value.includes('광역시') || value.includes('특별시')) {
-          formattedRegion = value.slice(0, 2) + '시';
-        }
-        ```
-    - 선택 값이 기존 `regionStore` 값과 동일할 경우 쿼리 및 상태 초기화
+- `search` 페이지 또한 단독의 페이지로 구성 되어 있으므로 다른 페이지의 쿼리로 영향이 받지 않도록 전역 상태관리로 검색 내용 관리
+- 지역명 변환: '서울특별시' -> '서울시', '제주특별자치도' -> '제주시' ...
+  ```typescript
+  if (value.includes('특별자치')) {
+    formattedRegion = value.slice(0, 2) + value.slice(-1);
+  } else if (value.includes('광역시') || value.includes('특별시')) {
+    formattedRegion = value.slice(0, 2) + '시';
+  }
+  ```
+  - 선택 값이 기존 `regionStore` 값과 동일할 경우 쿼리 및 상태 초기화
   - 페이지 이동 시 `regionStore` 상태 값 초기화
-    ```typescript
-    export const regionStore = create<RegionState>()(
-      persist(
-        (set) => ({
-          coloredRegion: null,
-          coloredCity: null,
-          setColoredRegion: (v: string | null) => {
-            set({ coloredRegion: v });
-          },
-          setColoredCity: (v: string | null) => {
-            set({ coloredCity: v });
-          },
-        }),
-        {
-          name: 'region-storage',
-        }
-      )
-    );
-    ```
-
-- 관련 util
-  - updateQueryString
-    - URL의 쿼리 스트링을 동적으로 업데이트하고 브라우저 히스토리 관리
-      - paramsToUpdate 객체: 쿼리 스트링을 업데이트 할 파라미터 객체 배열
-      - key(파라미터 이름), value(파라미터 값, `null`일 경우 파라미터 삭제)
-    ```typescript
-    // 사용 예시
-    updateQueryString({
-      origin: 'map',
-      category: '지역',
-      region: '서울시',
-    });
-    ```
 
 ## 💬 chat
 
@@ -145,18 +87,6 @@
     - ScrollHeight`: 요소 전체의 스크롤 가능한 높이 = 맨 아래 메세지 까지의 총 높이
     - `top: chatContainerRef.current.scrollHeight` 설정을 통해 스크롤을 가장 아래로 이동시키는 효과
     - 의존성 배열에 chatMsgs를 설정함으로써 채팅이 추가될 때 마다 실행시켜 새 메세지가 도착하면 자동으로 맨 아래로 스크롤
-
-## 📲 PWA( Progressive Web App )
-
-- PWA 기능 지원을 통해 웹 애플리케이션을 네이티브 앱처럼 설치, 오프라인에서 사용할 수 있도록 지원
-- `manifest.json` 파일 설정으로 앱 아이콘, 시작 URL, shortcuts, 색상 등 설정
-- display: `standalone` 옵션을 통해 브라우저 없이 독립 실행 가능하도록 설정
-- 설치 프로세스 개선
-  - 유저가 웹 앱을 설치할 수 있도록 `beforeinstallprompt` 이벤트 활용
-  - usePwtPrompt 커스텀 훅을 통해 PWA 설치 프롬프트 상태를 전역에서 관리
-  - 설치/실패에 대해 toast 알림으로 UX 향상
-- 서비스 워커 및 캐싱을 활용한 성능 최적화
-  - `@ducanh2912/next-pwa`
 
 ## 🎨 desktop UI
 
@@ -199,10 +129,12 @@
 - 이미지 등의 기본적으로 표시되는 내용이 없을 경우 지정 된 '기본값' 표시
 - 클릭 시 해당 아이템 상세 페이지로 이동
 
-## 📍toast 알림</b>으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선
+## 📍**_toast 알림_**으로 사용자에게 실시간 상태 알림을 제공하여 UX 개선
 
 ## 🛜 EC2 배포
 
 ---
 
 ## 💡 [리팩토링 기록](https://github.com/yeonn-k/campingping/blob/dev/REFACTOR.md)
+
+## ✨ [추가기능 구현](https://github.com/yeonn-k/campingping/blob/dev/FEATURES.md)
