@@ -44,8 +44,8 @@ const Map = () => {
   const [lon, setLon] = useState<number | null>(userLon);
 
   const mapRef = useRef<HTMLDivElement>(null);
-  const [kakaoMap, setKakaoMap] = useState<unknown | null>(null);
-  const [, setKakaoMarker] = useState<unknown | null>(null);
+  const [kakaoMap, setKakaoMap] = useState<kakao.maps.Map | null>(null);
+  const [, setKakaoMarker] = useState<kakao.maps.Marker | null>(null);
 
   const [campList, setCampList] = useState<CampMap[]>([]);
 
@@ -174,7 +174,7 @@ const Map = () => {
     const clusterer = new window.kakao.maps.MarkerClusterer({
       map: kakaoMap,
       averageCenter: true,
-      minLevel: 10,
+      minLevel: 9,
       markers: markers,
     });
 
