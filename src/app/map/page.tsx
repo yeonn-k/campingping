@@ -76,13 +76,33 @@ const Map = () => {
     }
   }, [regionQuery, location, userLat, userLon]);
 
-  const getNearByCampings = async () => {
-    if (regionQuery) return;
+  useEffect(() => {
+    if (!kakaoMap) return;
 
+    const onMapCenterChanged = () => {
+      const center = kakaoMap.getCenter();
+      const updatedLat = center.getLat();
+      const updatedLon = center.getLng();
+
+      setLat(updatedLat);
+      setLon(updatedLon);
+
+      getNearByCampings(updatedLat, updatedLon);
+    };
+
+    kakaoMap.addListener('mouseup', onMapCenterChanged);
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      kakaoMap.removeListener('mouseup', onMapCenterChanged);
+    };
+  }, [kakaoMap]);
+
+  const getNearByCampings = async (updatedLat: number, updatedLon: number) => {
     try {
       const apiUrl = createApiUrl('/campings/map', [
-        { name: 'lat', value: userLat },
-        { name: 'lon', value: userLon },
+        { name: 'lat', value: updatedLat },
+        { name: 'lon', value: updatedLon },
       ]);
 
       const res = await api.get(apiUrl);
@@ -115,11 +135,12 @@ const Map = () => {
 
   useEffect(() => {
     if (regionQuery === null) {
-      getNearByCampings();
+      if (typeof lat === 'number' && typeof lon === 'number')
+        getNearByCampings(lat, lon);
     } else {
       getCampingsByDoNm();
     }
-  }, [regionQuery]);
+  }, [lat, lon]);
 
   useEffect(() => {
     setCampList([]);
@@ -139,7 +160,10 @@ const Map = () => {
         const map = new window.kakao.maps.Map(mapRef.current, options);
 
         if (!regionQuery) {
-          getNearByCampings();
+          if (typeof lat === 'number' && typeof lon === 'number')
+            getNearByCampings(lat, lon);
+
+          console.log(lat, lon);
         }
 
         getCampingsByDoNm();
