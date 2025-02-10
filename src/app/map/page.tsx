@@ -299,7 +299,7 @@ const Map = () => {
           </div>
         ) : lat && lon ? (
           <div ref={mapRef} className="relative w-full h-full rounded-md">
-            <Move />
+            <Move region={regionQuery} />
             <MapListWrap campList={campList} />
           </div>
         ) : (
