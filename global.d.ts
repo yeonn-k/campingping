@@ -15,6 +15,27 @@ declare global {
   interface WindowEventMap {
     beforeinstallprompt: BeforeInstallPromptEvent;
   }
+
+  namespace kakao.maps {
+    interface Map {
+      getCenter(): LatLng;
+      getLevel(): number;
+      setLevel(level: number): void;
+      addListener(event: string, callback: () => void): void;
+      removeListener(event: string, callback: () => void): void;
+    }
+
+    interface LatLng {
+      getLat(): number;
+      getLng(): number;
+    }
+
+    interface Marker {
+      setPosition(position: LatLng): void;
+      getPosition(): LatLng;
+      setMap(map: Map): void;
+    }
+  }
 }
 
 export {};

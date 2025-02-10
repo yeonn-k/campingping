@@ -4,7 +4,11 @@ import Image from 'next/image';
 import moveIcon from '@icons/move.svg';
 import { useEffect, useState } from 'react';
 
-const Move = () => {
+interface MoveProps {
+  region: string | null;
+}
+
+const Move = ({ region }: MoveProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isFading, setIsFading] = useState(true);
 
@@ -38,7 +42,20 @@ const Move = () => {
         className="relative w-full text-center text-DarkGray p-1 mt-1 font-semibold bg-white rounded-xl shadow-shadowCustom
 "
       >
-        지도를 움직여보세요
+        {region ? (
+          <>
+            지도를 확대/축소하고 움직이면서
+            <br />
+            선택 지역의 캠핑장을 둘러보세요
+          </>
+        ) : (
+          <>
+            지도를 움직이며
+            <br />
+            우리집 주변의 캠핑장을
+            <br /> 둘러보세요
+          </>
+        )}
       </p>
     </div>
   );
