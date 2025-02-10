@@ -146,10 +146,11 @@ const Map = () => {
         setKakaoMap(map);
       });
     }
-  }, [lat, lon, regionQuery, selectedCategoryValue]);
+  }, [lat, lon, regionQuery, , cityQuery, selectedCategoryValue]);
 
   useEffect(() => {
     if (!kakaoMap || campList?.length === 0) return;
+
     const positions = campList?.map((camp) => ({
       id: camp.contentId,
       title: camp.facltNm,
@@ -161,6 +162,27 @@ const Map = () => {
       imgSrc: camp.firstImageUrl,
     }));
 
+    const markers = positions.map(function (position) {
+      return new window.kakao.maps.Marker({
+        position: new window.kakao.maps.LatLng(
+          position.latlng[1],
+          position.latlng[0]
+        ),
+      });
+    });
+
+    const clusterer = new window.kakao.maps.MarkerClusterer({
+      map: kakaoMap,
+      averageCenter: true,
+      minLevel: 10,
+      markers: markers,
+    });
+
+    markers.forEach((marker) => marker.setMap(null));
+
+    clusterer.clear();
+    setTimeout(() => clusterer.redraw(), 100);
+
     positions?.forEach((position) => {
       const marker = new window.kakao.maps.Marker({
         map: kakaoMap,
@@ -170,6 +192,7 @@ const Map = () => {
         contentId: position.id,
       });
 
+      clusterer.addMarker(marker);
       marker.setMap(kakaoMap);
 
       const createContent = (
@@ -214,7 +237,7 @@ const Map = () => {
 
       setKakaoMarker(marker);
     });
-  }, [campList]);
+  }, [campList, kakaoMap]);
 
   return (
     <>
