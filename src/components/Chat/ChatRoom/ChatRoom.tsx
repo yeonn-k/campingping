@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { socket } from '@/socket';
 
 import Button from '@/components/Button/Button';
@@ -31,11 +31,12 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useIsMobile();
+  const [nextCursor, setNextCursor] = useState<number | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
-      page: 2,
     });
   };
 
@@ -96,7 +97,12 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       chatHistory,
       nextCursor,
     }: ChatHistoryData) => {
-      setChatMsgs(chatHistory);
+      setChatMsgs((prev) => [...(chatHistory || []), ...(prev || [])]);
+      if (nextCursor) {
+        setNextCursor(nextCursor);
+      } else {
+        setNextCursor(null);
+      }
     };
     socket.on('chatHistory', handleGetChatting);
 
@@ -113,6 +119,30 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       });
     }
   }, [chatMsgs]);
+
+  const firstChatRef = useCallback((node: HTMLDivElement) => {
+    if (!nextCursor) return;
+
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (nextCursor) {
+            socket.emit('getChatHistory', {
+              roomId: chatRoomId,
+              cursor: nextCursor,
+            });
+          }
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    if (node) {
+      observerRef.current.observe(node);
+    }
+  }, []);
 
   return (
     <div className="relative h-full flex flex-col">
@@ -140,20 +170,24 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'}`}
         ref={chatContainerRef}
       >
-        {chatMsgs?.map((chat) => {
+        {chatMsgs?.map((chat, idx) => {
+          const isFirstChat = idx === 0;
+          const refProp = isFirstChat ? { ref: firstChatRef } : {};
           return chat.author.email === userEmail ? (
             <MyChatMsg
-              key={chat.id}
+              // key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               isRead={chat.isRead}
+              {...refProp}
             />
           ) : (
             <UrChatMsg
-              key={chat.id}
+              // key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               nickname={chat.author.nickname}
+              {...refProp}
             />
           );
         })}
