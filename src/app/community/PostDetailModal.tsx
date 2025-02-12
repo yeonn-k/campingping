@@ -119,9 +119,8 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     if (!currentPost) return;
 
     try {
-      // 필수 속성을 보장하도록 editedFields와 currentPost를 병합
-      const payload: Post = {
-        id: currentPost.id, // currentPost의 id를 사용하여 undefined 방지
+      // id 필드를 제외한 업데이트할 데이터 생성
+      const { ...updateData } = {
         title: editedFields.title ?? currentPost.title,
         content: editedFields.content ?? currentPost.content,
         location: editedFields.location ?? currentPost.location,
@@ -132,26 +131,15 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
         lon: editedFields.lon ?? currentPost.lon,
       };
 
-      // 수정된 게시글 데이터 서버에 전송
-      await updatePost(currentPost.id, payload);
-      setCurrentPost((prev) => {
-        if (!prev) return null; // prev가 null인 경우 반환
+      // 수정된 게시글 데이터 서버에 전송 (id 제외)
+      await updatePost(currentPost.id, updateData);
 
-        // 모든 필드를 병합하여 Post 형식을 보장
-        return {
-          ...prev,
-          ...editedFields,
-          id: prev.id,
-          title: editedFields.title ?? prev.title, // undefined인 경우 이전 값 유지
-          location: editedFields.location ?? prev.location,
-          people: editedFields.people ?? prev.people,
-          content: editedFields.content ?? prev.content,
-          startDate: editedFields.startDate ?? prev.startDate,
-          endDate: editedFields.endDate ?? prev.endDate,
-          lat: editedFields.lat ?? prev.lat,
-          lon: editedFields.lon ?? prev.lon,
-        };
+      // 상태 업데이트
+      setCurrentPost((prev) => {
+        if (!prev) return null;
+        return { ...prev, ...editedFields };
       });
+
       setIsEditingPost(false);
     } catch (error) {
       console.error('Error updating post:', error);
