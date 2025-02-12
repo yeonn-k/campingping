@@ -81,6 +81,7 @@ const SignIn = () => {
     if (fromKaKao) {
       if (email) {
         setUserState(email);
+        setIsKakaoLoading(false);
         router.push('/list');
       } else {
         router.push('/sign-in');

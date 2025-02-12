@@ -10,7 +10,7 @@ import UrChatMsg from './UrChatMsg';
 
 import profileGreen from '@icons/profile_green.svg';
 
-import { ChatMsgs } from '@/types/Chatting';
+import { ChatHistoryData, ChatMsgs } from '@/types/Chatting';
 
 import { userStore } from '@/stores/userState';
 import { chattingStore } from '@/stores/chattingState';
@@ -35,8 +35,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
-      page: 1,
-      limit: 100,
+      page: 2,
     });
   };
 
@@ -82,41 +81,6 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     getChatHistory();
   });
 
-  // useEffect(() => {
-  //   const handleChatting = (data: sendMessage) => {
-  //     const { sender, message, createdAt } = data;
-
-  //     setChatMsgs((prev) => {
-  //       if (!prev)
-  //         return [
-  //           {
-  //             message,
-  //             createdAt,
-  //             author: { email: sender.email, nickname: sender.nickname },
-  //           },
-  //         ];
-
-  //       const isDuplicate = prev.some((msg) => msg.createdAt === createdAt);
-  //       if (isDuplicate) return prev;
-
-  //       return [
-  //         ...prev,
-  //         {
-  //           message,
-  //           createdAt,
-  //           author: { email: sender.email, nickname: sender.nickname },
-  //         },
-  //       ];
-  //     });
-  //   };
-
-  //   socket.on('newMessage', handleChatting);
-
-  //   return () => {
-  //     socket.off('newMessage', handleChatting);
-  //   };
-  // }, [chatRoomId]);
-
   const getOutFromRoom = async () => {
     const res = await api.delete(`/chats/rooms/${chatRoomId}`);
 
@@ -128,8 +92,11 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   };
 
   useEffect(() => {
-    const handleGetChatting = (data: ChatMsgs[]) => {
-      setChatMsgs(data);
+    const handleGetChatting = ({
+      chatHistory,
+      nextCursor,
+    }: ChatHistoryData) => {
+      setChatMsgs(chatHistory);
     };
     socket.on('chatHistory', handleGetChatting);
 
@@ -176,12 +143,14 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         {chatMsgs?.map((chat) => {
           return chat.author.email === userEmail ? (
             <MyChatMsg
+              key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               isRead={chat.isRead}
             />
           ) : (
             <UrChatMsg
+              key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               nickname={chat.author.nickname}

@@ -8,20 +8,24 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  const data = event.data ? event.data.json() : {};
-  const { title, body } = data;
+  const options = {
+    body: event.data.text(), // 푸시 알림 내용
+    icon: './images/maskable_icon_x192.png', // 표시할 아이콘
+    tag: 'pwa-notification',
+  };
 
-  event.waitUntil(
-    self.registration.showNotification(title, {
-      body: body,
-      icon: '/icon.png',
-      badge: '/badge.png',
-    })
-  );
+  event.waitUntil(self.registration.showNotification(options));
 });
 
 self.addEventListener('notificationclick', (event) => {
-  const url = '/chat'; // 알림 클릭 시 이동할 URL
-  event.waitUntil(clients.openWindow(url));
   event.notification.close();
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({ type: 'NOTIFICATION_CLICKED' });
+      });
+      return clients.openWindow('https://campingping.com');
+    })
+  );
 });

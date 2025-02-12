@@ -17,7 +17,7 @@ const MyChatMsg = ({ message, createdAt, isRead }: MyChatMsgProps) => {
         <p className="text-description text-Gray">
           {isRead ? '' : '읽지 않음'}
         </p>
-        <p className="text-description text-Gray">{timeFormat(createdAt)}</p>
+        <p className="text-description text-Gray">{createdAt}</p>
       </div>
     </div>
   );
