@@ -26,4 +26,6 @@ const MyChatMsg = forwardRef<HTMLDivElement, MyChatMsgProps>(
   }
 );
 
+MyChatMsg.displayName = 'MyChatMsg';
+
 export default MyChatMsg;

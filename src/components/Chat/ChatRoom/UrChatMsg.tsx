@@ -20,4 +20,6 @@ const UrChatMsg = forwardRef<HTMLDivElement, UrChatMsgProps>(
   }
 );
 
+UrChatMsg.displayName = 'UrChatMsg';
+
 export default UrChatMsg;
