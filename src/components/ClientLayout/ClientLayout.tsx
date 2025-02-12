@@ -64,16 +64,6 @@ export default function ClientLayout({
     requestPushPermission();
   }, []);
 
-  useEffect(() => {
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data.type === 'NOTIFICATION_CLICKED') {
-          setChatState(true);
-        }
-      });
-    }
-  }, [setChatState]);
-
   return (
     <div className="relative">
       <ToastContainer
