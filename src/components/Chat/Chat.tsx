@@ -87,7 +87,6 @@ const Chat = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
       page: 1,
-      limit: 100,
     });
   };
 

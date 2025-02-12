@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { socket } from '@/socket';
 
 import Button from '@/components/Button/Button';
@@ -10,7 +10,7 @@ import UrChatMsg from './UrChatMsg';
 
 import profileGreen from '@icons/profile_green.svg';
 
-import { ChatMsgs } from '@/types/Chatting';
+import { ChatHistoryData, ChatMsgs } from '@/types/Chatting';
 
 import { userStore } from '@/stores/userState';
 import { chattingStore } from '@/stores/chattingState';
@@ -31,12 +31,12 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useIsMobile();
+  const [nextCursor, setNextCursor] = useState<number | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
-      page: 1,
-      limit: 100,
     });
   };
 
@@ -82,41 +82,6 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     getChatHistory();
   });
 
-  // useEffect(() => {
-  //   const handleChatting = (data: sendMessage) => {
-  //     const { sender, message, createdAt } = data;
-
-  //     setChatMsgs((prev) => {
-  //       if (!prev)
-  //         return [
-  //           {
-  //             message,
-  //             createdAt,
-  //             author: { email: sender.email, nickname: sender.nickname },
-  //           },
-  //         ];
-
-  //       const isDuplicate = prev.some((msg) => msg.createdAt === createdAt);
-  //       if (isDuplicate) return prev;
-
-  //       return [
-  //         ...prev,
-  //         {
-  //           message,
-  //           createdAt,
-  //           author: { email: sender.email, nickname: sender.nickname },
-  //         },
-  //       ];
-  //     });
-  //   };
-
-  //   socket.on('newMessage', handleChatting);
-
-  //   return () => {
-  //     socket.off('newMessage', handleChatting);
-  //   };
-  // }, [chatRoomId]);
-
   const getOutFromRoom = async () => {
     const res = await api.delete(`/chats/rooms/${chatRoomId}`);
 
@@ -128,8 +93,16 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   };
 
   useEffect(() => {
-    const handleGetChatting = (data: ChatMsgs[]) => {
-      setChatMsgs(data);
+    const handleGetChatting = ({
+      chatHistory,
+      nextCursor,
+    }: ChatHistoryData) => {
+      setChatMsgs((prev) => [...(chatHistory || []), ...(prev || [])]);
+      if (nextCursor) {
+        setNextCursor(nextCursor);
+      } else {
+        setNextCursor(null);
+      }
     };
     socket.on('chatHistory', handleGetChatting);
 
@@ -146,6 +119,30 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       });
     }
   }, [chatMsgs]);
+
+  const firstChatRef = useCallback((node: HTMLDivElement) => {
+    if (!nextCursor) return;
+
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (nextCursor) {
+            socket.emit('getChatHistory', {
+              roomId: chatRoomId,
+              cursor: nextCursor,
+            });
+          }
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    if (node) {
+      observerRef.current.observe(node);
+    }
+  }, []);
 
   return (
     <div className="relative h-full flex flex-col">
@@ -173,18 +170,24 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'}`}
         ref={chatContainerRef}
       >
-        {chatMsgs?.map((chat) => {
+        {chatMsgs?.map((chat, idx) => {
+          const isFirstChat = idx === 0;
+          const refProp = isFirstChat ? { ref: firstChatRef } : {};
           return chat.author.email === userEmail ? (
             <MyChatMsg
+              // key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               isRead={chat.isRead}
+              {...refProp}
             />
           ) : (
             <UrChatMsg
+              // key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               nickname={chat.author.nickname}
+              {...refProp}
             />
           );
         })}

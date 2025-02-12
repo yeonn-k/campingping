@@ -22,12 +22,18 @@ export interface sendMessage {
   };
 }
 
+export interface ChatHistoryData {
+  chatHistory: ChatMsgs[];
+  nextCursor: number;
+}
+
 export interface ChatMsgs {
+  id: number;
   message: string;
   createdAt: string;
+  isRead: boolean;
   author: {
     email: string;
     nickname: string;
   };
-  isRead: boolean;
 }
