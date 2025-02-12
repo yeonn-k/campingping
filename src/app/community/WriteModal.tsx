@@ -7,6 +7,7 @@ import Image from 'next/image';
 import closeIcon from '@icons/close.svg';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 interface FormData {
   peopleNum: string;
@@ -31,7 +32,13 @@ const WriteModal = ({
       .value;
     const { peopleNum, title, startDate, endDate, location } = data;
     const people = parseInt(peopleNum);
-    console.log(title, startDate, endDate, location, people, content);
+    if (new Date(startDate) > new Date(endDate)) {
+      toast.error('시작일은 종료일보다 이후일 수 없습니다.', {
+        position: 'top-right',
+        style: { zIndex: 9999 },
+      });
+      return;
+    }
     if (title && startDate && endDate && location && people && content) {
       try {
         navigator.geolocation.getCurrentPosition(

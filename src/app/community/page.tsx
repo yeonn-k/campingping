@@ -38,6 +38,7 @@ interface Post {
   endDate: Date;
   lat: number;
   lon: number;
+  user: { nickname: string; email: string };
 }
 
 const limit = 10;
@@ -66,17 +67,17 @@ const CommunityPage = () => {
   }, [userLat, userLon]);
 
   const handleGetPosts = async () => {
-    if (activeTab === 'myPosts' && userState) {
-      const data = await getMyPosts();
-      if (data) {
-        const postsWithDates = data.map((post: P) => ({
-          ...post,
-          startDate: new Date(post.startDate),
-          endDate: new Date(post.endDate),
-        }));
-        setMyPosts(postsWithDates);
-      }
-    }
+    // if (activeTab === 'myPosts' && userState) {
+    //   const data = await getMyPosts();
+    //   if (data) {
+    //     const postsWithDates = data.map((post: P) => ({
+    //       ...post,
+    //       startDate: new Date(post.startDate),
+    //       endDate: new Date(post.endDate),
+    //     }));
+    //     setMyPosts(postsWithDates);
+    //   }
+    // }
 
     const data = await getPosts(userLat, userLon);
 
@@ -152,22 +153,22 @@ const CommunityPage = () => {
     renderPosts();
   }, [isDetailModalOpen]);
 
-  useEffect(() => {
-    const fetchInitialPosts = async () => {
-      const data = await getMyPosts();
+  // useEffect(() => {
+  //   const fetchInitialPosts = async () => {
+  //     const data = await getMyPosts();
 
-      if (data) {
-        const postsWithDates = data.map((post: P) => ({
-          ...post,
-          startDate: new Date(post.startDate),
-          endDate: new Date(post.endDate),
-        }));
-        setMyPosts(postsWithDates);
-      }
-    };
+  //     if (data) {
+  //       const postsWithDates = data.map((post: P) => ({
+  //         ...post,
+  //         startDate: new Date(post.startDate),
+  //         endDate: new Date(post.endDate),
+  //       }));
+  //       setMyPosts(postsWithDates);
+  //     }
+  //   };
 
-    fetchInitialPosts();
-  }, []);
+  //   fetchInitialPosts();
+  // }, []);
   const handleDeletePost = async (postId: string) => {
     if (confirm('정말 이 게시글을 삭제하시겠습니까?')) {
       try {
@@ -343,7 +344,12 @@ const CommunityPage = () => {
                   onClick={() => openDetailModal(post)}
                   ref={index === allPosts.length - 1 ? lastItemRef : null}
                 >
-                  <p className="ml-2 mt-2">제목 : {post.title}</p>
+                  <p className="ml-2 mt-2 flex justify-between">
+                    제목 : {post.title}
+                    <span className="mr-2 text-right">
+                      작성자 : {post.user.nickname}
+                    </span>
+                  </p>
                   <hr className="my-2 border-t-1 border-Green" />
                   <p className="ml-2 mt-1">
                     시작일 : {new Date(post.startDate).toLocaleDateString()}

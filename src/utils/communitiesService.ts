@@ -69,7 +69,6 @@ export const getPostById = async (id: string) => {
 export const updatePost = async (
   id: string,
   postData: {
-    id: string;
     title: string;
     location: string;
     people: number;
