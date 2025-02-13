@@ -17,6 +17,8 @@ import { chattingStore } from '@/stores/chattingState';
 import useInputValue from '@/hooks/useInputValue';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { api } from '@/utils/axios';
+import { timeFormat } from '@/utils/timeFormat';
+
 import { toast } from 'react-toastify';
 
 interface ChatRoomProps {
@@ -177,7 +179,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
             <MyChatMsg
               // key={chat.id}
               message={chat.message}
-              createdAt={chat.createdAt}
+              createdAt={timeFormat(chat.createdAt)}
               isRead={chat.isRead}
               {...refProp}
             />
@@ -185,7 +187,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
             <UrChatMsg
               // key={chat.id}
               message={chat.message}
-              createdAt={chat.createdAt}
+              createdAt={timeFormat(chat.createdAt)}
               nickname={chat.author.nickname}
               {...refProp}
             />
