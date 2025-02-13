@@ -1,5 +1,5 @@
-// import { timeFormat } from '@/utils/timeFormat';
 import React, { forwardRef } from 'react';
+import { timeFormat } from '@/utils/timeFormat';
 
 interface MyChatMsgProps {
   message: string;
@@ -19,7 +19,7 @@ const MyChatMsg = forwardRef<HTMLDivElement, MyChatMsgProps>(
           <p className="text-description text-Gray">
             {isRead ? '' : '읽지 않음'}
           </p>
-          <p className="text-description text-Gray">{createdAt}</p>
+          <p className="text-description text-Gray">{timeFormat(createdAt)}</p>
         </div>
       </div>
     );
