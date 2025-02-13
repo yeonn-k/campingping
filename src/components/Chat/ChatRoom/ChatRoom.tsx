@@ -163,6 +163,17 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     }
   }, []);
 
+  const updateRead = () => {
+    const updatedChatHistory = chatMsgs?.map((chat) => ({
+      ...chat,
+      isRead: true,
+    }));
+
+    setChatMsgs(updatedChatHistory);
+  };
+
+  socket.on('updateRead', updateRead);
+
   return (
     <div className="relative h-full flex flex-col ">
       <div className="mt-1 ">
