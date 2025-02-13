@@ -24,7 +24,7 @@ export interface sendMessage {
 
 export interface ChatHistoryData {
   chatHistory: ChatMsgs[];
-  nextCursor: number;
+  nextCursor: number | null | undefined;
 }
 
 export interface ChatMsgs {

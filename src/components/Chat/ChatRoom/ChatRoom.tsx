@@ -17,7 +17,6 @@ import { chattingStore } from '@/stores/chattingState';
 import useInputValue from '@/hooks/useInputValue';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { api } from '@/utils/axios';
-import { timeFormat } from '@/utils/timeFormat';
 
 import { toast } from 'react-toastify';
 
@@ -33,7 +32,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useIsMobile();
-  const [nextCursor, setNextCursor] = useState<number | null>(null);
+  const [nextCursor, setNextCursor] = useState<number | null | undefined>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const getChatHistory = () => {
@@ -44,7 +43,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   useEffect(() => {
     getChatHistory();
-  }, []);
+  }, [chatRoomId]);
 
   const sendChatMsg = (inputValue: string, chatRoomId: number) => {
     socket.emit('sendMessage', {
@@ -80,9 +79,17 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     }
   };
 
-  socket.on('newMessage', () => {
-    getChatHistory();
-  });
+  useEffect(() => {
+    const handleNewMessage = () => {
+      getChatHistory();
+    };
+
+    socket.on('newMessage', handleNewMessage);
+
+    return () => {
+      socket.off('newMessage', handleNewMessage);
+    };
+  }, []);
 
   const getOutFromRoom = async () => {
     const res = await api.delete(`/chats/rooms/${chatRoomId}`);
@@ -94,24 +101,32 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     }
   };
 
-  useEffect(() => {
-    const handleGetChatting = ({
-      chatHistory,
-      nextCursor,
-    }: ChatHistoryData) => {
-      setChatMsgs((prev) => [...(chatHistory || []), ...(prev || [])]);
-      if (nextCursor) {
-        setNextCursor(nextCursor);
-      } else {
-        setNextCursor(null);
-      }
-    };
-    socket.on('chatHistory', handleGetChatting);
+  const handleGetChatting = ({ chatHistory, nextCursor }: ChatHistoryData) => {
+    setChatMsgs(chatHistory || []);
+    if (nextCursor !== null && nextCursor !== undefined) {
+      setNextCursor(nextCursor);
+    } else {
+      setNextCursor(null);
+    }
+  };
 
-    return () => {
-      socket.off('chatHistory', handleGetChatting);
-    };
-  }, []);
+  socket.on('chatHistory', handleGetChatting);
+
+  useEffect(() => {
+    if (nextCursor !== null) {
+      socket.emit('getChatHistory', { roomId: chatRoomId, cursor: nextCursor });
+    }
+  }, [nextCursor]);
+
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+
+    const container = chatContainerRef.current;
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: 'smooth',
+    });
+  }, [chatMsgs]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -120,16 +135,18 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         behavior: 'smooth',
       });
     }
-  }, [chatMsgs]);
+  }, [chatRoomId]);
 
-  const firstChatRef = useCallback((node: HTMLDivElement) => {
-    if (!nextCursor) return;
+  const lastChatRef = useCallback((node: HTMLDivElement) => {
+    console.log(nextCursor);
+    if (nextCursor === null || nextCursor === undefined) return;
 
     if (observerRef.current) observerRef.current.disconnect();
 
     observerRef.current = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          console.log('첫 번째 메시지에 도달');
           if (nextCursor) {
             socket.emit('getChatHistory', {
               roomId: chatRoomId,
@@ -138,7 +155,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
           }
         }
       },
-      { threshold: 0.4 }
+      { threshold: 0 }
     );
 
     if (node) {
@@ -147,7 +164,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   }, []);
 
   return (
-    <div className="relative h-full flex flex-col">
+    <div className="relative h-full flex flex-col ">
       <div className="mt-1 ">
         <div className="px-6 pt-1 pb-2 flex gap-1 justify-between border-b border-Green">
           <div className="flex gap-1">
@@ -169,17 +186,17 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         </div>
       </div>
       <div
-        className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'}`}
+        className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'} flex flex-col-reverse`}
         ref={chatContainerRef}
       >
         {chatMsgs?.map((chat, idx) => {
-          const isFirstChat = idx === 0;
-          const refProp = isFirstChat ? { ref: firstChatRef } : {};
+          const isLastChat = idx === chatMsgs.length - 1;
+          const refProp = isLastChat ? { ref: lastChatRef } : {};
           return chat.author.email === userEmail ? (
             <MyChatMsg
               // key={chat.id}
               message={chat.message}
-              createdAt={timeFormat(chat.createdAt)}
+              createdAt={chat.createdAt}
               isRead={chat.isRead}
               {...refProp}
             />
@@ -187,7 +204,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
             <UrChatMsg
               // key={chat.id}
               message={chat.message}
-              createdAt={timeFormat(chat.createdAt)}
+              createdAt={chat.createdAt}
               nickname={chat.author.nickname}
               {...refProp}
             />
