@@ -1,3 +1,4 @@
+import { timeFormat } from '@/utils/timeFormat';
 import React, { forwardRef } from 'react';
 
 interface UrChatMsgProps {
@@ -14,7 +15,9 @@ const UrChatMsg = forwardRef<HTMLDivElement, UrChatMsgProps>(
           <p className="w-full">{nickname}</p>
           <p className="w-full">{message}</p>
         </div>
-        <p className="text-description text-Gray ml-6">{createdAt}</p>
+        <p className="text-description text-Gray ml-6">
+          {timeFormat(createdAt)}
+        </p>
       </div>
     );
   }
