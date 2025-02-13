@@ -71,35 +71,25 @@ const Chat = () => {
     };
   }, []);
 
-  useEffect(() => {
-    getChatRooms();
-
-    socket.on('chatRooms', (rooms: ChatRooms[]) => {
-      setChats(rooms);
-    });
-  }, []);
-
   const getChatRooms = () => {
     socket.emit('getChatRooms');
   };
 
-  const getChatHistory = () => {
-    socket.emit('getChatHistory', {
-      roomId: chatRoomId,
-      page: 1,
+  useEffect(() => {
+    getChatRooms();
+    socket.on('chatRooms', (rooms: ChatRooms[]) => {
+      setChats(rooms);
     });
-  };
+
+    return () => {
+      socket.off('chatRooms');
+    };
+  }, []);
 
   const closeChats = () => {
     setChatState(false);
     setChatRoomId(null);
   };
-
-  useEffect(() => {
-    getChatHistory();
-  }, []);
-
-  socket.on('newMessage', getChatRooms);
 
   return (
     <div
