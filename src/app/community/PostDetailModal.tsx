@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import closeIcon from '@icons/close.svg';
+import profileIcon from '@images/profile.svg';
 import { getPostById, updatePost } from '@utils/communitiesService';
 import {
   createComment,
@@ -16,6 +17,7 @@ import { chattingStore } from '@/stores/chattingState';
 interface User {
   email: string;
   nickname: string;
+  profilUrl: string | null;
 }
 
 interface Post {
@@ -53,6 +55,16 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
   const [editedFields, setEditedFields] = useState<Partial<Post>>({});
 
   const { setChatRoomId, setChatState } = chattingStore();
+  const [expandedComments, setExpandedComments] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const toggleExpandComment = (commentId: string) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
 
   useEffect(() => {
     if (!post) {
@@ -119,7 +131,6 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
     if (!currentPost) return;
 
     try {
-      // id 필드를 제외한 업데이트할 데이터 생성
       const { ...updateData } = {
         title: editedFields.title ?? currentPost.title,
         content: editedFields.content ?? currentPost.content,
@@ -131,10 +142,8 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
         lon: editedFields.lon ?? currentPost.lon,
       };
 
-      // 수정된 게시글 데이터 서버에 전송 (id 제외)
       await updatePost(currentPost.id, updateData);
 
-      // 상태 업데이트
       setCurrentPost((prev) => {
         if (!prev) return null;
         return { ...prev, ...editedFields };
@@ -321,59 +330,90 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
           <div className="mt-4">
             <h4>댓글</h4>
             <hr className="my-2 border-LightGray" />
-            {comments.map((comment) => (
-              <div
-                key={comment.id}
-                className="flex justify-between items-center mb-2"
-              >
-                <div className="w-[80%]">
-                  <p
-                    className="text-xl cursor-pointer"
-                    onClick={() => createNewChat(comment.user.email)}
-                  >
-                    {comment.user.nickname}
-                  </p>
-                  {editingCommentId === comment.id ? (
-                    <>
-                      <input
-                        type="text"
-                        className="border rounded p-1"
-                        value={editingContent}
-                        onChange={(e) => setEditingContent(e.target.value)}
-                      />
-                      <button
-                        className="ml-2 text-Green"
-                        onClick={() =>
-                          handleCommentAction(
-                            'update',
-                            comment.id,
-                            editingContent
-                          )
-                        }
+            {comments.map((comment) => {
+              const isExpanded = expandedComments[comment.id];
+
+              return (
+                <div
+                  key={comment.id}
+                  className="flex justify-between items-center mb-2"
+                >
+                  <div className="w-[80%]">
+                    <div>
+                      <p
+                        className="text-xl cursor-pointer flex items-center space-x-2 mb-2"
+                        onClick={() => createNewChat(comment.user.email)}
                       >
-                        완료
-                      </button>
-                    </>
-                  ) : (
-                    <p>{comment.content}</p>
-                  )}
+                        <Image
+                          src={comment.user.profilUrl || profileIcon}
+                          alt="닫기"
+                          width={20}
+                          height={20}
+                          className="mt-1 ml-2 mr-2"
+                        />
+                        {comment.user.nickname}
+                      </p>
+                    </div>
+
+                    {editingCommentId === comment.id ? (
+                      <>
+                        <input
+                          type="text"
+                          className="border rounded p-1"
+                          value={editingContent}
+                          onChange={(e) => setEditingContent(e.target.value)}
+                        />
+                        <button
+                          className="ml-2 text-Green"
+                          onClick={() =>
+                            handleCommentAction(
+                              'update',
+                              comment.id,
+                              editingContent
+                            )
+                          }
+                        >
+                          완료
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p
+                          className={`whitespace-pre-wrap ${isExpanded ? '' : 'line-clamp-1'}`}
+                        >
+                          {comment.content}
+                        </p>
+                        {comment.content.length > 20 && (
+                          <button
+                            className="ml-2 justify-end"
+                            onClick={() => toggleExpandComment(comment.id)}
+                          >
+                            {isExpanded ? '접기' : '더보기'}
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  <div className="w-[20%]">
+                    <button
+                      className="mr-2 text-Green"
+                      onClick={() =>
+                        handleEditClick(comment.id, comment.content)
+                      }
+                    >
+                      수정
+                    </button>
+                    <button
+                      className="text-red-500"
+                      onClick={() => handleCommentAction('delete', comment.id)}
+                    >
+                      삭제
+                    </button>
+                  </div>
                 </div>
-                <div className="w-[20%]">
-                  <button
-                    className="mr-2 text-Green"
-                    onClick={() => handleEditClick(comment.id, comment.content)}
-                  >
-                    수정
-                  </button>
-                  <button
-                    className="text-red-500"
-                    onClick={() => handleCommentAction('delete', comment.id)}
-                  >
-                    삭제
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <textarea
             className="w-full border rounded p-2 mt-4"
