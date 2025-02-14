@@ -114,7 +114,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   };
 
   const handleGetChatting = ({ chatHistory, nextCursor }: ChatHistoryData) => {
-    setChatMsgs((prevMsgs = []) => {
+    setChatMsgs(() => {
       const currentMsgs = chatMsgsRef.current;
 
       const existingMsgIds = new Set(currentMsgs.map((msg) => msg.id));
