@@ -136,7 +136,7 @@ const Chat = () => {
                       roomId={chat.roomId}
                       nickname={chat.users[0].nickname}
                       lastMsg={chat.lastMessage}
-                      createdAt={timeFormat(chat.createdAt)}
+                      lastMsgTime={chat.lastMessageTime}
                       unreadCount={chat.unreadCount}
                     />
                   </div>
