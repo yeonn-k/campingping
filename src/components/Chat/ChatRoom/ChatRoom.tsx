@@ -34,6 +34,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useIsMobile();
   const [nextCursor, setNextCursor] = useState<number | null | undefined>(null);
+  const [isNewMessage, setIsNewMessage] = useState(true);
 
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -80,6 +81,8 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       message: inputValue,
       room: chatRoomId,
     });
+
+    setIsNewMessage(true);
   };
 
   const handleSendMessage = async () => {
@@ -138,6 +141,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   useEffect(() => {
     if (!chatContainerRef.current) return;
+    if (!isNewMessage) return;
 
     const container = chatContainerRef.current;
     container.scrollTo({
@@ -156,6 +160,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         clearTimeout(debounceTimeout.current);
       }
       debounceTimeout.current = setTimeout(() => {
+        setIsNewMessage(false);
         socket.emit('getChatHistory', {
           roomId: chatRoomId,
           cursor: nextCursor,
