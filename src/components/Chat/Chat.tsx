@@ -73,10 +73,6 @@ const Chat = () => {
 
   const getChatRooms = () => {
     socket.emit('getChatRooms');
-  };
-
-  useEffect(() => {
-    getChatRooms();
     socket.on('chatRooms', (rooms: ChatRooms[]) => {
       setChats(rooms);
     });
@@ -84,6 +80,10 @@ const Chat = () => {
     return () => {
       socket.off('chatRooms');
     };
+  };
+
+  useEffect(() => {
+    getChatRooms();
   }, []);
 
   const closeChats = () => {
@@ -136,7 +136,7 @@ const Chat = () => {
                       roomId={chat.roomId}
                       nickname={chat.users[0].nickname}
                       lastMsg={chat.lastMessage}
-                      createdAt={timeFormat(chat.createdAt)}
+                      lastMsgTime={chat.lastMessageTime}
                       unreadCount={chat.unreadCount}
                     />
                   </div>

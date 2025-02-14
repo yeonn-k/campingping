@@ -29,21 +29,45 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const { userEmail } = userStore();
   const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
-  const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
+  const chatMsgsRef = useRef<ChatMsgs[]>([]);
+  const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useIsMobile();
   const [nextCursor, setNextCursor] = useState<number | null | undefined>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
+    });
+
+    socket.off('newMessage');
+    socket.on('newMessage', getChatHistory);
+
+    socket.on('chatHistory', ({ chatHistory, nextCursor }: ChatHistoryData) => {
+      setChatMsgs(chatHistory);
+
+      if (typeof nextCursor === 'number') {
+        setNextCursor(nextCursor);
+      }
     });
   };
 
   useEffect(() => {
     getChatHistory();
   }, [chatRoomId]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, []);
 
   const sendChatMsg = (inputValue: string, chatRoomId: number) => {
     socket.emit('sendMessage', {
@@ -79,18 +103,6 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     }
   };
 
-  useEffect(() => {
-    const handleNewMessage = () => {
-      getChatHistory();
-    };
-
-    socket.on('newMessage', handleNewMessage);
-
-    return () => {
-      socket.off('newMessage', handleNewMessage);
-    };
-  }, []);
-
   const getOutFromRoom = async () => {
     const res = await api.delete(`/chats/rooms/${chatRoomId}`);
 
@@ -102,21 +114,23 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   };
 
   const handleGetChatting = ({ chatHistory, nextCursor }: ChatHistoryData) => {
-    setChatMsgs(chatHistory || []);
-    if (nextCursor !== null && nextCursor !== undefined) {
-      setNextCursor(nextCursor);
-    } else {
-      setNextCursor(null);
-    }
+    setChatMsgs((prevMsgs = []) => {
+      const currentMsgs = chatMsgsRef.current;
+
+      const existingMsgIds = new Set(currentMsgs.map((msg) => msg.id));
+      const filteredNewMsgs = chatHistory.filter(
+        (msg) => !existingMsgIds.has(msg.id)
+      );
+
+      const updatedMsgs = [...filteredNewMsgs, ...currentMsgs];
+
+      chatMsgsRef.current = updatedMsgs;
+
+      return updatedMsgs;
+    });
+
+    setNextCursor(nextCursor ?? null);
   };
-
-  socket.on('chatHistory', handleGetChatting);
-
-  useEffect(() => {
-    if (nextCursor !== null) {
-      socket.emit('getChatHistory', { roomId: chatRoomId, cursor: nextCursor });
-    }
-  }, [nextCursor]);
 
   useEffect(() => {
     if (!chatContainerRef.current) return;
@@ -128,40 +142,62 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     });
   }, [chatMsgs]);
 
+  const handleScroll = useCallback(() => {
+    if (!chatContainerRef.current) return;
+
+    const { scrollTop } = chatContainerRef.current;
+
+    if (scrollTop < 10 && nextCursor) {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+      debounceTimeout.current = setTimeout(() => {
+        socket.emit('getChatHistory', {
+          roomId: chatRoomId,
+          cursor: nextCursor,
+        });
+
+        socket.on('chatHistory', handleGetChatting);
+      }, 300);
+    }
+  }, [chatRoomId, nextCursor]);
+
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: 'smooth',
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (chatContainer) {
+        chatContainer.removeEventListener('scroll', handleScroll);
+      }
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, [handleScroll]);
+
+  useEffect(() => {
+    if (chatContainerRef.current && hasScrolled && nextCursor) {
+      socket.emit('getChatHistory', {
+        roomId: chatRoomId,
+        cursor: nextCursor,
       });
+
+      const handleChatHistory = (data: ChatHistoryData) => {
+        handleGetChatting(data);
+      };
+
+      socket.on('chatHistory', handleChatHistory);
+
+      setHasScrolled(false);
+
+      return () => {
+        socket.off('chatHistory', handleChatHistory);
+      };
     }
-  }, [chatRoomId]);
-
-  const lastChatRef = useCallback((node: HTMLDivElement) => {
-    console.log(nextCursor);
-    if (nextCursor === null || nextCursor === undefined) return;
-
-    if (observerRef.current) observerRef.current.disconnect();
-
-    observerRef.current = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          console.log('첫 번째 메시지에 도달');
-          if (nextCursor) {
-            socket.emit('getChatHistory', {
-              roomId: chatRoomId,
-              cursor: nextCursor,
-            });
-          }
-        }
-      },
-      { threshold: 0 }
-    );
-
-    if (node) {
-      observerRef.current.observe(node);
-    }
-  }, []);
+  }, [hasScrolled, nextCursor, chatRoomId, handleGetChatting]);
 
   const updateRead = () => {
     const updatedChatHistory = chatMsgs?.map((chat) => ({
@@ -197,27 +233,23 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         </div>
       </div>
       <div
-        className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'} flex flex-col-reverse`}
+        className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'} `}
         ref={chatContainerRef}
       >
-        {chatMsgs?.map((chat, idx) => {
-          const isLastChat = idx === chatMsgs.length - 1;
-          const refProp = isLastChat ? { ref: lastChatRef } : {};
+        {chatMsgs?.map((chat) => {
           return chat.author.email === userEmail ? (
             <MyChatMsg
-              // key={chat.id}
+              key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               isRead={chat.isRead}
-              {...refProp}
             />
           ) : (
             <UrChatMsg
-              // key={chat.id}
+              key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               nickname={chat.author.nickname}
-              {...refProp}
             />
           );
         })}

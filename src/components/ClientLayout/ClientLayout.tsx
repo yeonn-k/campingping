@@ -20,6 +20,7 @@ import InstallModal from '@/components/PWA/InstallPwaModal/InstallModal';
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 import { usePushNotification } from '@/hooks/usePushNotification';
 import PwaAlarmPopUp from '../PWA/PwaAlarmPopUp/PwaAlarmPopUp';
+import useRegisterPushNotification from '@/hooks/useRegistePushNotification';
 
 export default function ClientLayout({
   children,
@@ -64,12 +65,23 @@ export default function ClientLayout({
     requestPushPermission();
   }, []);
 
+  useRegisterPushNotification();
+  useEffect(() => {
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data.type === 'NOTIFICATION_CLICKED') {
+          setChatState(true);
+        }
+      });
+    }
+  }, [setChatState]);
+
   return (
     <div className="relative">
       <ToastContainer
         position="top-center"
         draggable
-        className="fixed left-1/2 -translate-x-1/2 mt-16 z-50 max-w-[90%]"
+        className="fixed left-1/2 -translate-x-1/2 mt-16 z-50 max-w-[90%] z-[100]"
       />
       <div className="flex h-screen justify-center items-center">
         <DesktopUi />
