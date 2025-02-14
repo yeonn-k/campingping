@@ -73,10 +73,6 @@ const Chat = () => {
 
   const getChatRooms = () => {
     socket.emit('getChatRooms');
-  };
-
-  useEffect(() => {
-    getChatRooms();
     socket.on('chatRooms', (rooms: ChatRooms[]) => {
       setChats(rooms);
     });
@@ -84,6 +80,10 @@ const Chat = () => {
     return () => {
       socket.off('chatRooms');
     };
+  };
+
+  useEffect(() => {
+    getChatRooms();
   }, []);
 
   const closeChats = () => {
