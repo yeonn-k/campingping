@@ -29,7 +29,8 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const { userEmail } = userStore();
   const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
-  const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>();
+  const chatMsgsRef = useRef<ChatMsgs[]>([]);
+  const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useIsMobile();
   const [nextCursor, setNextCursor] = useState<number | null | undefined>(null);
@@ -114,14 +115,18 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   const handleGetChatting = ({ chatHistory, nextCursor }: ChatHistoryData) => {
     setChatMsgs((prevMsgs = []) => {
-      const newMsgs = chatHistory || [];
-      const existingMsgIds = new Set(prevMsgs.map((msg) => msg.id));
+      const currentMsgs = chatMsgsRef.current;
 
-      const filteredNewMsgs = newMsgs.filter(
+      const existingMsgIds = new Set(currentMsgs.map((msg) => msg.id));
+      const filteredNewMsgs = chatHistory.filter(
         (msg) => !existingMsgIds.has(msg.id)
       );
 
-      return [...filteredNewMsgs, ...prevMsgs];
+      const updatedMsgs = [...filteredNewMsgs, ...currentMsgs];
+
+      chatMsgsRef.current = updatedMsgs;
+
+      return updatedMsgs;
     });
 
     setNextCursor(nextCursor ?? null);
@@ -138,24 +143,31 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   }, [chatMsgs]);
 
   const handleScroll = useCallback(() => {
-    if (chatContainerRef.current) {
-      const { scrollTop } = chatContainerRef.current;
-      if (scrollTop < 10) {
-        if (debounceTimeout.current) {
-          clearTimeout(debounceTimeout.current);
-        }
-        debounceTimeout.current = setTimeout(() => {
-          setHasScrolled(true);
-        }, 300);
+    if (!chatContainerRef.current) return;
+
+    const { scrollTop } = chatContainerRef.current;
+
+    if (scrollTop < 10 && nextCursor) {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
       }
+      debounceTimeout.current = setTimeout(() => {
+        socket.emit('getChatHistory', {
+          roomId: chatRoomId,
+          cursor: nextCursor,
+        });
+
+        socket.on('chatHistory', handleGetChatting);
+      }, 300);
     }
-  }, []);
+  }, [chatRoomId, nextCursor]);
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
     if (chatContainer) {
       chatContainer.addEventListener('scroll', handleScroll);
     }
+
     return () => {
       if (chatContainer) {
         chatContainer.removeEventListener('scroll', handleScroll);
@@ -172,10 +184,20 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         roomId: chatRoomId,
         cursor: nextCursor,
       });
-      socket.on('chatHistory', handleGetChatting);
-      setNextCursor(null);
+
+      const handleChatHistory = (data: ChatHistoryData) => {
+        handleGetChatting(data);
+      };
+
+      socket.on('chatHistory', handleChatHistory);
+
+      setHasScrolled(false);
+
+      return () => {
+        socket.off('chatHistory', handleChatHistory);
+      };
     }
-  }, [hasScrolled, nextCursor, chatRoomId]);
+  }, [hasScrolled, nextCursor, chatRoomId, handleGetChatting]);
 
   const updateRead = () => {
     const updatedChatHistory = chatMsgs?.map((chat) => ({
