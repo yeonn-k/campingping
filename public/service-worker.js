@@ -9,23 +9,26 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('push', (event) => {
   const options = {
-    // body: event.data.text(), // 푸시 알림 내용
-    // icon: './images/maskable_icon_x192.png', // 표시할 아이콘
-    // tag: 'pwa-notification',
+    title: event.data.title,
+    body: event.data.body,
+    icon: './images/maskable_icon_x192.png',
   };
 
-  event.waitUntil(self.registration.showNotification(options));
+  const roomId = event.data.roomId;
+
+  event.waitUntil(
+    self.registration.showNotification(options).then(() => {
+      event.waitUntil(
+        self.clients.matchAll({ type: 'window' }).then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: 'NOTIFICATION_CLICKED', roomId });
+          });
+        })
+      );
+    })
+  );
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-
-  event.waitUntil(
-    clients.matchAll({ type: 'window' }).then((clients) => {
-      clients.forEach((client) => {
-        client.postMessage({ type: 'NOTIFICATION_CLICKED' });
-      });
-      return clients.openWindow('https://campingping.com');
-    })
-  );
 });

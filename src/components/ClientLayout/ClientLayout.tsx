@@ -28,7 +28,7 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const { updateLocation } = useLocationStore();
-  const { chatState, setChatState } = chattingStore();
+  const { chatState, setChatState, setChatRoomId } = chattingStore();
   const { userState } = userStore();
   const isGeoLocationGranted = useGeoLocationPermission();
 
@@ -70,11 +70,14 @@ export default function ClientLayout({
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data.type === 'NOTIFICATION_CLICKED') {
+          const roomId = event.data.roomId;
+
           setChatState(true);
+          setChatRoomId(roomId);
         }
       });
     }
-  }, [setChatState]);
+  }, []);
 
   return (
     <div className="relative">
