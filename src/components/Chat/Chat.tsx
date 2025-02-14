@@ -13,7 +13,6 @@ import goToBack from '@icons/goToBack.svg';
 import { ChatRooms } from '@/types/Chatting';
 import { chattingStore } from '@/stores/chattingState';
 
-import { timeFormat } from '@/utils/timeFormat';
 const Chat = () => {
   const [, setIsConnected] = useState(false);
   const [, setTransport] = useState('N/A');
