@@ -24,13 +24,11 @@ self.addEventListener('push', (event) => {
 
     event.waitUntil(
       self.registration.showNotification(options).then(() => {
-        event.waitUntil(
-          self.clients.matchAll({ type: 'window' }).then((clients) => {
-            clients.forEach((client) => {
-              client.postMessage({ type: 'NOTIFICATION_CLICKED', roomId });
-            });
-          })
-        );
+        return self.clients.matchAll({ type: 'window' }).then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: 'NOTIFICATION_CLICKED', roomId });
+          });
+        });
       })
     );
   });
