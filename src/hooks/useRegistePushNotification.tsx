@@ -16,22 +16,31 @@ export default function useRegisterPushNotification() {
             ),
           });
 
-          const subscriptionData = {
-            endpoint: pushSubscription.endpoint,
-            expirationTime: pushSubscription.expirationTime,
-            keys: {
-              p256dh: arrayBufferToBase64(pushSubscription.getKey('p256dh')),
-              auth: arrayBufferToBase64(pushSubscription.getKey('auth')),
-            },
-          };
-
           try {
-            const res = await api.post('/user/subscribe', { subscriptionData });
+            const res = await api.post('/user/subscribe', {
+              endpoint: pushSubscription.endpoint,
+              expirationTime: pushSubscription.expirationTime,
+              keys: {
+                p256dh: arrayBufferToBase64(pushSubscription.getKey('p256dh')),
+                auth: arrayBufferToBase64(pushSubscription.getKey('auth')),
+              },
+            });
             if (res.status === 201) {
               console.log(
                 'subscriptionData 전송 성공!',
                 'subscriptionData: ',
-                subscriptionData
+
+                'endpoint: ',
+                pushSubscription.endpoint,
+                'expirationTime:',
+                pushSubscription.expirationTime,
+                'keys:',
+                {
+                  p256dh: arrayBufferToBase64(
+                    pushSubscription.getKey('p256dh')
+                  ),
+                  auth: arrayBufferToBase64(pushSubscription.getKey('auth')),
+                }
               );
             }
           } catch (error) {

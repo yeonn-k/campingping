@@ -72,6 +72,8 @@ const Chat = () => {
 
   const getChatRooms = () => {
     socket.emit('getChatRooms');
+    socket.emit('openChatRoom', { roomId: chatRoomId });
+
     socket.on('chatRooms', (rooms: ChatRooms[]) => {
       setChats(rooms);
     });

@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { socket } from '@/socket';
+import { toast } from 'react-toastify';
 
 import Button from '@/components/Button/Button';
 import MyChatMsg from './MyChatMsg';
@@ -18,8 +19,6 @@ import useInputValue from '@/hooks/useInputValue';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { api } from '@/utils/axios';
 
-import { toast } from 'react-toastify';
-
 interface ChatRoomProps {
   roomId: number;
   setChatRoomId: (v: number | null) => void;
@@ -27,16 +26,19 @@ interface ChatRoomProps {
 }
 const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const { userEmail } = userStore();
-  const [inputValue, handleInputChange, resetInput] = useInputValue();
   const { chatRoomId } = chattingStore();
+  const { isMobile } = useIsMobile();
+
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   const chatMsgsRef = useRef<ChatMsgs[]>([]);
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>([]);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const { isMobile } = useIsMobile();
   const [nextCursor, setNextCursor] = useState<number | null | undefined>(null);
 
-  const [hasScrolled, setHasScrolled] = useState(false);
+  const [inputValue, handleInputChange, resetInput] = useInputValue();
 
+  const [isNewMessage, setIsNewMessage] = useState(true);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const getChatHistory = () => {
@@ -58,6 +60,8 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   useEffect(() => {
     getChatHistory();
+
+    socket.emit('openChatRoom', { roomId: chatRoomId });
   }, [chatRoomId]);
 
   useEffect(() => {
@@ -74,6 +78,8 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       message: inputValue,
       room: chatRoomId,
     });
+
+    setIsNewMessage(true);
   };
 
   const handleSendMessage = async () => {
@@ -103,15 +109,9 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     }
   };
 
-  const getOutFromRoom = async () => {
-    const res = await api.delete(`/chats/rooms/${chatRoomId}`);
-
-    if (res.status === 200) {
-      toast.success('채팅방이 삭제되었습니다 🚪');
-
-      setChatRoomId(null);
-    }
-  };
+  useEffect(() => {
+    chatMsgsRef.current = chatMsgs;
+  }, [chatMsgs]);
 
   const handleGetChatting = ({ chatHistory, nextCursor }: ChatHistoryData) => {
     setChatMsgs(() => {
@@ -124,16 +124,23 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
       const updatedMsgs = [...filteredNewMsgs, ...currentMsgs];
 
-      chatMsgsRef.current = updatedMsgs;
-
       return updatedMsgs;
     });
 
     setNextCursor(nextCursor ?? null);
+
+    if (chatContainerRef.current) {
+      const currentScrollHeight = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTo({
+        top: currentScrollHeight * 0.1,
+        behavior: 'smooth',
+      });
+    }
   };
 
   useEffect(() => {
     if (!chatContainerRef.current) return;
+    if (!isNewMessage) return;
 
     const container = chatContainerRef.current;
     container.scrollTo({
@@ -148,16 +155,19 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     const { scrollTop } = chatContainerRef.current;
 
     if (scrollTop < 10 && nextCursor) {
-      if (debounceTimeout.current) {
-        clearTimeout(debounceTimeout.current);
-      }
+      if (debounceTimeout.current) return;
       debounceTimeout.current = setTimeout(() => {
+        setIsNewMessage(false);
         socket.emit('getChatHistory', {
           roomId: chatRoomId,
           cursor: nextCursor,
         });
 
         socket.on('chatHistory', handleGetChatting);
+
+        setTimeout(() => {
+          debounceTimeout.current = null;
+        }, 300);
       }, 300);
     }
   }, [chatRoomId, nextCursor]);
@@ -209,6 +219,16 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   };
 
   socket.on('updateRead', updateRead);
+
+  const getOutFromRoom = async () => {
+    const res = await api.delete(`/chats/rooms/${chatRoomId}`);
+
+    if (res.status === 200) {
+      toast.success('채팅방이 삭제되었습니다 🚪');
+
+      setChatRoomId(null);
+    }
+  };
 
   return (
     <div className="relative h-full flex flex-col ">
