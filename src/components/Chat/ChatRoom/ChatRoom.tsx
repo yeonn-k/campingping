@@ -58,7 +58,13 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   useEffect(() => {
     getChatHistory();
+
+    socket.emit('openChatRoom', { roomId: chatRoomId });
   }, [chatRoomId]);
+
+  useEffect(() => {
+    chatMsgsRef.current = chatMsgs;
+  }, [chatMsgs]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -123,8 +129,6 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       );
 
       const updatedMsgs = [...filteredNewMsgs, ...currentMsgs];
-
-      chatMsgsRef.current = updatedMsgs;
 
       return updatedMsgs;
     });

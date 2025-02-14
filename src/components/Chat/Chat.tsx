@@ -72,6 +72,7 @@ const Chat = () => {
 
   const getChatRooms = () => {
     socket.emit('getChatRooms');
+
     socket.on('chatRooms', (rooms: ChatRooms[]) => {
       setChats(rooms);
     });
