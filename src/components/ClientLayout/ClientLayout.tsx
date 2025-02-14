@@ -36,6 +36,20 @@ export default function ClientLayout({
   const { isPwaOpen, handleInstall, handleClose } = usePwaPrompt();
   const [isPwaAlarmOpen, setIsPwaAlarmOpen] = useState(false);
 
+  const registerServiceWorker = async () => {
+    try {
+      const registration =
+        await navigator.serviceWorker.register('/service-worker.js');
+      console.log('서비스 워커 등록 성공:', registration);
+    } catch (error) {
+      console.error('서비스 워커 등록 실패:', error);
+    }
+  };
+
+  const requestPushPermission = async () => {
+    askPushNotification();
+  };
+
   const { getPermission, denyPermission, askPushNotification } =
     usePushNotification({
       setIsPwaAlarmOpen,
@@ -58,11 +72,12 @@ export default function ClientLayout({
   }, [isGeoLocationGranted, updateLocation]);
 
   useEffect(() => {
-    const requestPushPermission = async () => {
-      askPushNotification();
+    const setupServiceWorkerAndPushPermission = async () => {
+      await registerServiceWorker();
+      requestPushPermission();
     };
 
-    requestPushPermission();
+    setupServiceWorkerAndPushPermission();
   }, []);
 
   useRegisterPushNotification();
