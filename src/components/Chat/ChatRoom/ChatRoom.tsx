@@ -40,6 +40,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const [isNewMessage, setIsNewMessage] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const isInitial = useRef<boolean>(true);
 
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
@@ -71,6 +72,8 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         behavior: 'smooth',
       });
     }
+
+    isInitial.current = false;
   }, []);
 
   const sendChatMsg = (inputValue: string, chatRoomId: number) => {
@@ -114,27 +117,31 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   }, [chatMsgs]);
 
   const handleGetChatting = ({ chatHistory, nextCursor }: ChatHistoryData) => {
-    setChatMsgs(() => {
-      const currentMsgs = chatMsgsRef.current;
+    if (isInitial) {
+      console.log('check');
 
-      const existingMsgIds = new Set(currentMsgs.map((msg) => msg.id));
-      const filteredNewMsgs = chatHistory.filter(
-        (msg) => !existingMsgIds.has(msg.id)
-      );
+      setChatMsgs(() => {
+        const currentMsgs = chatMsgsRef.current;
 
-      const updatedMsgs = [...filteredNewMsgs, ...currentMsgs];
+        const existingMsgIds = new Set(currentMsgs.map((msg) => msg.id));
+        const filteredNewMsgs = chatHistory.filter(
+          (msg) => !existingMsgIds.has(msg.id)
+        );
 
-      return updatedMsgs;
-    });
+        const updatedMsgs = [...filteredNewMsgs, ...currentMsgs];
 
-    setNextCursor(nextCursor ?? null);
-
-    if (chatContainerRef.current) {
-      const currentScrollHeight = chatContainerRef.current.scrollHeight;
-      chatContainerRef.current.scrollTo({
-        top: currentScrollHeight * 0.1,
-        behavior: 'smooth',
+        return updatedMsgs;
       });
+
+      setNextCursor(nextCursor ?? null);
+
+      if (chatContainerRef.current) {
+        const currentScrollHeight = chatContainerRef.current.scrollHeight;
+        chatContainerRef.current.scrollTo({
+          top: currentScrollHeight * 0.1,
+          // behavior: 'smooth',
+        });
+      }
     }
   };
 
@@ -154,7 +161,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
     const { scrollTop } = chatContainerRef.current;
 
-    if (scrollTop < 10 && nextCursor) {
+    if (scrollTop === 0 && nextCursor) {
       if (debounceTimeout.current) return;
       debounceTimeout.current = setTimeout(() => {
         setIsNewMessage(false);
@@ -167,7 +174,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
         setTimeout(() => {
           debounceTimeout.current = null;
-        }, 300);
+        }, 100);
       }, 300);
     }
   }, [chatRoomId, nextCursor]);
@@ -206,6 +213,12 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       return () => {
         socket.off('chatHistory', handleChatHistory);
       };
+    }
+
+    if (!isInitial.current) {
+      setTimeout(() => {
+        isInitial.current = true;
+      }, 1000);
     }
   }, [hasScrolled, nextCursor, chatRoomId, handleGetChatting]);
 
