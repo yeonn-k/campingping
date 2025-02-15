@@ -77,6 +77,14 @@ useEffect(() => {
 
 ## 💬 Chat
 
+### 이전 메세지 불러오기( 무한 스크롤 )
+
+- 채팅방 최상단으로 스크롤 시 디바운싱을 통해 이전 채팅 요청
+- `scrollTop === 0` 조건을 만족할 경우 서버에 `nextCursor`를 포함해 이전 메세지 요청
+- 디바운스 구현을 통한 불필요한 요청 방지, `300ms` 딜레이 설정
+- 새로운 메세지 데이터를 받은 뒤 중복 메세지 필터링 후 기존 메세지 리스트 **_앞쪽_**에 추가
+- 기존에 보고 있던 메세지 위치로 조정 및 불필요한 추가 요청을 막기 위해 `scrollTo` 메서드로 스크롤 위치 조정
+
 ### Enter 입력 채팅 / 한글 입력 중복 방지
 
 - `Enter` 키 입력으로 채팅 전송
@@ -104,6 +112,12 @@ const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 ### 읽지 않은 메세지
 
 - 채팅방 안에서 읽지 않은 메세지에는 '읽지 않음' 표시
+- socket 이벤트 `updateRead` 수신 시, chatMsgs 의 모든 isRead 상태를 true로 변환
+
+### 채팅 시간 관리( day.js )
+
+- day.js를 활용한 util 함수 `timeFormat.ts`
+- utc 시간으로 받아서 사용하고자 하는 형태로 변환
 
 ### 채팅방 나가기 기능 구현
 

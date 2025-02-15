@@ -12,11 +12,13 @@ import goToBack from '@icons/goToBack.svg';
 
 import { ChatRooms } from '@/types/Chatting';
 import { chattingStore } from '@/stores/chattingState';
+import { userStore } from '@/stores/userState';
 
 const Chat = () => {
   const [, setIsConnected] = useState(false);
   const [, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
+  const { userState } = userStore();
 
   const {
     chatState,
@@ -28,15 +30,17 @@ const Chat = () => {
   } = chattingStore();
 
   const onConnect = () => {
-    setIsConnected(true);
-    setTransport(socket.io.engine.transport.name);
+    if (userState) {
+      setIsConnected(true);
+      setTransport(socket.io.engine.transport.name);
 
-    socket.io.engine.on(
-      'upgrade',
-      (transport: { name: SetStateAction<string> }) => {
-        setTransport(transport.name);
-      }
-    );
+      socket.io.engine.on(
+        'upgrade',
+        (transport: { name: SetStateAction<string> }) => {
+          setTransport(transport.name);
+        }
+      );
+    }
   };
 
   const onDisconnect = () => {
