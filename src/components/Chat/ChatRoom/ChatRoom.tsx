@@ -138,7 +138,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       if (chatContainerRef.current) {
         const currentScrollHeight = chatContainerRef.current.scrollHeight;
         chatContainerRef.current.scrollTo({
-          top: currentScrollHeight * 0.1,
+          top: currentScrollHeight * 0.08,
           // behavior: 'smooth',
         });
       }
