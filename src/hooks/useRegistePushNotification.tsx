@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { api } from '@utils/axios';
+import { userStore } from '@/stores/userState';
 
 export default function useRegisterPushNotification() {
+  const { userState } = userStore();
   useEffect(() => {
     const registerPushNotification = async () => {
       if ('Notification' in window && 'serviceWorker' in navigator) {
@@ -50,7 +52,9 @@ export default function useRegisterPushNotification() {
       }
     };
 
-    registerPushNotification();
+    if (userState) {
+      registerPushNotification();
+    } else return;
   }, []);
 }
 

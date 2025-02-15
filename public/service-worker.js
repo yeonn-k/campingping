@@ -8,8 +8,8 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  console.log('Push event received', event);
   console.log('Event data:', event.data);
+  console.log('Event data.text():', event.data.text());
 
   event.data.json().then((data) => {
     console.log('Parsed JSON:', data);
