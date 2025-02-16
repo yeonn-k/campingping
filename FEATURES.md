@@ -46,7 +46,6 @@
   - PWA 일 경우에만 알림 권한에 대한 동의 여부 모달 발생
 
 ```typescript
-const isPWA = () => window.matchMedia('(display-mode: standalone)').matches;
 const getPermission = async () => {
   await Notification.requestPermission();
   setIsPwaAlarmOpen(false);
@@ -56,7 +55,7 @@ const denyPermission = () => {
 };
 const askPushNotification = () => {
   const askNotificationPermission = async () => {
-    if (!isPWA()) {
+    if (!isPwa) {
       return;
     }
     if (Notification.permission === 'default') {

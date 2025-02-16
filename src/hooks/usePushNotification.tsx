@@ -1,20 +1,17 @@
-interface PushNotificationProps {
-  setIsPwaAlarmOpen: (v: boolean, type?: string) => void;
-}
+import { usePwaStore } from '@/stores/pwaState';
+import { userStore } from '@/stores/userState';
+import { isPwa } from '@/utils/isPwa';
 
-export const usePushNotification = ({
-  setIsPwaAlarmOpen,
-}: PushNotificationProps) => {
-  const isPWA = () => window.matchMedia('(display-mode: standalone)').matches;
-
+export const usePushNotification = () => {
+  const { isVisited } = userStore();
+  const { setIsPwaOpen } = usePwaStore();
   const denyPermission = () => {
-    setIsPwaAlarmOpen(false);
+    setIsPwaOpen(false);
   };
 
-  const askPushNotification = () => {
-    const visited = localStorage.getItem('isVisited');
-    if (isPWA() && !visited) {
-      setIsPwaAlarmOpen(true, 'default');
+  const askPushNotification = async () => {
+    if (isPwa() && !isVisited) {
+      setIsPwaOpen(true, 'noti-default');
     }
   };
 
@@ -22,13 +19,18 @@ export const usePushNotification = ({
     if (Notification.permission === 'default') {
       const permission = await Notification.requestPermission();
 
-      if (permission) {
-        setIsPwaAlarmOpen(false);
+      if (permission === 'granted') {
+        setIsPwaOpen(false);
       } else {
-        setIsPwaAlarmOpen(true, 'unsupported');
+        setIsPwaOpen(false);
+        setIsPwaOpen(true, 'unsupported');
       }
+    } else if (Notification.permission === 'denied') {
+      setIsPwaOpen(false);
+      setIsPwaOpen(true, 'unsupported');
+    } else {
+      return;
     }
-    localStorage.setItem('isVisited', 'true');
   };
 
   return {
