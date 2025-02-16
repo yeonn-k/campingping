@@ -20,7 +20,7 @@ import InstallModal from '@/components/PWA/InstallPwaModal/InstallModal';
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 import { usePushNotification } from '@/hooks/usePushNotification';
 import PwaAlarmPopUp from '../PWA/PwaAlarmPopUp/PwaAlarmPopUp';
-import useRegisterPushNotification from '@/hooks/useRegisterPushNotification';
+import useRegisterPushNotification from '@/utils/registerPushNotification';
 
 export default function ClientLayout({
   children,
