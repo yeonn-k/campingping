@@ -13,6 +13,5 @@ export const usePwaStore = create<PwaState>((set) => ({
   isPwaOpen: false,
   modalType: '',
   setDeferredPrompt: (prompt) => set({ deferredPrompt: prompt }),
-  setIsPwaOpen: (v, text) =>
-    set((state) => ({ isPwaOpen: v, modalType: text })),
+  setIsPwaOpen: (v, text) => set(() => ({ isPwaOpen: v, modalType: text })),
 }));

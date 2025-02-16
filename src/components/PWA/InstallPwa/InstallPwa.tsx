@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import logo from '@images/campingping.png';
 
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
-import { usePwaStore } from '@/stores/pwaState';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => void;
