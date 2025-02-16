@@ -50,7 +50,7 @@ export default function ClientLayout({
     askPushNotification();
   };
 
-  const { getPermission, denyPermission, askPushNotification } =
+  const { checkNotificationPermission, denyPermission, askPushNotification } =
     usePushNotification({
       setIsPwaAlarmOpen,
     });
@@ -125,7 +125,10 @@ export default function ClientLayout({
             <InstallModal onClick={handleInstall} onClose={handleClose} />
           )}
           {isPwaAlarmOpen && (
-            <PwaAlarmPopUp onClick={getPermission} onClose={denyPermission} />
+            <PwaAlarmPopUp
+              onClick={checkNotificationPermission}
+              onClose={denyPermission}
+            />
           )}
           {chatState && <Chat />}
           <Nav />

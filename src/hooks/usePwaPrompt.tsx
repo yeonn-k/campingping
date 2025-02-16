@@ -23,9 +23,12 @@ export const usePwaPrompt = () => {
     };
   }, []);
 
-  const installPWA = () => {
-    if (!deferredPrompt) return;
-    setIsPwaOpen(true);
+  const installPwa = async () => {
+    if (!deferredPrompt) {
+      setIsPwaOpen(true, 'unsupported');
+    } else {
+      setIsPwaOpen(true, 'supporteed');
+    }
   };
 
   const handleInstall = async () => {
@@ -51,7 +54,7 @@ export const usePwaPrompt = () => {
     deferredPrompt,
     setDeferredPrompt,
     isPwaOpen,
-    installPWA,
+    installPwa,
     handleInstall,
     handleClose,
   };
