@@ -21,6 +21,8 @@ import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 import { usePushNotification } from '@/hooks/usePushNotification';
 import PwaAlarmPopUp from '../PWA/PwaAlarmPopUp/PwaAlarmPopUp';
 import useRegisterPushNotification from '@/utils/registerPushNotification';
+import { isPwa } from '@/utils/isPwa';
+import { usePwaStore } from '@/stores/pwaState';
 
 export default function ClientLayout({
   children,
@@ -33,9 +35,8 @@ export default function ClientLayout({
   const isGeoLocationGranted = useGeoLocationPermission();
 
   const { isMobile } = useIsMobile();
-  const { isPwaOpen, handleInstall, handleClose } = usePwaPrompt();
-  const [isPwaAlarmOpen, setIsPwaAlarmOpen] = useState(false);
-
+  const { handleInstall, handleClose } = usePwaPrompt();
+  const { isPwaOpen } = usePwaStore();
   const registerServiceWorker = async () => {
     try {
       const registration =
@@ -50,10 +51,8 @@ export default function ClientLayout({
     askPushNotification();
   };
 
-  const { checkNotificationPermission, denyPermission, askPushNotification } =
-    usePushNotification({
-      setIsPwaAlarmOpen,
-    });
+  const { denyPermission, askPushNotification, checkNotificationPermission } =
+    usePushNotification();
 
   const pathname = usePathname();
   const router = useRouter();
@@ -74,13 +73,16 @@ export default function ClientLayout({
   useEffect(() => {
     const setupServiceWorkerAndPushPermission = async () => {
       await registerServiceWorker();
-      requestPushPermission();
+      if (userState) {
+        requestPushPermission();
+      }
     };
 
     setupServiceWorkerAndPushPermission();
   }, []);
 
   useRegisterPushNotification();
+
   useEffect(() => {
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener('message', (event) => {
@@ -120,11 +122,11 @@ export default function ClientLayout({
             />
           )}
 
-          <InstallPrompt />
+          {!isPwa() && <InstallPrompt />}
           {isPwaOpen && (
             <InstallModal onClick={handleInstall} onClose={handleClose} />
           )}
-          {isPwaAlarmOpen && (
+          {isPwaOpen && (
             <PwaAlarmPopUp
               onClick={checkNotificationPermission}
               onClose={denyPermission}

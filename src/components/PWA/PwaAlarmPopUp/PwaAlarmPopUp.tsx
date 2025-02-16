@@ -2,6 +2,7 @@ import Image from 'next/image';
 import logo from '@images/campingping.png';
 import Button from '@/components/Button/Button';
 import { usePwaStore } from '@/stores/pwaState';
+import { userStore } from '@/stores/userState';
 
 interface PwaAlarmPopUpProps {
   onClick: () => Promise<void>;
@@ -10,9 +11,11 @@ interface PwaAlarmPopUpProps {
 
 const PwaAlarmPopUp = ({ onClick, onClose }: PwaAlarmPopUpProps) => {
   const { modalType } = usePwaStore();
+  const { setIsVisited } = userStore();
 
   const handleClose = async () => {
     await onClose();
+    setIsVisited(true);
   };
 
   return (
@@ -27,7 +30,7 @@ const PwaAlarmPopUp = ({ onClick, onClose }: PwaAlarmPopUpProps) => {
           priority
         />
 
-        {modalType === 'default' ? (
+        {modalType === 'noti-default' ? (
           <>
             <p className="text-description">
               <span className="text-textGreen">캠핑핑</span> 앱이 오프라인일
