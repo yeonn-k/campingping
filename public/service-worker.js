@@ -15,14 +15,14 @@ self.addEventListener('push', (event) => {
     body: data.body,
     icon: './images/maskable_icon_x192.png',
     badge: 'images/maskable_icon_x128.png',
-    data: data.roomId,
+    data: { roomId: data.roomId },
   };
 
   event.waitUntil(
     self.registration.showNotification(title, options).then(() => {
       return self.clients.matchAll({ type: 'window' }).then((clients) => {
         clients.forEach((client) => {
-          client.postMessage({ type: 'NOTIFICATION_CLICKED', data });
+          client.postMessage({ type: 'NOTIFICATION_RECEIVED', data: data });
         });
       });
     })
@@ -31,4 +31,14 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+
+  const roomId = event.notification.data.roomId;
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window' }).then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({ type: 'NOTIFICATION_CLICKED', roomId: roomId });
+      });
+    })
+  );
 });
