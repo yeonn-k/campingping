@@ -10,18 +10,19 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('push', (event) => {
   const data = JSON.parse(event.data.text());
 
+  const title = data.title;
   const options = {
-    title: data.title,
     body: data.body,
     icon: './images/maskable_icon_x192.png',
-    data: { roomId },
+    badge: 'images/maskable_icon_x128.png',
+    data: data.roomId,
   };
 
   event.waitUntil(
-    self.registration.showNotification(options).then(() => {
+    self.registration.showNotification(title, options).then(() => {
       return self.clients.matchAll({ type: 'window' }).then((clients) => {
         clients.forEach((client) => {
-          client.postMessage({ type: 'NOTIFICATION_CLICKED', roomId });
+          client.postMessage({ type: 'NOTIFICATION_CLICKED', data });
         });
       });
     })
