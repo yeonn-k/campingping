@@ -21,6 +21,8 @@ import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 import { usePushNotification } from '@/hooks/usePushNotification';
 import PwaAlarmPopUp from '../PWA/PwaAlarmPopUp/PwaAlarmPopUp';
 import useRegisterPushNotification from '@/utils/registerPushNotification';
+import { socket } from '@/socket';
+import { ChatHistoryData, ChatMsgs } from '@/types/Chatting';
 
 export default function ClientLayout({
   children,
@@ -35,6 +37,9 @@ export default function ClientLayout({
   const { isMobile } = useIsMobile();
   const { isPwaOpen, handleInstall, handleClose } = usePwaPrompt();
   const [isPwaAlarmOpen, setIsPwaAlarmOpen] = useState(false);
+
+  const [, setChatMsgs] = useState<ChatMsgs[]>([]);
+  const [, setNextCursor] = useState<number | null | undefined>(null);
 
   const registerServiceWorker = async () => {
     try {
@@ -85,10 +90,25 @@ export default function ClientLayout({
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data.type === 'NOTIFICATION_CLICKED') {
-          const roomId = event.data;
+          const roomId = event.data.roomId;
 
           setChatState(true);
           setChatRoomId(roomId);
+
+          socket.emit('getChatHistory', {
+            roomId: roomId,
+          });
+
+          socket.on(
+            'chatHistory',
+            ({ chatHistory, nextCursor }: ChatHistoryData) => {
+              setChatMsgs(chatHistory);
+
+              if (typeof nextCursor === 'number') {
+                setNextCursor(nextCursor);
+              }
+            }
+          );
         }
       });
     }
