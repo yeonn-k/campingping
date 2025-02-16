@@ -85,7 +85,7 @@ export default function ClientLayout({
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data.type === 'NOTIFICATION_CLICKED') {
-          const roomId = event.data.roomId;
+          const roomId = event.data;
 
           setChatState(true);
           setChatRoomId(roomId);

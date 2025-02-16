@@ -4,7 +4,7 @@ import { userStore } from '@/stores/userState';
 
 const useRegisterPushNotification = async () => {
   const { userState } = userStore();
-  if (!userState) return; // 유저 상태가 없으면 중단
+  if (!userState) return;
 
   if ('Notification' in window && 'serviceWorker' in navigator) {
     const permission = await Notification.requestPermission();
@@ -18,8 +18,11 @@ const useRegisterPushNotification = async () => {
         ),
       });
 
+      const existingSubscription =
+        await registration.pushManager.getSubscription();
+      if (existingSubscription) return;
+
       try {
-        console.log('trying');
         const res = await api.post('/user/subscribe', {
           endpoint: pushSubscription.endpoint,
           expirationTime: pushSubscription.expirationTime,

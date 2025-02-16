@@ -8,30 +8,24 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  console.log('Event data:', event.data);
-  console.log('Event data.text():', event.data.text());
+  const data = JSON.parse(event.data.text());
 
-  event.data.json().then((data) => {
-    console.log('Parsed JSON:', data);
+  const options = {
+    title: data.title,
+    body: data.body,
+    icon: './images/maskable_icon_x192.png',
+    data: { roomId },
+  };
 
-    const options = {
-      title: data.title,
-      body: data.body,
-      icon: './images/maskable_icon_x192.png',
-    };
-
-    const roomId = data.roomId;
-
-    event.waitUntil(
-      self.registration.showNotification(options).then(() => {
-        return self.clients.matchAll({ type: 'window' }).then((clients) => {
-          clients.forEach((client) => {
-            client.postMessage({ type: 'NOTIFICATION_CLICKED', roomId });
-          });
+  event.waitUntil(
+    self.registration.showNotification(options).then(() => {
+      return self.clients.matchAll({ type: 'window' }).then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({ type: 'NOTIFICATION_CLICKED', roomId });
         });
-      })
-    );
-  });
+      });
+    })
+  );
 });
 
 self.addEventListener('notificationclick', (event) => {
