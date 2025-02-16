@@ -21,15 +21,10 @@ export const usePushNotification = () => {
 
       if (permission === 'granted') {
         setIsPwaOpen(false);
-      } else {
-        setIsPwaOpen(false);
-        setIsPwaOpen(true, 'unsupported');
       }
-    } else if (Notification.permission === 'denied') {
+    } else {
       setIsPwaOpen(false);
       setIsPwaOpen(true, 'unsupported');
-    } else {
-      return;
     }
   };
 
