@@ -20,7 +20,7 @@ import InstallModal from '@/components/PWA/InstallPwaModal/InstallModal';
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 import { usePushNotification } from '@/hooks/usePushNotification';
 import PwaAlarmPopUp from '../PWA/PwaAlarmPopUp/PwaAlarmPopUp';
-import useRegisterPushNotification from '@/hooks/useRegistePushNotification';
+import useRegisterPushNotification from '@/hooks/useRegisterPushNotification';
 
 export default function ClientLayout({
   children,
@@ -85,7 +85,7 @@ export default function ClientLayout({
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data.type === 'NOTIFICATION_CLICKED') {
-          const roomId = event.data.roomId;
+          const roomId = event.data;
 
           setChatState(true);
           setChatRoomId(roomId);
