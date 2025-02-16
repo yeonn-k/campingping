@@ -17,10 +17,6 @@ const useRegisterPushNotification = async () => {
         ),
       });
 
-      const existingSubscription =
-        await registration.pushManager.getSubscription();
-      if (existingSubscription) return;
-
       try {
         const res = await api.post('/user/subscribe', {
           endpoint: pushSubscription.endpoint,
