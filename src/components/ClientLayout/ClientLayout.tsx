@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DesktopUi from './DesktopUi';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
 import Nav from '../Nav/Nav';
