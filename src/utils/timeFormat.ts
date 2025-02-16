@@ -1,6 +1,6 @@
 import * as dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
+// import timezone from 'dayjs/plugin/timezone';
 import 'dayjs/locale/ko';
 
 export const timeFormat = (utcTime: string) => {
