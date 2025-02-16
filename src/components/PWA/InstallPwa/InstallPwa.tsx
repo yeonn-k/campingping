@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import logo from '@images/campingping.png';
 
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
+import { usePwaStore } from '@/stores/pwaState';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => void;
@@ -15,7 +16,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 const InstallPrompt = () => {
   const pathname = usePathname();
-  const { setDeferredPrompt, deferredPrompt, installPWA } = usePwaPrompt();
+  const { setDeferredPrompt, installPwa } = usePwaPrompt();
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -41,24 +42,22 @@ const InstallPrompt = () => {
     <div
       className={`fixed ${pathname === '/community' ? 'bottom-[19rem]' : 'bottom-56'} right-0 translate-x-[-14px] z-[18] `}
     >
-      {deferredPrompt && (
-        <button
-          className={`relative bg-lime-400 p-2 rounded-full shadow-shadowCustom w-14 h-14 z-[18] flex justify-center`}
-          onClick={installPWA}
-        >
-          <Image
-            src={logo}
-            alt="logo"
-            width={90}
-            height={90}
-            quality={20}
-            className="opacity-50"
-          />
-          <div className="text-center text-white font-semibold absolute top-1/2 -translate-y-1/2">
-            APP
-          </div>
-        </button>
-      )}
+      <button
+        className={`relative bg-lime-400 p-2 rounded-full shadow-shadowCustom w-14 h-14 z-[18] flex justify-center`}
+        onClick={installPwa}
+      >
+        <Image
+          src={logo}
+          alt="logo"
+          width={90}
+          height={90}
+          quality={20}
+          className="opacity-50"
+        />
+        <div className="text-center text-white font-semibold absolute top-1/2 -translate-y-1/2">
+          APP
+        </div>
+      </button>
     </div>
   );
 };
