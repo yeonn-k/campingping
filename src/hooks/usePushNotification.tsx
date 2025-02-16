@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 interface PushNotificationProps {
   setIsPwaAlarmOpen: (v: boolean, type?: string) => void;
 }
@@ -7,32 +5,35 @@ interface PushNotificationProps {
 export const usePushNotification = ({
   setIsPwaAlarmOpen,
 }: PushNotificationProps) => {
-  const [isFirstVisit, setIsFirstVisit] = useState(false);
-
   const isPWA = () => window.matchMedia('(display-mode: standalone)').matches;
-
-  const getPermission = async () => {
-    await Notification.requestPermission();
-
-    setIsPwaAlarmOpen(false);
-  };
 
   const denyPermission = () => {
     setIsPwaAlarmOpen(false);
   };
 
-  const askPushNotification = async () => {
-    if (Notification.permission === 'default') {
-      setIsPwaAlarmOpen(true);
+  const askPushNotification = () => {
+    const visited = localStorage.getItem('isVisited');
+    if (isPWA() && !visited) {
+      setIsPwaAlarmOpen(true, 'default');
     }
   };
 
-  useEffect(() => {
-    const visited = localStorage.getItem('isFirstVisited');
-    if (isPWA() && !visited) {
-      askPushNotification();
-    }
-  }, [isFirstVisit]);
+  const checkNotificationPermission = async () => {
+    if (Notification.permission === 'default') {
+      const permission = await Notification.requestPermission();
 
-  return { getPermission, denyPermission, askPushNotification };
+      if (permission) {
+        setIsPwaAlarmOpen(false);
+      } else {
+        setIsPwaAlarmOpen(true, 'unsupported');
+      }
+    }
+    localStorage.setItem('isVisited', 'true');
+  };
+
+  return {
+    denyPermission,
+    askPushNotification,
+    checkNotificationPermission,
+  };
 };

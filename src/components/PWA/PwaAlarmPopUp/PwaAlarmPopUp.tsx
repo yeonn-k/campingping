@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import logo from '@images/campingping.png';
 import Button from '@/components/Button/Button';
+import { usePwaStore } from '@/stores/pwaState';
 
 interface PwaAlarmPopUpProps {
   onClick: () => Promise<void>;
@@ -8,7 +9,7 @@ interface PwaAlarmPopUpProps {
 }
 
 const PwaAlarmPopUp = ({ onClick, onClose }: PwaAlarmPopUpProps) => {
-  const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+  const { modalType } = usePwaStore();
 
   const handleClose = async () => {
     await onClose();
@@ -26,7 +27,7 @@ const PwaAlarmPopUp = ({ onClick, onClose }: PwaAlarmPopUpProps) => {
           priority
         />
 
-        {isApple ? (
+        {modalType === 'default' ? (
           <>
             <p className="text-description">
               <span className="text-textGreen">캠핑핑</span> 앱이 오프라인일
@@ -51,11 +52,11 @@ const PwaAlarmPopUp = ({ onClick, onClose }: PwaAlarmPopUpProps) => {
           </>
         ) : (
           <>
-            <p className="text-description">
+            <p className="text-description text-center">
               알림 설정 권한이 없습니다.
-              <span className="text-textGreen">
+              <p className="text-textGreen">
                 설정에서 알림 권한을 직접 활성화해주세요 !
-              </span>
+              </p>
             </p>
 
             <div className="mt-3">
