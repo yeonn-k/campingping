@@ -42,6 +42,8 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const isInitial = useRef<boolean>(true);
 
+  const [closed, setClosed] = useState(false);
+
   const getChatHistory = () => {
     socket.emit('getChatHistory', {
       roomId: chatRoomId,
@@ -60,10 +62,9 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   };
 
   useEffect(() => {
+    if (!chatRoomId) return;
     getChatHistory();
-
-    socket.emit('openChatRoom', { roomId: chatRoomId });
-  }, [chatRoomId]);
+  }, []);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -243,8 +244,14 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     }
   };
 
+  const userLeft = () => {
+    setClosed(true);
+  };
+
+  socket.on('userLeftRoom', userLeft);
+
   return (
-    <div className="relative h-full flex flex-col ">
+    <div className="relative h-full flex flex-col pb-12">
       <div className="mt-1 ">
         <div className="px-6 pt-1 pb-2 flex gap-1 justify-between border-b border-Green">
           <div className="flex gap-1">
@@ -260,7 +267,10 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
             </div>
           </div>
 
-          <button className="text-Green" onClick={getOutFromRoom}>
+          <button
+            className="text-Green"
+            onClick={closed ? () => setChatRoomId(null) : getOutFromRoom}
+          >
             대화 나가기
           </button>
         </div>
@@ -286,16 +296,23 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
             />
           );
         })}
+
+        {closed && (
+          <div className="flex justify-center">
+            <div className="flex justify-center items-center bg-LightGray rounded-2xl text-white px-3 py-1 my-4">
+              상대방이 채팅을 떠났습니다
+            </div>
+          </div>
+        )}
       </div>
-      <div
-        className={`border-t border-Green w-full  ${isMobile ? 'h-32' : 'h-40'} flex justify-center items-center p-4`}
-      >
+      <div className="border-t border-Green w-full h-32 flex justify-center items-center gap-3 p-4">
         <textarea
           placeholder="채팅을 입력하세요"
-          className={`w-full  ${isMobile ? 'h-24' : 'h-36'} outline-none	pt-2 pr-3 resize-none `}
+          className="w-full h-24 outline-none	px-1 resize-none rounded-lg"
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleEnter}
+          disabled={closed}
         ></textarea>
         <Button height="h-24" onClick={handleSendMessage}>
           전송
