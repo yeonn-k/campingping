@@ -3,13 +3,20 @@ import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 export const usePwaPrompt = () => {
-  const { deferredPrompt, setDeferredPrompt, isPwaOpen, setIsPwaOpen } =
-    usePwaStore();
+  const {
+    deferredPrompt,
+    setDeferredPrompt,
+    isPwaOpen,
+    setIsPwaOpen,
+    setClicked,
+  } = usePwaStore();
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault();
+
       setDeferredPrompt(e);
+
       setIsPwaOpen(false);
     };
 
@@ -24,10 +31,12 @@ export const usePwaPrompt = () => {
   }, []);
 
   const installPwa = async () => {
+    setClicked('install');
+
     if (!deferredPrompt) {
-      setIsPwaOpen(true, 'unsupported');
+      setIsPwaOpen(true, 'pwa-unsupported');
     } else {
-      setIsPwaOpen(true, 'supporteed');
+      setIsPwaOpen(true, 'pwa-supported');
     }
   };
 
