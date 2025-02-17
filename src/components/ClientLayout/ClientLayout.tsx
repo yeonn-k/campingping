@@ -133,7 +133,7 @@ export default function ClientLayout({
             />
           )}
 
-          {!isPwa() && <InstallPrompt />}
+          {!isPwaState && <InstallPrompt />}
           {isPwaOpen && clicked === 'install' && (
             <PwaModal onClick={handleInstall} onClose={handleClose} />
           )}
