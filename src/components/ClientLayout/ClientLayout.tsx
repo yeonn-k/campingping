@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DesktopUi from './DesktopUi';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
 import Nav from '../Nav/Nav';
@@ -16,19 +16,22 @@ import { userStore } from '@/stores/userState';
 import React from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import InstallPrompt from '@/components/PWA/InstallPwa/InstallPwa';
-import InstallModal from '@/components/PWA/InstallPwaModal/InstallModal';
+import InstallModal from '@/components/PWA/PwaModal/PwaModal';
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 import { usePushNotification } from '@/hooks/usePushNotification';
 import PwaAlarmPopUp from '../PWA/PwaAlarmPopUp/PwaAlarmPopUp';
 import useRegisterPushNotification from '@/utils/registerPushNotification';
 import { isPwa } from '@/utils/isPwa';
 import { usePwaStore } from '@/stores/pwaState';
+import PwaModal from '@/components/PWA/PwaModal/PwaModal';
 
 export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isPwaState, setIsPwaState] = useState<boolean | null>(null);
+
   const { updateLocation } = useLocationStore();
   const { chatState, setChatState, setChatRoomId } = chattingStore();
   const { userState } = userStore();
@@ -36,7 +39,7 @@ export default function ClientLayout({
 
   const { isMobile } = useIsMobile();
   const { handleInstall, handleClose } = usePwaPrompt();
-  const { isPwaOpen } = usePwaStore();
+  const { isPwaOpen, clicked } = usePwaStore();
   const registerServiceWorker = async () => {
     try {
       const registration =
@@ -96,6 +99,14 @@ export default function ClientLayout({
     }
   }, []);
 
+  useEffect(() => {
+    setIsPwaState(isPwa());
+  }, []);
+
+  if (isPwaState === null) {
+    return;
+  }
+
   return (
     <div className="relative">
       <ToastContainer
@@ -123,11 +134,11 @@ export default function ClientLayout({
           )}
 
           {!isPwa() && <InstallPrompt />}
-          {isPwaOpen && (
-            <InstallModal onClick={handleInstall} onClose={handleClose} />
+          {isPwaOpen && clicked === 'install' && (
+            <PwaModal onClick={handleInstall} onClose={handleClose} />
           )}
-          {isPwaOpen && (
-            <PwaAlarmPopUp
+          {isPwaOpen && clicked === 'noti' && (
+            <PwaModal
               onClick={checkNotificationPermission}
               onClose={denyPermission}
             />

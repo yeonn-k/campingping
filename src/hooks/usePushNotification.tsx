@@ -4,18 +4,22 @@ import { isPwa } from '@/utils/isPwa';
 
 export const usePushNotification = () => {
   const { isVisited } = userStore();
-  const { setIsPwaOpen } = usePwaStore();
+  const { setIsPwaOpen, setClicked } = usePwaStore();
   const denyPermission = () => {
     setIsPwaOpen(false);
   };
 
   const askPushNotification = async () => {
+    setClicked('noti');
+
     if (isPwa() && !isVisited) {
       setIsPwaOpen(true, 'noti-default');
     }
   };
 
   const checkNotificationPermission = async () => {
+    setClicked('noti');
+
     if (Notification.permission === 'default') {
       const permission = await Notification.requestPermission();
 
@@ -24,7 +28,7 @@ export const usePushNotification = () => {
       }
     } else {
       setIsPwaOpen(false);
-      setIsPwaOpen(true, 'unsupported');
+      setIsPwaOpen(true, 'noti-unsupported');
     }
   };
 
