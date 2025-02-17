@@ -1,7 +1,13 @@
 'use client';
 import Image from 'next/image';
 
-import { SetStateAction, useEffect, useState } from 'react';
+import {
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { socket } from '../../socket';
 
 import ChatBox from './ChatBox';
@@ -19,6 +25,8 @@ const Chat = () => {
   const [, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
   const { userState } = userStore();
+
+  const isInitialRender = useRef(true);
 
   const {
     chatState,
@@ -62,9 +70,8 @@ const Chat = () => {
     };
   }, []);
 
-  const getChatRooms = () => {
+  const getChatRooms = useCallback(() => {
     socket.emit('getChatRooms');
-    socket.emit('openChatRoom', { roomId: chatRoomId });
 
     socket.on('chatRooms', (rooms: ChatRooms[]) => {
       setChats(rooms);
@@ -73,7 +80,7 @@ const Chat = () => {
     return () => {
       socket.off('chatRooms');
     };
-  };
+  }, [chatRoomId]);
 
   useEffect(() => {
     getChatRooms();
@@ -83,6 +90,20 @@ const Chat = () => {
     setChatState(false);
     setChatRoomId(null);
   };
+
+  useEffect(() => {
+    const handleUserLeftRoom = () => {
+      if (chats.length > 0) {
+        getChatRooms();
+      }
+    };
+
+    socket.on('userLeftRoom', handleUserLeftRoom);
+
+    return () => {
+      socket.off('userLeftRoom', handleUserLeftRoom);
+    };
+  }, [getChatRooms]);
 
   return (
     <div
@@ -113,7 +134,7 @@ const Chat = () => {
       {chatRoomId === null ? (
         <div>
           <div className="text-title p-6">주변 사람들과 대화해보세요</div>
-          <div className="flex flex-wrap flex-col items-center gap-4 w-full ">
+          <div className="flex flex-wrap flex-col items-center gap-4 w-full pb-12">
             {chats.length > 0 ? (
               chats.map((chat) => {
                 return (
