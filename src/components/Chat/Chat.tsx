@@ -1,13 +1,7 @@
 'use client';
 import Image from 'next/image';
 
-import {
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import { socket } from '../../socket';
 
 import ChatBox from './ChatBox';
@@ -25,8 +19,6 @@ const Chat = () => {
   const [, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
   const { userState } = userStore();
-
-  const isInitialRender = useRef(true);
 
   const {
     chatState,

@@ -16,10 +16,10 @@ import { userStore } from '@/stores/userState';
 import React from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import InstallPrompt from '@/components/PWA/InstallPwa/InstallPwa';
-import InstallModal from '@/components/PWA/PwaModal/PwaModal';
+
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 import { usePushNotification } from '@/hooks/usePushNotification';
-import PwaAlarmPopUp from '../PWA/PwaAlarmPopUp/PwaAlarmPopUp';
+
 import useRegisterPushNotification from '@/utils/registerPushNotification';
 import { isPwa } from '@/utils/isPwa';
 import { usePwaStore } from '@/stores/pwaState';
