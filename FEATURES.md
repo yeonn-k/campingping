@@ -4,33 +4,40 @@
 
 ## 📲 PWA( Progressive Web App )
 
-- PWA 기능 지원을 통해 웹 애플리케이션을 네이티브 앱처럼 설치, 오프라인에서 사용할 수 있도록 지원
-  - 채팅 기능에서 push 알림을 지원할 수 있도록 하기 위함
+- PWA 기능 지원을 통해 웹 애플리케이션을 네이티브 앱처럼 설치, 일부 기능 오프라인에서 사용할 수 있도록 지원
+  - 채팅 메시지 등 실시간 푸시 알림 수신 기능
+  - 알림 클릭 시 특정 화면으로 바로 이동하여 UX 향상
+  - Next.js PWA 플러그인 활용
 - `manifest.json` 파일 설정으로 앱 아이콘, 시작 URL, shortcuts, 색상 등 설정
 - display: `standalone` 옵션을 통해 브라우저 없이 독립 실행 가능하도록 설정
 - 설치 프로세스 구현
+
   - 유저가 웹 앱을 설치할 수 있도록 `beforeinstallprompt` 이벤트 활용
   - usePwtPrompt 커스텀 훅을 통해 PWA 설치 프롬프트 상태를 전역에서 관리
   - 설치/실패에 대해 toast 알림으로 UX 향상
+
   ```typescript
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
+    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault();
-      setDeferredPrompt(e as unknown as BeforeInstallPromptEvent);
+      setDeferredPrompt(e);
+      setIsPwaOpen(false);
     };
-    window.addEventListener(
-      'beforeinstallprompt',
-      handleBeforeInstallPrompt as EventListener
-    );
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
     return () => {
       window.removeEventListener(
         'beforeinstallprompt',
-        handleBeforeInstallPrompt as EventListener
+        handleBeforeInstallPrompt
       );
     };
   }, []);
-  const installPWA = () => {
+
+  const handleInstall = async () => {
     if (!deferredPrompt) return;
+    setIsPwaOpen(false);
+
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((result) => {
       if (result.outcome === 'accepted') {
@@ -42,37 +49,119 @@
     });
   };
   ```
-- 일림 권한 설정 프로세스 구현
-  - PWA 일 경우에만 알림 권한에 대한 동의 여부 모달 발생
+
+- 알림 동의 모달 구현
+  - PWA 환경에서만 알림 권한 요청 모달을 표시
+    - useEffect로 최초 진입 시 Notification.permission 상테 확인 및 모달 발생
 
 ```typescript
-const getPermission = async () => {
-  await Notification.requestPermission();
-  setIsPwaAlarmOpen(false);
+const askPushNotification = async () => {
+  setClicked('noti');
+
+  if (isPwa() && !isVisited) {
+    setIsPwaOpen(true, 'noti-default');
+  }
 };
-const denyPermission = () => {
-  setIsPwaAlarmOpen(false);
-};
-const askPushNotification = () => {
-  const askNotificationPermission = async () => {
-    if (!isPwa) {
-      return;
+
+const checkNotificationPermission = async () => {
+  setClicked('noti');
+
+  if (Notification.permission === 'default') {
+    const permission = await Notification.requestPermission();
+
+    if (permission === 'granted') {
+      setIsPwaOpen(false);
     }
-    if (Notification.permission === 'default') {
-      setIsPwaAlarmOpen(true);
-    }
-  };
-  askNotificationPermission();
+  } else {
+    setIsPwaOpen(false);
+    setIsPwaOpen(true, 'noti-unsupported');
+  }
 };
-useEffect(() => {
-  askPushNotification();
-}, []);
 ```
 
-- 설치 동의 / 알림 동의 권한 요청 커스텀 모달
-- 서비스 워커 및 캐싱을 활용한 성능 최적화
-  - `@ducanh2912/next-pwa`
-- maskable icon 등록
+## 🔔 Push Notification
+
+- 브라우저 푸시 구독 및 서버 연동
+
+  - 브라우저의 `PushManager.subscripbe()`를 통해 구독 정보 생성
+  - 구독 정보를 서버에 전송, 저장하여 서버로 부터 구독자에 대해 푸시 알림 수신
+
+  ```typescript
+  const useRegisterPushNotification = async () => {
+    if ('Notification' in window && 'serviceWorker' in navigator) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        const registration = await navigator.serviceWorker.ready;
+        const pushSubscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlB64ToUint8Array(
+            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+          ),
+        });
+
+        await api.post('/user/subscribe', {
+          endpoint: pushSubscription.endpoint,
+          expirationTime: pushSubscription.expirationTime,
+          keys: {
+            p256dh: arrayBufferToBase64(pushSubscription.getKey('p256dh')),
+            auth: arrayBufferToBase64(pushSubscription.getKey('auth')),
+          },
+        });
+      }
+    }
+  };
+  ```
+
+- Service Worker.js
+  - 푸시 알림 수신 및 알림 클릭 시 리스트 페이지에서 채팅 화면화면을 자동으로 활성화
+
+```typescript
+self.addEventListener('push', (event) => {
+  const data = JSON.parse(event.data.text());
+
+  const title = data.title;
+  const options = {
+    body: data.body,
+    icon: './images/maskable_icon_x192.png',
+    badge: 'images/maskable_icon_x128.png',
+    data: data.roomId,
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options).then(() => {
+      return self.clients.matchAll({ type: 'window' }).then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({ type: 'NOTIFICATION_CLICKED', data });
+        });
+      });
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const roomId = event.notification.data;
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window' }).then((clients) => {
+      const client = clients.find((client) =>
+        client.url.includes('campingping.com/list')
+      );
+
+      if (client) {
+        client.postMessage({ type: 'OPEN_CHAT_MODAL', roomId });
+        client.focus();
+      } else {
+        self.clients.openWindow(`/list`).then((newClient) => {
+          if (newClient)
+            newClient.postMessage({ type: 'OPEN_CHAT_MODAL', roomId });
+        });
+      }
+    })
+  );
+});
+```
 
 ## 💬 Chat
 

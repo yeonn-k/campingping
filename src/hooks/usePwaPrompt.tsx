@@ -14,9 +14,7 @@ export const usePwaPrompt = () => {
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault();
-
       setDeferredPrompt(e);
-
       setIsPwaOpen(false);
     };
 
