@@ -13,7 +13,7 @@
 - 설치 프로세스 구현
 
   - 유저가 웹 앱을 설치할 수 있도록 `beforeinstallprompt` 이벤트 활용
-  - usePwtPrompt 커스텀 훅을 통해 PWA 설치 프롬프트 상태를 전역에서 관리
+  - usePwaPrompt 커스텀 훅을 통해 PWA 설치 프롬프트 상태를 전역에서 관리
   - 설치/실패에 대해 toast 알림으로 UX 향상
 
   ```typescript
