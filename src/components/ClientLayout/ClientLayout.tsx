@@ -125,11 +125,6 @@ export default function ClientLayout({
 
     navigator.serviceWorker.addEventListener('message', messageHandler);
 
-    // 초기화 시 대기 중인 알림 확인
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.active?.postMessage({ type: 'CHECK_PENDING_NOTIFICATIONS' });
-    });
-
     return () => {
       navigator.serviceWorker.removeEventListener('message', messageHandler);
     };
