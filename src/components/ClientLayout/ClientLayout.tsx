@@ -25,7 +25,8 @@ import { isPwa } from '@/utils/isPwa';
 import { usePwaStore } from '@/stores/pwaState';
 import PwaModal from '@/components/PWA/PwaModal/PwaModal';
 
-import { getChatHistory } from '@/utils/getChatHistory';
+import { socket } from '../../socket';
+import { ChatHistoryData, ChatMsgs } from '@/types/Chatting';
 
 export default function ClientLayout({
   children,
@@ -35,7 +36,10 @@ export default function ClientLayout({
   const [isPwaState, setIsPwaState] = useState<boolean | null>(null);
 
   const { updateLocation } = useLocationStore();
-  const { chatState, setChatState, setChatRoomId } = chattingStore();
+  const { chatState, setChatState, chatRoomId, setChatRoomId } =
+    chattingStore();
+  const [, setChatMsgs] = useState<ChatMsgs[]>([]);
+
   const { userState } = userStore();
   const isGeoLocationGranted = useGeoLocationPermission();
 
@@ -89,25 +93,42 @@ export default function ClientLayout({
   useRegisterPushNotification();
 
   useEffect(() => {
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data.type === 'OPEN_CHAT_MODAL') {
-          const roomId = event.data;
+    if (!navigator.serviceWorker) return;
 
-          if (userState && roomId) {
-            setChatState(true);
-            setChatRoomId(roomId);
-            getChatHistory();
-          } else if (userState && !roomId) {
-            setChatState(true);
-          } else {
-            router.push('/sign-in');
-            toast.error('로그인이 필요합니다 💡');
-          }
+    const messageHandler = (event: MessageEvent) => {
+      if (event.data.type === 'OPEN_CHAT_MODAL') {
+        const roomId = event.data.roomId;
+
+        if (userState && roomId) {
+          setChatState(true);
+          setChatRoomId(roomId);
+
+          socket.emit('getChatHistory', { roomId: chatRoomId });
+
+          const chatHistoryHandler = ({ chatHistory }: ChatHistoryData) => {
+            setChatMsgs(chatHistory);
+          };
+
+          socket.on('chatHistory', chatHistoryHandler);
+
+          return () => {
+            socket.off('chatHistory', chatHistoryHandler);
+          };
+        } else if (userState && !roomId) {
+          setChatState(true);
+        } else {
+          router.push('/sign-in');
+          toast.error('로그인이 필요합니다 💡');
         }
-      });
-    }
-  }, []);
+      }
+    };
+
+    navigator.serviceWorker.addEventListener('message', messageHandler);
+
+    return () => {
+      navigator.serviceWorker.removeEventListener('message', messageHandler);
+    };
+  }, [userState]);
 
   useEffect(() => {
     setIsPwaState(isPwa());

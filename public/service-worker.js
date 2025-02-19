@@ -44,8 +44,9 @@ self.addEventListener('notificationclick', (event) => {
         client.postMessage({ type: 'OPEN_CHAT_MODAL', roomId });
         client.focus();
       } else {
-        self.clients.openWindow(`/list`).then((windowClient) => {
-          windowClient.postMessage({ type: 'OPEN_CHAT_MODAL', roomId });
+        self.clients.openWindow(`/list`).then((newClient) => {
+          if (newClient)
+            newClient.postMessage({ type: 'OPEN_CHAT_MODAL', roomId });
         });
       }
     })
