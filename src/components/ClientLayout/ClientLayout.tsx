@@ -24,6 +24,7 @@ import useRegisterPushNotification from '@/utils/registerPushNotification';
 import { isPwa } from '@/utils/isPwa';
 import { usePwaStore } from '@/stores/pwaState';
 import PwaModal from '@/components/PWA/PwaModal/PwaModal';
+import { socket } from '@/socket';
 
 export default function ClientLayout({
   children,
@@ -92,8 +93,14 @@ export default function ClientLayout({
         if (event.data.type === 'NOTIFICATION_CLICKED') {
           const roomId = event.data;
 
-          setChatState(true);
-          setChatRoomId(roomId);
+          if (userState && roomId) {
+            setChatState(true);
+            setChatRoomId(roomId);
+            socket.emit('getChatHistory', { roomId: roomId });
+          }
+        } else {
+          router.push('/login');
+          toast.error('로그인이 필요합니다 💡');
         }
       });
     }
