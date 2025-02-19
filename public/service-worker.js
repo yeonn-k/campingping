@@ -31,11 +31,23 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+
   const roomId = event.notification.data;
 
   event.waitUntil(
-    self.clients.openWindow(`/list`).then((windowClient) => {
-      windowClient.postMessage({ type: 'OPEN_CHAT_MODAL', roomId });
+    self.clients.matchAll({ type: 'window' }).then((clients) => {
+      const client = clients.find((client) =>
+        client.url.includes('campingping.com/list')
+      );
+
+      if (client) {
+        client.postMessage({ type: 'OPEN_CHAT_MODAL', roomId });
+        client.focus();
+      } else {
+        self.clients.openWindow(`/list`).then((windowClient) => {
+          windowClient.postMessage({ type: 'OPEN_CHAT_MODAL', roomId });
+        });
+      }
     })
   );
 });
