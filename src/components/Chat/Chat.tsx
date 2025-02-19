@@ -10,7 +10,7 @@ import ChatRoom from './ChatRoom/ChatRoom';
 import chevron from '@icons/chevron_gray.svg';
 import goToBack from '@icons/goToBack.svg';
 
-import { ChatRooms } from '@/types/Chatting';
+import { ChatMsgs, ChatRooms } from '@/types/Chatting';
 import { chattingStore } from '@/stores/chattingState';
 import { userStore } from '@/stores/userState';
 
@@ -19,6 +19,7 @@ const Chat = () => {
   const [, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
   const { userState } = userStore();
+  const [newChat, setNewChat] = useState<ChatMsgs>();
 
   const {
     chatState,
@@ -77,6 +78,25 @@ const Chat = () => {
   useEffect(() => {
     getChatRooms();
   }, []);
+
+  const newRoom = () => {
+    const newMsgId = newChat ? newChat.id : '';
+    const roomExist = chats.some((chat) => chat.roomId === newMsgId);
+
+    if (!roomExist) getChatRooms();
+  };
+
+  useEffect(() => {
+    const handleNewMessage = () => {
+      newRoom();
+    };
+
+    socket.on('newMessage', handleNewMessage);
+
+    return () => {
+      socket.off('newMessage', handleNewMessage);
+    };
+  }, [newRoom]);
 
   const closeChats = () => {
     setChatState(false);
