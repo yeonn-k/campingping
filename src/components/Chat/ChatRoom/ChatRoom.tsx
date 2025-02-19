@@ -24,6 +24,7 @@ interface ChatRoomProps {
   setChatRoomId: (v: number | null) => void;
   nickname: string;
 }
+
 const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const { userEmail } = userStore();
   const { chatRoomId } = chattingStore();
@@ -37,7 +38,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   const [inputValue, handleInputChange, resetInput] = useInputValue();
 
-  const [isNewMessage, setIsNewMessage] = useState(true);
+  const isNewMessage = useRef(true);
   const [hasScrolled, setHasScrolled] = useState(false);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const isInitial = useRef<boolean>(true);
@@ -83,7 +84,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       room: chatRoomId,
     });
 
-    setIsNewMessage(true);
+    isNewMessage.current = true;
   };
 
   const handleSendMessage = async () => {
@@ -165,7 +166,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     if (scrollTop === 0 && nextCursor) {
       if (debounceTimeout.current) return;
       debounceTimeout.current = setTimeout(() => {
-        setIsNewMessage(false);
+        isNewMessage.current = false;
         socket.emit('getChatHistory', {
           roomId: chatRoomId,
           cursor: nextCursor,
