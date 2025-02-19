@@ -19,7 +19,7 @@ const Chat = () => {
   const [, setTransport] = useState('N/A');
   const [chats, setChats] = useState<ChatRooms[]>([]);
   const { userState } = userStore();
-  const [newChat, setNewChat] = useState<ChatMsgs>();
+  const [newChat] = useState<ChatMsgs>();
 
   const {
     chatState,
