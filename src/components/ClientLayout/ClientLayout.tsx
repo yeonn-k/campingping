@@ -99,7 +99,7 @@ export default function ClientLayout({
             socket.emit('getChatHistory', { roomId: roomId });
           }
         } else {
-          router.push('/login');
+          router.push('/sign-in');
           toast.error('로그인이 필요합니다 💡');
         }
       });
