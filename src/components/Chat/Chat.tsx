@@ -180,8 +180,6 @@ const Chat = () => {
           roomId={chatRoomId}
           setChatRoomId={setChatRoomId}
           nickname={chatNick}
-          chats={chats}
-          setChats={setChats}
         />
       )}
     </div>
