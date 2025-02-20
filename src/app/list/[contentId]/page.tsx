@@ -7,8 +7,6 @@ import { api } from '@/utils/axios';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 
-import myWishIcon from '@icons/liked.svg';
-import notMyWishIcon from '@icons/not-liked.svg';
 import goToBack from '@icons/goToBack.svg';
 
 import SearchBar from '@/components/SearchBar/SearchBar';
@@ -226,14 +224,6 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
               fill
               className="rounded object-cover"
               quality={60}
-            />
-
-            <Image
-              src={campData.favorite ? myWishIcon : notMyWishIcon}
-              alt="위시리스트"
-              width={20}
-              height={19}
-              className="absolute top-3 right-3"
             />
           </div>
         ) : (

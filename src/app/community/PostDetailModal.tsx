@@ -379,7 +379,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
                     ) : (
                       <>
                         <p
-                          className={`whitespace-pre-wrap ${isExpanded ? '' : 'line-clamp-1'}`}
+                          className={`whitespace-pre-wrap ${isExpanded ? '' : 'line-clamp-1 ml-2'}`}
                         >
                           {comment.content}
                         </p>

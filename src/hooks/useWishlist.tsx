@@ -1,16 +1,27 @@
 import useWishlistStore from '@/stores/wishlistState';
 import { api } from '@/utils/axios';
-import { Camp } from '@/types/Camp';
+import { WishlistCamp } from '@/types/Camp';
 
-const useWishlist = () => {
+interface UseWishlist {
+  data: WishlistCamp[];
+  getWishlist: () => void;
+  addOrRemoveWishlist: ({
+    contentId,
+    status,
+  }: {
+    contentId: string;
+    status: boolean;
+  }) => Promise<void>;
+}
+
+const useWishlist = (): UseWishlist => {
   const { wishlist, setWishlist, addToWishlist, removeFromWishlist } =
     useWishlistStore();
 
   const getWishlist = async () => {
     try {
-      const response = await api.get('/favorite');
-      const fetchedWishlist: Camp[] = response.data;
-      setWishlist(fetchedWishlist);
+      const response = await api.get('/favorites');
+      setWishlist(response.data.data);
     } catch (error) {
       console.error('Error fetching Wishlists:', error);
     }
@@ -24,9 +35,9 @@ const useWishlist = () => {
     status: boolean;
   }) => {
     try {
-      await api.post('/favorite', { contentId, status });
+      await api.post('/favorites', { contentId, status });
       if (status) {
-        const camp = wishlist.find((camp) => camp.contentId === contentId);
+        const camp = wishlist.find((camp) => camp.contentid === contentId);
         if (camp) addToWishlist(camp);
       } else {
         removeFromWishlist(contentId);
@@ -37,7 +48,7 @@ const useWishlist = () => {
   };
 
   return {
-    wishlist,
+    data: wishlist,
     getWishlist,
     addOrRemoveWishlist,
   };

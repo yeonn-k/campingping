@@ -1,10 +1,10 @@
 import { create } from 'zustand';
-import { Camp } from '@/types/Camp';
+import { WishlistCamp } from '@/types/Camp';
 
 interface WishlistState {
-  wishlist: Camp[];
-  setWishlist: (wishlist: Camp[]) => void;
-  addToWishlist: (camp: Camp) => void;
+  wishlist: WishlistCamp[];
+  setWishlist: (wishlist: WishlistCamp[]) => void;
+  addToWishlist: (camp: WishlistCamp) => void;
   removeFromWishlist: (contentId: string) => void;
 }
 
@@ -17,7 +17,7 @@ const useWishlistStore = create<WishlistState>((set) => ({
     })),
   removeFromWishlist: (contentId) =>
     set((state) => ({
-      wishlist: state.wishlist.filter((camp) => camp.contentId !== contentId),
+      wishlist: state.wishlist.filter((camp) => camp.contentid !== contentId),
     })),
 }));
 

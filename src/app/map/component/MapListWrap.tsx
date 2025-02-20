@@ -56,7 +56,7 @@ export const MapListWrap = ({ campList }: MapProps) => {
           return (
             <div className="w-full flex justify-center" key={camp.contentId}>
               <Card
-                itemId={camp.contentId}
+                contentId={camp.contentId}
                 name={camp.facltNm}
                 liked={camp.favorite}
                 imgSrc={camp.firstImageUrl}
