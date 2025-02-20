@@ -94,7 +94,7 @@ const List = () => {
           campingData.map((camp) => (
             <Card
               key={camp.contentId}
-              itemId={camp.contentId}
+              contentId={camp.contentId}
               liked={camp.favorite}
               imgSrc={camp.firstImageUrl}
               name={camp.facltNm ? camp.facltNm : ''}

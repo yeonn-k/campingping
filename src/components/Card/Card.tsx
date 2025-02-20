@@ -5,8 +5,11 @@ import myWishIcon from '@icons/liked.svg';
 import notMyWishIcon from '@icons/not-liked.svg';
 import DefaultImg from '../DefaultImg/DefaultImg';
 
+import useWishlist from '@/hooks/useWishlist';
+import { useState } from 'react';
+
 interface CardProps {
-  itemId: string;
+  contentId: string;
   liked: boolean;
   imgSrc: string | null;
   name: string;
@@ -15,15 +18,26 @@ interface CardProps {
 }
 
 const Card = ({
-  itemId,
-  liked,
+  contentId,
+  liked: initialLiked,
   imgSrc,
   name,
   address,
   description,
 }: CardProps) => {
+  const { addOrRemoveWishlist } = useWishlist();
+  const [liked, setLiked] = useState(initialLiked);
+
+  const handleWishlist = (e: React.MouseEvent<HTMLImageElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const newLikedState = !liked;
+    setLiked(newLikedState);
+
+    addOrRemoveWishlist({ contentId, status: newLikedState });
+  };
   return (
-    <Link href={`/list/${itemId}`} className="w-full flex justify-center">
+    <Link href={`/list/${contentId}`} className="w-full flex justify-center">
       <div className="w-10.5/12 rounded overflow-hidden">
         <div className="relative w-full h-56">
           {imgSrc ? (
@@ -44,6 +58,7 @@ const Card = ({
             width={20}
             height={19}
             className="absolute top-3 right-3"
+            onClick={handleWishlist}
           />
         </div>
 

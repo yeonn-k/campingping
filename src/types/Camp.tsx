@@ -5,6 +5,20 @@ interface CampLocation {
   coordinates: [number, number] | null;
 }
 
+export interface WishlistCamp {
+  id: number;
+  campingid: number;
+  contentid: string;
+  facltnm: string;
+  addr1: string;
+  addr2: string | null;
+  donm: string | null;
+  sigungunm: string | null;
+  lineintro: string | null;
+  intro: string | null;
+  firstimageurl: string | null;
+}
+
 export interface CampImage {
   id: number;
   url: string;
