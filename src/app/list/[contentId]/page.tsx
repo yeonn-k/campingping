@@ -217,11 +217,12 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
       </div>
       <div className="flex flex-col grow p-5 ">
         {campData?.firstImageUrl ? (
-          <div className="relative w-full h-56">
+          <div className="relative w-full h-64">
             <Image
               src={campData.firstImageUrl}
               alt="캠핑장 이미지"
               fill
+              sizes="auto"
               className="rounded object-cover"
               quality={60}
             />

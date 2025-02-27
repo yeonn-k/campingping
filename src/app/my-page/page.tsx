@@ -134,6 +134,7 @@ const MyPage = () => {
                         src={camp.firstimageurl}
                         alt={camp.facltnm}
                         fill
+                        sizes="auto"
                         className="rounded"
                       />
                       <Image

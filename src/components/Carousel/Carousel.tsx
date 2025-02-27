@@ -47,6 +47,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
                   className="rounded-md justify-items-stretch"
                   src={image.url}
                   fill
+                  sizes="auto"
                   alt="Camp Image"
                 />
               ) : (
@@ -60,6 +61,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
           key={validImages[0].id || 'default'}
           src={validImages[0].url}
           fill
+          sizes="auto"
           alt="Camp Image"
         />
       ) : (

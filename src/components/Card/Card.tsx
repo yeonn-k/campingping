@@ -45,6 +45,7 @@ const Card = ({
               src={imgSrc}
               alt="캠핑장 이미지"
               fill
+              sizes="auto"
               className="rounded object-cover"
               quality={60}
             />

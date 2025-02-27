@@ -1,10 +1,6 @@
 import { api } from '@utils/axios';
-import { userStore } from '@/stores/userState';
 
-const useRegisterPushNotification = async () => {
-  const { userState } = userStore();
-  if (!userState) return;
-
+const registerPushNotification = async () => {
   if ('Notification' in window && 'serviceWorker' in navigator) {
     const permission = await Notification.requestPermission();
 
@@ -27,19 +23,19 @@ const useRegisterPushNotification = async () => {
           },
         });
         if (res.status === 201) {
-          console.log(
-            'subscriptionData 전송 성공!',
-            'subscriptionData: ',
-            'endpoint: ',
-            pushSubscription.endpoint,
-            'expirationTime:',
-            pushSubscription.expirationTime,
-            'keys:',
-            {
-              p256dh: arrayBufferToBase64(pushSubscription.getKey('p256dh')),
-              auth: arrayBufferToBase64(pushSubscription.getKey('auth')),
-            }
-          );
+          // console.log(
+          //   'subscriptionData 전송 성공!',
+          //   'subscriptionData: ',
+          //   'endpoint: ',
+          //   pushSubscription.endpoint,
+          //   'expirationTime:',
+          //   pushSubscription.expirationTime,
+          //   'keys:',
+          //   {
+          //     p256dh: arrayBufferToBase64(pushSubscription.getKey('p256dh')),
+          //     auth: arrayBufferToBase64(pushSubscription.getKey('auth')),
+          //   }
+          // );
         }
       } catch (error) {
         console.error(error);
@@ -77,4 +73,4 @@ const urlB64ToUint8Array = (base64String: string | undefined): Uint8Array => {
   return outputArray;
 };
 
-export default useRegisterPushNotification;
+export default registerPushNotification;

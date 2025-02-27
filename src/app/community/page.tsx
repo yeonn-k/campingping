@@ -64,7 +64,7 @@ const CommunityPage = () => {
     if (userLat && userLon) {
       handleGetPosts();
     }
-  }, [userLat, userLon]);
+  }, []);
 
   const handleGetPosts = async () => {
     // if (activeTab === 'myPosts' && userState) {
@@ -130,28 +130,45 @@ const CommunityPage = () => {
     setSelectedPost(post);
     setIsDetailModalOpen(true);
   };
-  const closeDetailModal = () => {
+
+  const closeDetailModal = async () => {
     setSelectedPost(null);
     setIsDetailModalOpen(false);
+
+    const data = await getMyPosts();
+    if (data) {
+      const postsWithDates = data.map((post: P) => ({
+        ...post,
+        startDate: new Date(post.startDate),
+        endDate: new Date(post.endDate),
+      }));
+      setMyPosts(postsWithDates);
+    }
   };
 
   const ref = useRef<HTMLDivElement>(null);
+  // useEffect(() => {
+  //   const renderPosts = async () => {
+  //     if (isDetailModalOpen === false) {
+  //       const data = await getMyPosts();
+  //       if (data) {
+  //         const postsWithDates = data.map((post: P) => ({
+  //           ...post,
+  //           startDate: new Date(post.startDate),
+  //           endDate: new Date(post.endDate),
+  //         }));
+  //         setMyPosts(postsWithDates);
+  //       }
+  //     }
+  //   };
+  //   renderPosts();
+  // }, [isDetailModalOpen]);
+
   useEffect(() => {
-    const renderPosts = async () => {
-      if (isDetailModalOpen === false) {
-        const data = await getMyPosts();
-        if (data) {
-          const postsWithDates = data.map((post: P) => ({
-            ...post,
-            startDate: new Date(post.startDate),
-            endDate: new Date(post.endDate),
-          }));
-          setMyPosts(postsWithDates);
-        }
-      }
-    };
-    renderPosts();
-  }, [isDetailModalOpen]);
+    if (!selectedPost) {
+      handleGetPosts();
+    }
+  }, [selectedPost]);
 
   // useEffect(() => {
   //   const fetchInitialPosts = async () => {
@@ -186,6 +203,7 @@ const CommunityPage = () => {
   };
   const getallMyPosts = useCallback(async () => {
     if (isLoading) return;
+    if (!userState) return;
 
     setIsLoading(true);
     try {
