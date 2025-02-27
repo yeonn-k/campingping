@@ -132,7 +132,7 @@ const Map = () => {
       console.error('Error fetching campings:', error);
     } finally {
     }
-  }, [selectedCategoryValue, regionQuery]);
+  }, [selectedCategoryValue, regionQuery, cityQuery]);
 
   useEffect(() => {
     if (regionQuery === null) {
@@ -141,7 +141,7 @@ const Map = () => {
     } else {
       getCampingsByDoNm();
     }
-  }, [lat, lon]);
+  }, [lat, lon, selectedCategoryValue]);
 
   useEffect(() => {
     setCampList([]);
