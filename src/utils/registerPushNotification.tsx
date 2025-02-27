@@ -1,10 +1,6 @@
 import { api } from '@utils/axios';
-import { userStore } from '@/stores/userState';
 
-const useRegisterPushNotification = async () => {
-  const { userState } = userStore();
-  if (!userState) return;
-
+const registerPushNotification = async () => {
   if ('Notification' in window && 'serviceWorker' in navigator) {
     const permission = await Notification.requestPermission();
 
@@ -77,4 +73,4 @@ const urlB64ToUint8Array = (base64String: string | undefined): Uint8Array => {
   return outputArray;
 };
 
-export default useRegisterPushNotification;
+export default registerPushNotification;

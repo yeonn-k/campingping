@@ -120,7 +120,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   const handleGetChatting = ({ chatHistory, nextCursor }: ChatHistoryData) => {
     if (isInitial) {
-      console.log('check');
+      // console.log('check');
 
       setChatMsgs(() => {
         const currentMsgs = chatMsgsRef.current;

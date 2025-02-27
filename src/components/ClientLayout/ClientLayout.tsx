@@ -20,7 +20,7 @@ import InstallPrompt from '@/components/PWA/InstallPwa/InstallPwa';
 import { usePwaPrompt } from '@/hooks/usePwaPrompt';
 import { usePushNotification } from '@/hooks/usePushNotification';
 
-import useRegisterPushNotification from '@/utils/registerPushNotification';
+import registerPushNotification from '@/utils/registerPushNotification';
 import { isPwa } from '@/utils/isPwa';
 import { usePwaStore } from '@/stores/pwaState';
 import PwaModal from '@/components/PWA/PwaModal/PwaModal';
@@ -50,9 +50,9 @@ export default function ClientLayout({
     try {
       const registration =
         await navigator.serviceWorker.register('/service-worker.js');
-      console.log('서비스 워커 등록 성공:', registration);
+      // console.log('서비스 워커 등록 성공:', registration);
     } catch (error) {
-      console.error('서비스 워커 등록 실패:', error);
+      // console.error('서비스 워커 등록 실패:', error);
     }
   };
 
@@ -90,7 +90,18 @@ export default function ClientLayout({
     setupServiceWorkerAndPushPermission();
   }, []);
 
-  useRegisterPushNotification();
+  useEffect(() => {
+    const initPushNotification = async () => {
+      if (!userState) return;
+      try {
+        await registerPushNotification();
+      } catch (error) {
+        console.error('Push Notification 등록 실패:', error);
+      }
+    };
+
+    initPushNotification();
+  }, [userState]);
 
   useEffect(() => {
     if (!navigator.serviceWorker) return;

@@ -26,8 +26,6 @@ const PwaModal = ({ onClick, onClose }: ModalProps) => {
     await onClose();
   };
 
-  console.log(modalType);
-
   return (
     <div className="fixed top-0 w-full h-screen bg-black bg-opacity-50 z-zModal max-w-[450px]">
       <div className="bg-white p-6 rounded-b-3xl w-full h-48 flex flex-col justify-center items-center transition-all duration-500 ease-in-out z-zModal">
