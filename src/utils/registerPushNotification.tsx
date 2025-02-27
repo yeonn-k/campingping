@@ -23,19 +23,19 @@ const registerPushNotification = async () => {
           },
         });
         if (res.status === 201) {
-          console.log(
-            'subscriptionData 전송 성공!',
-            'subscriptionData: ',
-            'endpoint: ',
-            pushSubscription.endpoint,
-            'expirationTime:',
-            pushSubscription.expirationTime,
-            'keys:',
-            {
-              p256dh: arrayBufferToBase64(pushSubscription.getKey('p256dh')),
-              auth: arrayBufferToBase64(pushSubscription.getKey('auth')),
-            }
-          );
+          // console.log(
+          //   'subscriptionData 전송 성공!',
+          //   'subscriptionData: ',
+          //   'endpoint: ',
+          //   pushSubscription.endpoint,
+          //   'expirationTime:',
+          //   pushSubscription.expirationTime,
+          //   'keys:',
+          //   {
+          //     p256dh: arrayBufferToBase64(pushSubscription.getKey('p256dh')),
+          //     auth: arrayBufferToBase64(pushSubscription.getKey('auth')),
+          //   }
+          // );
         }
       } catch (error) {
         console.error(error);
