@@ -88,6 +88,7 @@ const Nav = () => {
                 alt={navItem.name}
                 width={24}
                 height={24}
+                className="w-6 h-6 sm:w-7 sm:h-7"
               />
               <span
                 className={`text-[10px] ${pathname === navItem.url ? 'text-Green' : 'text-Gray'}`}

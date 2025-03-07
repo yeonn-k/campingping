@@ -161,11 +161,11 @@ const Map = () => {
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
 
-        if (regionQuery) {
-          map.setZoomable(true);
-        } else {
-          map.setZoomable(false);
-        }
+        // if (regionQuery) {
+        //   map.setZoomable(true);
+        // } else {
+        //   map.setZoomable(false);
+        // }
 
         setKakaoMap(map);
 
