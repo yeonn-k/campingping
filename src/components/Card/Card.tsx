@@ -38,7 +38,7 @@ const Card = ({
   };
   return (
     <Link href={`/list/${contentId}`} className="w-full flex justify-center">
-      <div className="w-10.5/12 rounded overflow-hidden">
+      <div className="min-w-[320px] w-10.5/12 rounded overflow-hidden">
         <div className="relative w-full h-56">
           {imgSrc ? (
             <Image

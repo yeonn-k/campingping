@@ -79,7 +79,7 @@ const List = () => {
   }, [fetchCampingData, nextCursorRef]);
 
   return (
-    <div className="w-full flex flex-col pb-20 h-screen" ref={scrollRef}>
+    <div className="w-full flex flex-col pb-20 ">
       <SearchBar
         origin="list"
         category={selectedCategoryValue}
@@ -89,7 +89,10 @@ const List = () => {
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />
-      <div className="flex flex-col space-y-8  p-4 mx-* pb-20 ">
+      <div
+        className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 pb-20 min-h-screen"
+        ref={scrollRef}
+      >
         {campingData?.length ? (
           campingData.map((camp) => (
             <Card
