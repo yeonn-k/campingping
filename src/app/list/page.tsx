@@ -82,7 +82,7 @@ const List = () => {
   return (
     <>
       <Header />
-      <div className="w-full flex flex-col pb-20 h-screen sm:pt-10 sm:pt-14">
+      <div className="w-full flex flex-col pb-20 h-screen pt-11 sm:pt-14">
         <SearchBar
           origin="list"
           category={selectedCategoryValue}

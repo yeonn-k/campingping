@@ -277,7 +277,7 @@ const Map = () => {
   return (
     <>
       <Header />
-      <div className="h-screen flex flex-col w-full sm:pt-10 sm:pt-14">
+      <div className="h-screen flex flex-col w-full pt-11 sm:pt-14">
         <SearchBar
           origin="map"
           category={selectedCategoryValue}
