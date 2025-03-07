@@ -35,7 +35,7 @@ const Category = ({
   onCategorySelected: handleCategoryClick,
 }: CategoryProps) => {
   return (
-    <div className="w-full">
+    <div className="w-full flex justify-center">
       <div className="flex overflow-x-auto scrollbar-hide whitespace-nowrap scroll-smooth">
         {categories.map((category) => {
           const isSelected =

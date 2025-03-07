@@ -1,13 +1,12 @@
 'use client';
 
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import DesktopUi from './DesktopUi';
 
 import { useEffect, useState } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
-import Nav from '../Nav/Nav';
+
 import { usePathname, useRouter } from 'next/navigation';
 import OpenTheChats from '../OpenTheChats/OpenTheChats';
 import { chattingStore } from '@/stores/chattingState';
@@ -29,11 +28,7 @@ import { socket } from '../../socket';
 import { ChatHistoryData, ChatMsgs } from '@/types/Chatting';
 import { CHAT } from '@/constants/chat/chatEvents';
 
-export default function ClientLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ClientLayout() {
   const [isPwaState, setIsPwaState] = useState<boolean | null>(null);
 
   const { updateLocation } = useLocationStore();
@@ -150,45 +145,33 @@ export default function ClientLayout({
   }
 
   return (
-    <div className="relative">
-      <ToastContainer
-        position="top-center"
-        draggable
-        className="fixed left-1/2 -translate-x-1/2 mt-16 z-50 max-w-[90%] z-[100]"
-      />
-      <div className="flex h-screen justify-center items-center">
-        <DesktopUi />
-        <div
-          className={`relative w-full md:max-w-[450px] h-full flex justify-center ${chatState ? 'overflow-hidden' : 'overflow-auto'}`}
-        >
-          {children}
-          {pathname !== '/sign-in' && pathname !== '/search' && (
-            <OpenTheChats
-              onClick={() => {
-                if (userState) {
-                  setChatState(true);
-                } else {
-                  router.push('/sign-in');
-                  toast.error('로그인이 필요한 기능이에요');
-                }
-              }}
-            />
-          )}
+    <div
+      className={`relative w-full md:max-w-[450px] h-full flex justify-center ${chatState ? 'overflow-hidden' : 'overflow-auto'}`}
+    >
+      {pathname !== '/sign-in' && pathname !== '/search' && (
+        <OpenTheChats
+          onClick={() => {
+            if (userState) {
+              setChatState(true);
+            } else {
+              router.push('/sign-in');
+              toast.error('로그인이 필요한 기능이에요');
+            }
+          }}
+        />
+      )}
 
-          {!isPwaState && <InstallPrompt />}
-          {isPwaOpen && clicked === 'install' && (
-            <PwaModal onClick={handleInstall} onClose={handleClose} />
-          )}
-          {isPwaOpen && clicked === 'noti' && (
-            <PwaModal
-              onClick={checkNotificationPermission}
-              onClose={denyPermission}
-            />
-          )}
-          {chatState && <Chat />}
-          <Nav />
-        </div>
-      </div>
+      {!isPwaState && <InstallPrompt />}
+      {isPwaOpen && clicked === 'install' && (
+        <PwaModal onClick={handleInstall} onClose={handleClose} />
+      )}
+      {isPwaOpen && clicked === 'noti' && (
+        <PwaModal
+          onClick={checkNotificationPermission}
+          onClose={denyPermission}
+        />
+      )}
+      {chatState && <Chat />}
     </div>
   );
 }
