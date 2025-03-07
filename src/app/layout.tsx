@@ -47,13 +47,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-w-sm max-w-7xl mx-auto ">
+      <body className="min-w-sm max-w-7xl mx-auto overflow-hidden">
         <Script
           strategy="beforeInteractive"
           src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false&libraries=clusterer`}
         />
 
-        <div className="relative flex flex-col w-full justify-center items-center min-h-screen">
+        <div className="relative flex flex-col w-full justify-center items-center ">
           <ToastContainer
             position="top-center"
             draggable
@@ -62,7 +62,7 @@ export default function RootLayout({
 
           <Header />
 
-          <div className="flex flex-col justify-center items-center w-full sm:pt-10 sm:pt-14 pb-16">
+          <div className="flex flex-col justify-center items-center w-full sm:pt-10 sm:pt-14 pb-16 ">
             {children}
             <ClientOnly />
             <Nav />

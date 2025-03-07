@@ -274,7 +274,7 @@ const Map = () => {
   }, [campList, kakaoMap]);
 
   return (
-    <>
+    <div className="h-screen flex flex-col w-full overflow-hidden">
       <SearchBar
         origin="map"
         category={selectedCategoryValue}
@@ -289,7 +289,7 @@ const Map = () => {
         />
       )}
 
-      <div className="relative w-full h-full flex justify-center">
+      <div className="relative w-full flex flex-1 justify-center">
         <WeatherWithLatLon lat={lat} lon={lon} />
 
         {isGeoLocationGranted && !lat && !lon ? (
@@ -302,18 +302,18 @@ const Map = () => {
             </div>
           </div>
         ) : lat && lon ? (
-          <div ref={mapRef} className="relative w-full h-full rounded-md">
+          <div ref={mapRef} className="relative w-full flex-1 rounded-md">
             <Move region={regionQuery} />
             <MapListWrap campList={campList} />
           </div>
         ) : (
-          <div className="h-5/6 flex flex-col justify-center items-center">
+          <div className="h-5/6 flex flex-col flex-1 justify-center items-center">
             <p>위치를 기반으로 하는 페이지 입니다.</p>
             <p>위치 권한을 확인해주세요</p>
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -26,6 +26,7 @@ const useInfiniteScroll = ({
   }, []);
 
   useEffect(() => {
+    if (!loadMoreElementRef.current) return;
     const observer = new IntersectionObserver(handleObserver);
 
     if (loadMoreElementRef.current) {

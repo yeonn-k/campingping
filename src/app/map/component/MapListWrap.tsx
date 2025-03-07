@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import Card from '@/components/Card/Card';
 import chevron from '@icons/chevron_gray.svg';
+import chevron90 from '@icons/chevron90.svg';
 
 import { CampMap } from '@/types/Camp';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
@@ -28,50 +29,105 @@ export const MapListWrap = ({ campList }: MapProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      ref={scrollRef}
-      className={`bg-white absolute bottom-0 w-full ${isOpenList ? 'h-full overflow-auto' : 'h-32 pt-5 rounded-t-2xl overflow-hidden'} pb-20 flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
-    >
-      {isOpenList ? (
-        <Image
-          src={chevron}
-          alt="화살표 아이콘"
-          width={16}
-          quality={10}
-          className="pb-2 mb-4 origin-center rotate-180"
-          onClick={handleList}
-        />
-      ) : (
-        <Image
-          src={chevron}
-          alt="화살표 아이콘"
-          width={16}
-          quality={10}
-          className="pb-4"
-          onClick={handleList}
-        />
-      )}
-      {localCampList?.length > 0 ? (
-        localCampList.map((camp) => {
-          return (
-            <div className="w-full flex justify-center" key={camp.contentId}>
-              <Card
-                contentId={camp.contentId}
-                name={camp.facltNm}
-                liked={camp.favorite}
-                imgSrc={camp.firstImageUrl}
-                address={camp.addr1}
-                description={camp.lineIntro}
-              />
-            </div>
-          );
-        })
-      ) : (
-        <div className="h-5/6 flex flex-col justify-center items-center">
-          <p>검색 결과가 없습니다.</p>
+    <>
+      <div
+        ref={scrollRef}
+        className={`md:hidden bg-white fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full ${isOpenList ? 'h-full sm:h-[90vh] overflow-auto' : 'h-32 overflow-hidden'} rounded-t-2xl  pt-5 pb-20 flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
+      >
+        {isOpenList ? (
+          <Image
+            src={chevron}
+            alt="화살표 아이콘"
+            width={16}
+            quality={10}
+            className="pb-2 mb-4 origin-center rotate-180"
+            onClick={handleList}
+          />
+        ) : (
+          <Image
+            src={chevron}
+            alt="화살표 아이콘"
+            width={16}
+            quality={10}
+            className="pb-4"
+            onClick={handleList}
+          />
+        )}
+        {localCampList?.length > 0 ? (
+          localCampList.map((camp) => {
+            return (
+              <div className="w-full flex justify-center" key={camp.contentId}>
+                <Card
+                  contentId={camp.contentId}
+                  name={camp.facltNm}
+                  liked={camp.favorite}
+                  imgSrc={camp.firstImageUrl}
+                  address={camp.addr1}
+                  description={camp.lineIntro}
+                />
+              </div>
+            );
+          })
+        ) : (
+          <div className="h-5/6 flex flex-col justify-center items-center">
+            <p>검색 결과가 없습니다.</p>
+          </div>
+        )}
+        <ScrollToTop scrollRef={scrollRef} />
+      </div>
+
+      <div
+        className={`relative bg-white fixed top-0 left-0 ${isOpenList ? 'w-[22vh]' : 'w-12'} h-full flex flex-col  
+shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out 
+hidden md:flex`}
+      >
+        <div className="absolute right-4 top-1/2 transform -translate-x-1/2 ">
+          {isOpenList ? (
+            <Image
+              src={chevron90}
+              alt="화살표 아이콘"
+              width={16}
+              quality={10}
+              onClick={handleList}
+            />
+          ) : (
+            <Image
+              src={chevron90}
+              alt="화살표 아이콘"
+              width={16}
+              quality={10}
+              className="origin-center scale-x-[-1]"
+              onClick={handleList}
+            />
+          )}
         </div>
-      )}
-      <ScrollToTop scrollRef={scrollRef} />
-    </div>
+
+        <div className="overflow-hidden m-10">
+          {localCampList?.length > 0 ? (
+            localCampList.map((camp) => {
+              return (
+                <div
+                  className="w-full flex justify-center"
+                  key={camp.contentId}
+                >
+                  <Card
+                    contentId={camp.contentId}
+                    name={camp.facltNm}
+                    liked={camp.favorite}
+                    imgSrc={camp.firstImageUrl}
+                    address={camp.addr1}
+                    description={camp.lineIntro}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <div className="h-5/6 flex flex-col justify-center items-center">
+              <p>검색 결과가 없습니다.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
   );
 };

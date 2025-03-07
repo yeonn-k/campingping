@@ -79,23 +79,26 @@ const List = () => {
   }, [fetchCampingData, nextCursorRef]);
 
   return (
-    <div className="w-full flex flex-col pb-20 ">
+    <div className="w-full flex flex-col pb-20 h-screen">
       <SearchBar
         origin="list"
         category={selectedCategoryValue}
         region={regionQuery}
       />
+
       <Category
         selectedCategory={selectedCategory}
         onCategorySelected={handleCategorySelected}
       />
+
       <div
-        className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 pb-20 min-h-screen"
+        className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 pb-20 overflow-auto"
         ref={scrollRef}
       >
         {campingData?.length ? (
-          campingData.map((camp) => (
+          campingData.map((camp, idx) => (
             <Card
+              ref={idx === campingData.length - 1 ? loadMoreRef : undefined}
               key={camp.contentId}
               contentId={camp.contentId}
               liked={camp.favorite}
@@ -115,9 +118,7 @@ const List = () => {
           <p>검색 결과가 없습니다</p>
         )}
       </div>
-      <div ref={loadMoreRef} className="h-[100px]">
-        {isLoading && <LoadingSpinner />}
-      </div>
+      <div className="h-[100px]">{isLoading && <LoadingSpinner />}</div>
 
       <ScrollToTop scrollRef={scrollRef} />
     </div>
