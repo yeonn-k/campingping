@@ -77,11 +77,10 @@ export const MapListWrap = ({ campList }: MapProps) => {
       </div>
 
       <div
-        className={`relative bg-white fixed top-0 left-0 ${isOpenList ? 'w-[22vh]' : 'w-12'} h-full flex flex-col  
-shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out 
+        className={`relative bg-white fixed top-0 left-0 ${isOpenList ? 'w-[22vh]' : 'w-12'} h-full flex flex-col shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out 
 hidden md:flex`}
       >
-        <div className="absolute right-4 top-1/2 transform -translate-x-1/2 ">
+        <div className="absolute right-4 top-10 ">
           {isOpenList ? (
             <Image
               src={chevron90}
@@ -102,7 +101,7 @@ hidden md:flex`}
           )}
         </div>
 
-        <div className="overflow-hidden m-10">
+        <div className=" overflow-x-hidden overflow-y-auto m-10 h-screen ">
           {localCampList?.length > 0 ? (
             localCampList.map((camp) => {
               return (

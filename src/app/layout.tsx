@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 import { ToastContainer } from 'react-toastify';
 
 import Nav from '@/components/Nav/Nav';
-import Header from '@/components/Header/Header';
 
 const ClientOnly = dynamic(() => import('@/components/ClientOnly/ClientOnly'), {
   ssr: false,
@@ -60,9 +59,7 @@ export default function RootLayout({
             className="fixed left-1/2 -translate-x-1/2 z-50 max-w-[90%] z-[100]"
           />
 
-          <Header />
-
-          <div className="flex flex-col justify-center items-center w-full sm:pt-10 sm:pt-14 pb-16 ">
+          <div className="flex flex-col justify-center items-center w-full  pb-16 ">
             {children}
             <ClientOnly />
             <Nav />

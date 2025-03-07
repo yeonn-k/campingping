@@ -22,6 +22,7 @@ import { createApiUrl } from '@/utils/createApiUrl';
 import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import Move from './component/Move';
+import Header from '@/components/Header/Header';
 
 const NoSSRCategory = dynamic(
   () => import('../../components/Category/Category'),
@@ -274,46 +275,49 @@ const Map = () => {
   }, [campList, kakaoMap]);
 
   return (
-    <div className="h-screen flex flex-col w-full overflow-hidden">
-      <SearchBar
-        origin="map"
-        category={selectedCategoryValue}
-        region={regionQuery}
-        city={cityQuery}
-      />
-
-      {regionQuery && (
-        <NoSSRCategory
-          selectedCategory={selectedCategory}
-          onCategorySelected={handleCategorySelected}
+    <>
+      <Header />
+      <div className="h-screen flex flex-col w-full sm:pt-10 sm:pt-14">
+        <SearchBar
+          origin="map"
+          category={selectedCategoryValue}
+          region={regionQuery}
+          city={cityQuery}
         />
-      )}
 
-      <div className="relative w-full flex flex-1 justify-center">
-        <WeatherWithLatLon lat={lat} lon={lon} />
-
-        {isGeoLocationGranted && !lat && !lon ? (
-          <div className="w-full h-full flex justify-center items-center">
-            <div className="flex flex-wrap justify-center pb-28">
-              <LoadingSpinner />
-              <p className="w-full text-Gray text-center mt-2">
-                지도를 불러오는 중 입니다
-              </p>
-            </div>
-          </div>
-        ) : lat && lon ? (
-          <div ref={mapRef} className="relative w-full flex-1 rounded-md">
-            <Move region={regionQuery} />
-            <MapListWrap campList={campList} />
-          </div>
-        ) : (
-          <div className="h-5/6 flex flex-col flex-1 justify-center items-center">
-            <p>위치를 기반으로 하는 페이지 입니다.</p>
-            <p>위치 권한을 확인해주세요</p>
-          </div>
+        {regionQuery && (
+          <NoSSRCategory
+            selectedCategory={selectedCategory}
+            onCategorySelected={handleCategorySelected}
+          />
         )}
+
+        <div className="relative w-full flex flex-1 justify-center">
+          <WeatherWithLatLon lat={lat} lon={lon} />
+
+          {isGeoLocationGranted && !lat && !lon ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <div className="flex flex-wrap justify-center pb-28">
+                <LoadingSpinner />
+                <p className="w-full text-Gray text-center mt-2">
+                  지도를 불러오는 중 입니다
+                </p>
+              </div>
+            </div>
+          ) : lat && lon ? (
+            <div ref={mapRef} className="relative w-full flex-1 rounded-md">
+              <Move region={regionQuery} />
+              <MapListWrap campList={campList} />
+            </div>
+          ) : (
+            <div className="h-5/6 flex flex-col flex-1 justify-center items-center">
+              <p>위치를 기반으로 하는 페이지 입니다.</p>
+              <p>위치 권한을 확인해주세요</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

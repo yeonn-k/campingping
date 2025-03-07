@@ -101,7 +101,7 @@ const SignIn = () => {
     router.push('/sign-up');
   };
   return (
-    <div className="relative flex justify-center items-center w-full">
+    <div className="relative flex justify-center items-center w-full h-screen">
       <Image
         src={RegisterBg}
         width={100}
