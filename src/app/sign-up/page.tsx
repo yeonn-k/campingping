@@ -116,109 +116,120 @@ const SignUp = () => {
         alt="배경이미지"
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <Image
-        src={LogoWhite}
-        width={200}
-        height={50}
-        alt="logo"
-        priority
-        className="absolute top-20"
-      />
-      <div className="absolute bg-white w-[346px] h-[612px] rounded-lg flex justify-center items-center flex-col">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="w-full flex flex-col items-center mb-3 gap-1"
-        >
-          <h1 className="text-title">회원가입</h1>
-          <div className={`w-10/12 ${errors.email ? 'mb-2' : 'mb-6'}`}>
-            이메일
-            <div className="flex gap-3">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm " />
+      <div className="absolute flex flex-col justify-center items-center">
+        <Image
+          src={LogoWhite}
+          width={200}
+          height={50}
+          alt="logo"
+          priority
+          className="mb-8 w-72"
+        />
+        <div className=" bg-white w-[346px] h-[612px] rounded-lg flex justify-center items-center flex-col mb-10">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-full flex flex-col items-center mb-3 gap-1"
+          >
+            <h1 className="text-title">회원가입</h1>
+            <div className={`w-10/12 ${errors.email ? 'mb-2' : 'mb-6'}`}>
+              이메일
+              <div className="flex gap-3">
+                <Input
+                  placeholder="이메일을 입력해주세요"
+                  type="email"
+                  {...register('email', {
+                    required: '이메일을 입력해주세요',
+                    pattern: {
+                      value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+                      message: '유효한 이메일을 입력해주세요',
+                    },
+                  })}
+                  hasError={!!errors.email}
+                  errorMessage={errors.email?.message}
+                />
+                <Button
+                  width="w-[96px]"
+                  onClick={sendVerification}
+                  type="button"
+                >
+                  인증코드
+                </Button>
+              </div>
+            </div>
+            <div className={`w-10/12 ${errors.verification ? 'mb-2' : 'mb-6'}`}>
+              이메일 인증 코드 입력
+              <div className="flex gap-3">
+                <Input
+                  placeholder="인증 코드를 입력해주세요"
+                  type="string"
+                  {...register('verification', {
+                    required: '인증 코드를 입력해주세요',
+                  })}
+                  hasError={!!errors.verification}
+                  errorMessage={errors.verification?.message}
+                />
+                <Button
+                  width="w-[96px]"
+                  onClick={checkVerification}
+                  type="button"
+                >
+                  인증하기
+                </Button>
+              </div>
+            </div>
+            <div className={`w-10/12 ${errors.password ? 'mb-2' : 'mb-6'}`}>
+              비밀번호
               <Input
-                placeholder="이메일을 입력해주세요"
-                type="email"
-                {...register('email', {
-                  required: '이메일을 입력해주세요',
+                placeholder="비밀번호를 입력해주세요"
+                type="password"
+                {...register('password', {
+                  required: '비밀번호를 입력해주세요',
                   pattern: {
-                    value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
-                    message: '유효한 이메일을 입력해주세요',
+                    value:
+                      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
+                    message:
+                      '영문, 숫자, 특수문자 포함 8자리 이상이어야 합니다.',
                   },
                 })}
-                hasError={!!errors.email}
-                errorMessage={errors.email?.message}
+                hasError={!!errors.password}
+                errorMessage={errors.password?.message}
               />
-              <Button width="w-[96px]" onClick={sendVerification} type="button">
-                인증코드
-              </Button>
             </div>
-          </div>
-          <div className={`w-10/12 ${errors.verification ? 'mb-2' : 'mb-6'}`}>
-            이메일 인증 코드 입력
-            <div className="flex gap-3">
+            <div
+              className={`w-10/12 ${errors.passwordCheck ? 'mb-2' : 'mb-6'}`}
+            >
+              비밀번호 확인
               <Input
-                placeholder="인증 코드를 입력해주세요"
-                type="string"
-                {...register('verification', {
-                  required: '인증 코드를 입력해주세요',
+                placeholder="비밀번호를 확인해주세요"
+                type="password"
+                {...register('passwordCheck', {
+                  required: '비밀번호를 확인해주세요',
+                  validate: (v: string, formValues) => {
+                    if (v !== formValues.password) {
+                      return '비밀번호가 일치하지 않습니다';
+                    }
+                  },
                 })}
-                hasError={!!errors.verification}
-                errorMessage={errors.verification?.message}
+                hasError={!!errors.passwordCheck}
+                errorMessage={errors.passwordCheck?.message}
               />
-              <Button
-                width="w-[96px]"
-                onClick={checkVerification}
-                type="button"
-              >
-                인증하기
-              </Button>
             </div>
-          </div>
-          <div className={`w-10/12 ${errors.password ? 'mb-2' : 'mb-6'}`}>
-            비밀번호
-            <Input
-              placeholder="비밀번호를 입력해주세요"
-              type="password"
-              {...register('password', {
-                required: '비밀번호를 입력해주세요',
-                pattern: {
-                  value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
-                  message: '영문, 숫자, 특수문자 포함 8자리 이상이어야 합니다.',
-                },
-              })}
-              hasError={!!errors.password}
-              errorMessage={errors.password?.message}
-            />
-          </div>
-          <div className={`w-10/12 ${errors.passwordCheck ? 'mb-2' : 'mb-6'}`}>
-            비밀번호 확인
-            <Input
-              placeholder="비밀번호를 확인해주세요"
-              type="password"
-              {...register('passwordCheck', {
-                required: '비밀번호를 확인해주세요',
-                validate: (v: string, formValues) => {
-                  if (v !== formValues.password) {
-                    return '비밀번호가 일치하지 않습니다';
-                  }
-                },
-              })}
-              hasError={!!errors.passwordCheck}
-              errorMessage={errors.passwordCheck?.message}
-            />
-          </div>
-          <div className={`w-10/12 ${errors.nickname ? 'mb-2' : 'mb-6'}`}>
-            닉네임
-            <Input
-              placeholder="닉네임을 입력해주세요"
-              type="text"
-              {...register('nickname', {
-                required: '닉네임을 입력해주세요',
-              })}
-              hasError={!!errors.nickname}
-              errorMessage={errors.nickname?.message}
-            />
-          </div>
-          <Button width={'w-10/12'}>가입하기</Button>
-        </form>
+            <div className={`w-10/12 ${errors.nickname ? 'mb-2' : 'mb-6'}`}>
+              닉네임
+              <Input
+                placeholder="닉네임을 입력해주세요"
+                type="text"
+                {...register('nickname', {
+                  required: '닉네임을 입력해주세요',
+                })}
+                hasError={!!errors.nickname}
+                errorMessage={errors.nickname?.message}
+              />
+            </div>
+            <Button width={'w-10/12'}>가입하기</Button>
+          </form>
+        </div>
       </div>
     </div>
   );
