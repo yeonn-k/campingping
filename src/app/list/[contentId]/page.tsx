@@ -21,6 +21,7 @@ import NotFound from '@/app/not-found';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import DefaultImg from '@/components/DefaultImg/DefaultImg';
 import { Location } from '@/types/Location';
+import Header from '@/components/Header/Header';
 
 interface Facility {
   name: string;
@@ -197,261 +198,271 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
   }
 
   return (
-    <div
-      className="relative w-full h-screen overflow-y-scroll pb-12"
-      ref={scrollRef}
-    >
-      <Image
-        src={goToBack}
-        width={16}
-        alt="뒤로가기 버튼"
-        quality={10}
-        className="absolute left-4 top-11"
-        onClick={() => {
-          history.back();
-        }}
-      />
-      <SearchBar origin="detail" category={null} region={null} />
-      <div className="flex justify-center">
-        <WeatherWithLatLon lat={location.lat} lon={location.lon} />
-      </div>
-      <div className="flex flex-col grow p-5 ">
-        {campData?.firstImageUrl ? (
-          <div className="relative w-full h-64">
-            <Image
-              src={campData.firstImageUrl}
-              alt="캠핑장 이미지"
-              fill
-              sizes="auto"
-              className="rounded object-cover"
-              quality={60}
-            />
-          </div>
-        ) : (
-          <DefaultImg />
-        )}
+    <>
+      <Header />
+      <div
+        className="relative mt-14 w-full h-screen overflow-y-scroll pb-32"
+        ref={scrollRef}
+      >
+        <Image
+          src={goToBack}
+          width={16}
+          alt="뒤로가기 버튼"
+          quality={10}
+          className="absolute left-4  top-9 sm:hidden"
+          onClick={() => {
+            history.back();
+          }}
+        />
+        <SearchBar origin="detail" category={null} region={null} />
+        <div className="flex justify-center">
+          <WeatherWithLatLon lat={location.lat} lon={location.lon} />
+        </div>
+        <div className="flex flex-col grow p-5 ">
+          {campData?.firstImageUrl ? (
+            <div className="relative w-full aspect-[4/3] ">
+              <Image
+                src={campData.firstImageUrl}
+                alt="캠핑장 이미지"
+                fill
+                className="rounded object-cover"
+                priority
+              />
+            </div>
+          ) : (
+            <DefaultImg />
+          )}
 
-        <div className="flex justify-between">
-          <div>
-            <h2 className="text-subTitle mt-4">{campData?.facltNm}</h2>
-            <p className="text-description text-Gray ">{campData?.addr1}</p>
-            <p className="text-description text-Gray mt-1 ">
-              {campData?.lineIntro}
-            </p>
-          </div>
-          <div>
-            {campData?.induty || campData?.lccl ? (
-              <div className="flex flex-col items-center mt-5">
-                {categories.map((category) => {
-                  if (
-                    campData.induty?.includes(category.name) ||
-                    campData.lccl?.includes(category.name)
-                  ) {
-                    const iconPath = getIconPath(category.iconName, false);
-                    return (
-                      <div
-                        className="flex flex-wrap justify-center"
-                        key={category.name}
-                      >
-                        <Image
+          <div className="flex justify-between">
+            <div>
+              <h2 className="text-subTitle sm:text-title mt-4">
+                {campData?.facltNm}
+              </h2>
+              <p className="text-description sm:text-content text-Gray ">
+                {campData?.addr1}
+              </p>
+              <p className="text-description sm:text-content text-Gray mt-1 ">
+                {campData?.lineIntro}
+              </p>
+            </div>
+            <div>
+              {campData?.induty || campData?.lccl ? (
+                <div className="flex flex-col items-center mt-5">
+                  {categories.map((category) => {
+                    if (
+                      campData.induty?.includes(category.name) ||
+                      campData.lccl?.includes(category.name)
+                    ) {
+                      const iconPath = getIconPath(category.iconName, false);
+                      return (
+                        <div
+                          className="flex flex-wrap justify-center"
                           key={category.name}
-                          src={iconPath}
-                          alt={`${category.name} 아이콘`}
+                        >
+                          <Image
+                            key={category.name}
+                            src={iconPath}
+                            alt={`${category.name} 아이콘`}
+                            width={24}
+                            height={24}
+                            className="m-1.5 sm:w-7"
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
+          </div>
+          <hr className="mb-4" />
+
+          {campData?.intro && (
+            <>
+              <div className="space-y-1 mb-2">
+                <p className="text-content ">캠핑장 소개</p>
+                <p className="text-description text-Gray">{campData.intro}</p>
+              </div>
+
+              <div className="flex space-x-6 justify-center my-6">
+                <span className="text-LightGray text-[6px]">●</span>
+                <span className="text-LightGray text-[6px]">●</span>
+                <span className="text-LightGray text-[6px]">●</span>
+              </div>
+            </>
+          )}
+
+          {campData?.bizrno || campData?.manageSttus || campData?.homepage ? (
+            <div className="space-y-1 mb-8">
+              <p className="mb-1 ">기본정보</p>
+              <div className="w-full grid grid-cols-[1fr_2fr] gap-1 text-description">
+                {campData.bizrno && (
+                  <>
+                    <div>사업자 정보</div>
+                    <div className="text-Gray">{campData.bizrno}</div>
+                  </>
+                )}
+                {campData.manageSttus && (
+                  <>
+                    <div>운영 상태</div>
+                    <div className="text-Gray">{campData.manageSttus}</div>
+                    {campData.manageSttus !== '운영' &&
+                      campData.hvofBgnde &&
+                      campData.hvofEndde && (
+                        <>
+                          <div>휴무 기간 시작일</div>
+                          <div className="text-Gray">{campData.hvofBgnde}</div>
+                          <div>휴무 기간 종료일</div>
+                          <div className="text-Gray">{campData.hvofEndde}</div>
+                        </>
+                      )}
+                  </>
+                )}
+                {campData.homepage && (
+                  <>
+                    <div>홈페이지</div>
+                    <a
+                      href={
+                        campData.homepage.startsWith('http://') ||
+                        campData.homepage.startsWith('https://')
+                          ? campData.homepage
+                          : `https://${campData.homepage}`
+                      }
+                      target="_blank"
+                      className="text-Gray col-span-2"
+                    >
+                      {campData.homepage}
+                    </a>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-1 mb-8">
+              <p className="mb-1">기본정보</p>
+              <p className="text-Gray">정보를 업데이트할 예정입니다.</p>
+            </div>
+          )}
+
+          {facilities && (
+            <div className="space-y-1 mb-8">
+              <p className="mb-1">시설정보</p>
+              <div className="flex flex-row flex-wrap">
+                {facilities?.map((facility) => {
+                  const matchedFacility = facilityIcons.find(
+                    (icon) => icon.name === facility
+                  );
+                  return (
+                    <div
+                      key={facility}
+                      className="flex flex-col basis-1/4 items-center justify-center cursor-pointer p-2 rounded-lg transition"
+                    >
+                      {matchedFacility && (
+                        <Image
+                          src={`/icons/facility/${matchedFacility.iconName}.png`}
+                          alt={matchedFacility.iconName}
                           width={24}
                           height={24}
-                          className="m-1.5"
+                          className="sm:w-7"
                         />
-                      </div>
-                    );
-                  }
-                  return null;
+                      )}
+                      <span className="text-[10px] text-Gray">
+                        {matchedFacility?.name}
+                      </span>
+                    </div>
+                  );
                 })}
               </div>
-            ) : (
-              ''
-            )}
-          </div>
-        </div>
-        <hr className="mb-4" />
-
-        {campData?.intro && (
-          <>
-            <div className="space-y-1 mb-2">
-              <p className="text-content ">캠핑장 소개</p>
-              <p className="text-description text-Gray">{campData.intro}</p>
             </div>
+          )}
 
-            <div className="flex space-x-6 justify-center my-6">
-              <span className="text-LightGray text-[6px]">●</span>
-              <span className="text-LightGray text-[6px]">●</span>
-              <span className="text-LightGray text-[6px]">●</span>
-            </div>
-          </>
-        )}
-
-        {campData?.bizrno || campData?.manageSttus || campData?.homepage ? (
-          <div className="space-y-1 mb-8">
-            <p className="mb-1 ">기본정보</p>
-            <div className="w-full grid grid-cols-[1fr_2fr] gap-1 text-description">
-              {campData.bizrno && (
-                <>
-                  <div>사업자 정보</div>
-                  <div className="text-Gray">{campData.bizrno}</div>
-                </>
-              )}
-              {campData.manageSttus && (
-                <>
-                  <div>운영 상태</div>
-                  <div className="text-Gray">{campData.manageSttus}</div>
-                  {campData.manageSttus !== '운영' &&
-                    campData.hvofBgnde &&
-                    campData.hvofEndde && (
-                      <>
-                        <div>휴무 기간 시작일</div>
-                        <div className="text-Gray">{campData.hvofBgnde}</div>
-                        <div>휴무 기간 종료일</div>
-                        <div className="text-Gray">{campData.hvofEndde}</div>
-                      </>
-                    )}
-                </>
-              )}
-              {campData.homepage && (
-                <>
-                  <div>홈페이지</div>
-                  <a
-                    href={
-                      campData.homepage.startsWith('http://') ||
-                      campData.homepage.startsWith('https://')
-                        ? campData.homepage
-                        : `https://${campData.homepage}`
-                    }
-                    target="_blank"
-                    className="text-Gray col-span-2"
-                  >
-                    {campData.homepage}
-                  </a>
-                </>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-1 mb-8">
-            <p className="mb-1">기본정보</p>
-            <p className="text-Gray">정보를 업데이트할 예정입니다.</p>
-          </div>
-        )}
-
-        {facilities && (
-          <div className="space-y-1 mb-8">
-            <p className="mb-1">시설정보</p>
-            <div className="flex flex-row flex-wrap">
-              {facilities?.map((facility) => {
-                const matchedFacility = facilityIcons.find(
-                  (icon) => icon.name === facility
-                );
-                return (
-                  <div
-                    key={facility}
-                    className="flex flex-col basis-1/4 items-center justify-center cursor-pointer p-2 rounded-lg transition"
-                  >
-                    {matchedFacility && (
-                      <Image
-                        src={`/icons/facility/${matchedFacility.iconName}.png`}
-                        alt={matchedFacility.iconName}
-                        width={24}
-                        height={24}
-                      />
-                    )}
-                    <span className="text-[10px] text-Gray">
-                      {matchedFacility?.name}
-                    </span>
+          {(campData?.posblFcltyCl ||
+            campData?.themaEnvrnCl ||
+            campData?.eqpmnLendCl ||
+            campData?.animalCmgCl) && (
+            <>
+              <div className="space-y-1 mb-8">
+                <p className="mb-1">추가정보</p>
+                <div className="grid grid-cols-[1fr,2fr] gap-1 text-description">
+                  {campData.posblFcltyCl && (
+                    <>
+                      <div>주변 이용 가능 시설</div>
+                      <div className="text-Gray">{campData.posblFcltyCl}</div>
+                    </>
+                  )}
+                  {campData.themaEnvrnCl && (
+                    <>
+                      <div>테마 환경</div>
+                      <div className="text-Gray">{campData.themaEnvrnCl}</div>
+                    </>
+                  )}
+                  {campData.eqpmnLendCl && (
+                    <>
+                      <div>캠핑장비 대여</div>
+                      <div className="text-Gray">{campData.eqpmnLendCl}</div>
+                    </>
+                  )}
+                  {campData.animalCmgCl && (
+                    <>
+                      <div>반려동물 출입</div>
+                      <div className="text-Gray">{campData.animalCmgCl}</div>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-1 mb-8">
+                <p className="mb-1">캠핑장 사진</p>
+                {campData.images && (
+                  <div className="flex flex-col p-2">
+                    <Carousel images={campData.images} />
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {(campData?.posblFcltyCl ||
-          campData?.themaEnvrnCl ||
-          campData?.eqpmnLendCl ||
-          campData?.animalCmgCl) && (
-          <>
-            <div className="space-y-1 mb-8">
-              <p className="mb-1">추가정보</p>
-              <div className="grid grid-cols-[1fr,2fr] gap-1 text-description">
-                {campData.posblFcltyCl && (
-                  <>
-                    <div>주변 이용 가능 시설</div>
-                    <div className="text-Gray">{campData.posblFcltyCl}</div>
-                  </>
-                )}
-                {campData.themaEnvrnCl && (
-                  <>
-                    <div>테마 환경</div>
-                    <div className="text-Gray">{campData.themaEnvrnCl}</div>
-                  </>
-                )}
-                {campData.eqpmnLendCl && (
-                  <>
-                    <div>캠핑장비 대여</div>
-                    <div className="text-Gray">{campData.eqpmnLendCl}</div>
-                  </>
-                )}
-                {campData.animalCmgCl && (
-                  <>
-                    <div>반려동물 출입</div>
-                    <div className="text-Gray">{campData.animalCmgCl}</div>
-                  </>
                 )}
               </div>
-            </div>
-            <div className="space-y-1 mb-8">
-              <p className="mb-1">캠핑장 사진</p>
-              {campData.images && (
-                <div className="flex flex-col  p-2">
-                  <Carousel images={campData.images} />
-                </div>
-              )}
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        <div className="space-y-2">
-          <p className="mb-1">위치</p>
-          <div className="flex">
-            <Image
-              className="flex"
-              src="/icons/location.png"
-              alt="location"
-              width={24}
-              height={24}
-            />
-            <span className="text-Gray text-description align-middle">
-              {campData?.addr1}
-              {!!campData?.addr2 && ` ${campData.addr2}`}
-            </span>
-          </div>
-          <div className="flex space-x-1 ">
-            <Image
-              className="flex"
-              src="/icons/phone.png"
-              alt="phone"
-              width={24}
-              height={24}
-            />
-            <span className="text-Gray text-description align-middle">
-              {campData?.tel}
-            </span>
-          </div>
+          <div className="space-y-2">
+            <p className="mb-1">위치</p>
+            <div className="flex">
+              <Image
+                className="flex"
+                src="/icons/location.png"
+                alt="location"
+                width={24}
+                height={24}
+              />
+              <span className="text-Gray text-description sm:text-content align-middle">
+                {campData?.addr1}
+                {!!campData?.addr2 && ` ${campData.addr2}`}
+              </span>
+            </div>
+            <div className="flex space-x-1 ">
+              <Image
+                className="flex"
+                src="/icons/phone.png"
+                alt="phone"
+                width={24}
+                height={24}
+              />
+              <span className="text-Gray text-description sm:text-content align-middle">
+                {campData?.tel}
+              </span>
+            </div>
 
-          <div className="flex jsutify-center mb-24">
-            <div ref={mapRef} className=" w-full h-[250px] m-2 rounded-md" />
+            <div className="flex jsutify-center mb-24">
+              <div
+                ref={mapRef}
+                className=" w-full aspect-[2/1] m-2 rounded-md"
+              />
+            </div>
           </div>
         </div>
+        <ScrollToTop scrollRef={scrollRef} />
       </div>
-      <ScrollToTop scrollRef={scrollRef} />
-    </div>
+    </>
   );
 };
 

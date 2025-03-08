@@ -101,67 +101,73 @@ const SignIn = () => {
     router.push('/sign-up');
   };
   return (
-    <div className="relative flex justify-center items-center w-full">
+    <div className="relative flex flex-col justify-center items-center w-full h-screen">
       <Image
         src={RegisterBg}
         width={100}
         height={100}
         alt="배경이미지"
         className="absolute inset-0 w-full h-full object-cover"
-        quality={60}
+        quality={80}
       />
-      <Image
-        src={LogoWhite}
-        width={200}
-        height={50}
-        alt="logo"
-        priority
-        className="absolute top-32"
-      />
-      <div className="absolute bg-white w-[346px] h-[494px] rounded-lg flex justify-center items-center flex-col">
-        <Image
-          src={SymbolImg}
-          width={110}
-          height={110}
-          quality={100}
-          alt="심볼 이미지"
-        />
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="w-full flex flex-col items-center mb-3"
-        >
-          <div className="mb-6 w-10/12">
-            이메일
-            <Input
-              placeholder="이메일을 입력해주세요"
-              type="email"
-              {...register('email')}
-            />
-          </div>
-          <div className="mb-6 w-10/12">
-            비밀번호
-            <Input
-              placeholder="비밀번호를 입력해주세요"
-              type="password"
-              {...register('password')}
-            />
-          </div>
-          <Button width={'w-10/12'}>로그인</Button>
-        </form>
-        <Button
-          width={'w-10/12'}
-          bgcolor={'bg-kakaoYellow'}
-          onClick={handleKakaoLogin}
-        >
-          <div className="flex justify-center">
-            <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
-            <span className="ml-1">카카오 로그인</span>
-          </div>
-        </Button>
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
 
-        <button className="mt-2" onClick={moveToSignUp}>
-          회원가입
-        </button>
+      <div className="relative flex flex-col items-center gap-6 z-10">
+        <Image
+          src={LogoWhite}
+          width={200}
+          height={50}
+          alt="logo"
+          priority
+          className="w-72"
+        />
+
+        <div className="bg-white w-[346px] h-[494px] rounded-lg flex justify-center items-center flex-col">
+          <Image
+            src={SymbolImg}
+            width={110}
+            height={110}
+            quality={100}
+            alt="심볼 이미지"
+          />
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-full flex flex-col items-center mb-3"
+          >
+            <div className="mb-6 w-10/12">
+              이메일
+              <Input
+                placeholder="이메일을 입력해주세요"
+                type="email"
+                {...register('email')}
+              />
+            </div>
+            <div className="mb-6 w-10/12">
+              비밀번호
+              <Input
+                placeholder="비밀번호를 입력해주세요"
+                type="password"
+                {...register('password')}
+              />
+            </div>
+            <Button width={'w-10/12'}>로그인</Button>
+          </form>
+
+          <Button
+            width={'w-10/12'}
+            bgcolor={'bg-kakaoYellow'}
+            onClick={handleKakaoLogin}
+          >
+            <div className="flex justify-center">
+              <Image src={KakaoLogo} width={27} height={27} alt="kakao" />
+              <span className="ml-1">카카오 로그인</span>
+            </div>
+          </Button>
+
+          <button className="mt-2" onClick={moveToSignUp}>
+            회원가입
+          </button>
+        </div>
       </div>
     </div>
   );

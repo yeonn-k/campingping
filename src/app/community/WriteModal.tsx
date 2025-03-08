@@ -75,10 +75,16 @@ const WriteModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-[90%] h-[80%] max-w-md">
+      <div className="bg-white p-6 rounded-lg w-[90%] h-auto sm:w-[40%] ">
         <div className="flex items-center justify-between mb-6">
           <button onClick={onClose}>
-            <Image src={closeIcon} alt="닫기" width={10} height={10} />
+            <Image
+              src={closeIcon}
+              alt="닫기"
+              width={10}
+              height={10}
+              className="sm:w-4 sm:h-4"
+            />
           </button>
           <h2 className="text-subTitle text-center w-full">게시글 작성</h2>
         </div>
@@ -118,18 +124,13 @@ const WriteModal = ({
               {...register('peopleNum')}
             />
           </div>
-          <div className="mb-4 flex items-center space-x-2 ">
-            <span className="w-16 text-left mb-2">기타</span>
+          <div className="mb-4 flex space-x-2 ">
+            <div className="flex w-16 text-left mb-2 py-2">기타</div>
             <textarea
               id="content"
               onChange={handleContentChange}
               placeholder="기타 내용을 입력해주세요"
-              className="w-[65.5%]  border border-lightGray rounded resize-none overflow-hidden focus:border-Green focus:outline-none placeholder:text-LightGray"
-              style={{
-                minHeight: '40px',
-                lineHeight: '1.5',
-                maxHeight: '200px',
-              }}
+              className="w-full border border-lightGray rounded resize-none overflow-hidden focus:border-Green focus:outline-none placeholder:text-LightGray p-2 h-40 sm:h-60"
             />
           </div>
           <div className="flex justify-center mt-6">

@@ -27,6 +27,7 @@ import PwaModal from '@/components/PWA/PwaModal/PwaModal';
 import { socket } from '../../socket';
 import { ChatHistoryData, ChatMsgs } from '@/types/Chatting';
 import { CHAT } from '@/constants/chat/chatEvents';
+import ModalBox from '../ModalBox/ModalBox';
 
 export default function ClientLayout() {
   const [isPwaState, setIsPwaState] = useState<boolean | null>(null);
@@ -145,32 +146,33 @@ export default function ClientLayout() {
   }
 
   return (
-    <div
-      className={`relative w-full md:max-w-[450px] h-full flex justify-center ${chatState ? 'overflow-hidden' : 'overflow-auto'}`}
-    >
-      {pathname !== '/sign-in' && pathname !== '/search' && (
-        <OpenTheChats
-          onClick={() => {
-            if (userState) {
-              setChatState(true);
-            } else {
-              router.push('/sign-in');
-              toast.error('로그인이 필요한 기능이에요');
-            }
-          }}
-        />
-      )}
-
+    <div className="w-full flex flex-col">
       {!isPwaState && <InstallPrompt />}
+      <OpenTheChats
+        onClick={() => {
+          if (userState) {
+            setChatState(true);
+          } else {
+            router.push('/sign-in');
+            toast.error('로그인이 필요한 기능이에요');
+          }
+        }}
+      />
+
       {isPwaOpen && clicked === 'install' && (
-        <PwaModal onClick={handleInstall} onClose={handleClose} />
+        <ModalBox>
+          <PwaModal onClick={handleInstall} onClose={handleClose} />
+        </ModalBox>
       )}
       {isPwaOpen && clicked === 'noti' && (
-        <PwaModal
-          onClick={checkNotificationPermission}
-          onClose={denyPermission}
-        />
+        <ModalBox>
+          <PwaModal
+            onClick={checkNotificationPermission}
+            onClose={denyPermission}
+          />
+        </ModalBox>
       )}
+
       {chatState && <Chat />}
     </div>
   );

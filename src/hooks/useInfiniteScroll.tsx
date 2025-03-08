@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-const LIMIT = 10;
+const LIMIT = 18;
 
 const useInfiniteScroll = ({
   loadMoreElementRef,
@@ -26,6 +26,7 @@ const useInfiniteScroll = ({
   }, []);
 
   useEffect(() => {
+    if (!loadMoreElementRef.current) return;
     const observer = new IntersectionObserver(handleObserver);
 
     if (loadMoreElementRef.current) {

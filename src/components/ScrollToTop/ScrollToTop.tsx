@@ -1,11 +1,21 @@
 import Image from 'next/image';
 import chevron from '@icons/chevron_green.svg';
+import { usePathname } from 'next/navigation';
 
 interface ScrollToTopProps {
   scrollRef: React.RefObject<HTMLDivElement>;
 }
 
 const ScrollToTop = ({ scrollRef }: ScrollToTopProps) => {
+  const pathname = usePathname();
+
+  if (
+    pathname === '/sign-in' ||
+    pathname === '/sign-up' ||
+    pathname === '/search'
+  )
+    return;
+
   const scrollToTop = () => {
     if (scrollRef.current !== null) {
       scrollRef.current.scrollTo({
@@ -17,7 +27,7 @@ const ScrollToTop = ({ scrollRef }: ScrollToTopProps) => {
 
   return (
     <button
-      className="fixed bottom-16 right-0 translate-x-[-14px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
+      className="fixed bottom-[5rem] right-0 translate-x-[-14px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
       onClick={scrollToTop}
     >
       <Image src={chevron} alt="페이지 상단으로" width={24} />

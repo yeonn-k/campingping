@@ -35,8 +35,8 @@ const Category = ({
   onCategorySelected: handleCategoryClick,
 }: CategoryProps) => {
   return (
-    <div className="w-full flex justify-center">
-      <div className="flex overflow-x-auto scrollbar-hide whitespace-nowrap scroll-smooth">
+    <div className="w-full flex justify-center sm:mb-4">
+      <div className="flex sm:gap-3 overflow-x-auto scrollbar-hide whitespace-nowrap scroll-smooth">
         {categories.map((category) => {
           const isSelected =
             selectedCategory === '전체'
@@ -54,7 +54,8 @@ const Category = ({
                 alt={category.name}
                 width={24}
                 height={24}
-                quality={5}
+                className="w-6 h-6 sm:w-7 sm:h-7"
+                quality={10}
               />
               <span
                 className={`text-[12px] ${

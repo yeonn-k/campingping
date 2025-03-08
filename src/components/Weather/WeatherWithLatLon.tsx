@@ -34,10 +34,6 @@ const WeatherWithLatLon = ({
     }
   }, [lat, lon]);
 
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
-
   const gridClass = weatherData.length === 0 ? 'grid-cols-1' : 'grid-cols-4';
 
   return (
@@ -51,6 +47,10 @@ const WeatherWithLatLon = ({
       {!weatherData.length ? (
         <div className="w-full flex justify-center items-center text-Gray p-2">
           날씨 데이터를 불러오는 중...
+        </div>
+      ) : error ? (
+        <div className="w-full flex justify-center items-center text-Gray p-2">
+          {error}
         </div>
       ) : (
         weatherData.map((day, index) => (

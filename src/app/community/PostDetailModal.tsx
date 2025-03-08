@@ -235,7 +235,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[19]">
-      <div className="bg-white rounded-lg w-[90%] h-[80%] max-w-md overflow-auto">
+      <div className="bg-white rounded-lg w-[90%] h-auto sm:w-[40%] overflow-auto sm:p-4">
         <div className="flex items-center justify-between mb-4">
           <button onClick={onClose}>
             <Image
@@ -243,7 +243,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
               alt="닫기"
               width={12}
               height={12}
-              className="ml-4 mt-4"
+              className="ml-4 mt-4 sm:w-4 sm:h-4"
             />
           </button>
           <h3 className="text-subTitle w-full text-center mt-4 mr-4">
@@ -268,44 +268,44 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
                   { field: 'people', label: '인원' },
                   { field: 'content', label: '기타' },
                 ].map(({ field, label, type }) => (
-                  <div key={field} className="mb-4">
-                    <p className="text-darkGray">
+                  <div key={field} className="mb-4 flex ">
+                    <div className="text-darkGray w-16 flex items-center">
                       {label}:{' '}
-                      {isEditingPost ? (
-                        <input
-                          type={type || 'text'}
-                          className="border rounded p-1"
-                          value={
+                    </div>
+                    {isEditingPost ? (
+                      <input
+                        type={type || 'text'}
+                        className="border rounded p-1 w-full"
+                        value={
+                          type === 'date'
+                            ? new Date(
+                                editedFields[field as keyof Post] as string
+                              )
+                                .toISOString()
+                                .slice(0, 10)
+                            : editedFields[field as keyof Post]?.toString() ||
+                              ''
+                        }
+                        onChange={(e) =>
+                          handleFieldChange(
+                            field,
                             type === 'date'
-                              ? new Date(
-                                  editedFields[field as keyof Post] as string
-                                )
-                                  .toISOString()
-                                  .slice(0, 10)
-                              : editedFields[field as keyof Post]?.toString() ||
-                                ''
-                          }
-                          onChange={(e) =>
-                            handleFieldChange(
-                              field,
-                              type === 'date'
-                                ? new Date(e.target.value).toISOString()
-                                : e.target.value
-                            )
-                          }
-                        />
-                      ) : type === 'date' ? (
-                        currentPost[field as keyof Post] ? (
-                          new Date(
-                            currentPost[field as keyof Post] as string
-                          ).toLocaleDateString()
-                        ) : (
-                          '미정'
-                        )
+                              ? new Date(e.target.value).toISOString()
+                              : e.target.value
+                          )
+                        }
+                      />
+                    ) : type === 'date' ? (
+                      currentPost[field as keyof Post] ? (
+                        new Date(
+                          currentPost[field as keyof Post] as string
+                        ).toLocaleDateString()
                       ) : (
-                        currentPost[field as keyof Post]?.toString() || ''
-                      )}
-                    </p>
+                        '미정'
+                      )
+                    ) : (
+                      currentPost[field as keyof Post]?.toString() || ''
+                    )}
                   </div>
                 ))}
               </>
@@ -339,7 +339,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
                   key={comment.id}
                   className="flex justify-between items-center mb-2"
                 >
-                  <div className="w-[80%]">
+                  <div className="w-[90%]">
                     <div>
                       <p
                         className="text-xl cursor-pointer flex items-center space-x-2 mb-2"
@@ -363,7 +363,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
                       <>
                         <input
                           type="text"
-                          className="border rounded p-1"
+                          className="border rounded p-1 w-[80%]"
                           value={editingContent}
                           onChange={(e) => setEditingContent(e.target.value)}
                         />
@@ -399,9 +399,9 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
                     )}
                   </div>
 
-                  <div className="w-[20%]">
+                  <div className="flex flex-col justify-center items-end w-[10%] mr-3">
                     <button
-                      className="mr-2 text-Green"
+                      className=" text-Green"
                       onClick={() =>
                         handleEditClick(comment.id, comment.content)
                       }
@@ -420,14 +420,14 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
             })}
           </div>
           <textarea
-            className="w-full border rounded p-2 mt-4"
+            className="w-full border rounded p-2 mt-4 resize-none"
             placeholder="댓글을 입력하세요."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
           />
           <div className="text-right">
             <button
-              className="bg-Green text-white p-2 rounded w-20"
+              className="bg-Green text-white p-2 rounded w-20 "
               onClick={handleCommentSubmit}
             >
               댓글 등록

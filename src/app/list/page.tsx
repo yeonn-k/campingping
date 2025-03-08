@@ -13,6 +13,7 @@ import { createApiUrl } from '@/utils/createApiUrl';
 import useCategory from '@/hooks/useCategory';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 import { useSearchParams } from 'next/navigation';
+import Header from '@/components/Header/Header';
 
 const List = () => {
   const { selectedCategoryValue, selectedCategory, handleCategorySelected } =
@@ -79,45 +80,53 @@ const List = () => {
   }, [fetchCampingData, nextCursorRef]);
 
   return (
-    <div className="w-full flex flex-col pb-20 h-screen" ref={scrollRef}>
-      <SearchBar
-        origin="list"
-        category={selectedCategoryValue}
-        region={regionQuery}
-      />
-      <Category
-        selectedCategory={selectedCategory}
-        onCategorySelected={handleCategorySelected}
-      />
-      <div className="flex flex-col space-y-8  p-4 mx-* pb-20 ">
-        {campingData?.length ? (
-          campingData.map((camp) => (
-            <Card
-              key={camp.contentId}
-              contentId={camp.contentId}
-              liked={camp.favorite}
-              imgSrc={camp.firstImageUrl}
-              name={camp.facltNm ? camp.facltNm : ''}
-              address={
-                camp.addr1
-                  ? camp.addr2
-                    ? `${camp.addr1} ${camp.addr2}`
-                    : camp.addr1
-                  : ''
-              }
-              description={camp.lineIntro || ''}
-            />
-          ))
-        ) : (
-          <p>검색 결과가 없습니다</p>
-        )}
-      </div>
-      <div ref={loadMoreRef} className="h-[100px]">
-        {isLoading && <LoadingSpinner />}
-      </div>
+    <>
+      <Header />
+      <div className="w-full flex flex-col pb-20 h-screen pt-11 sm:pt-14">
+        <SearchBar
+          origin="list"
+          category={selectedCategoryValue}
+          region={regionQuery}
+        />
 
-      <ScrollToTop scrollRef={scrollRef} />
-    </div>
+        <Category
+          selectedCategory={selectedCategory}
+          onCategorySelected={handleCategorySelected}
+        />
+
+        <div
+          className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 pb-20 overflow-auto"
+          ref={scrollRef}
+        >
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : campingData?.length ? (
+            campingData.map((camp, idx) => (
+              <Card
+                ref={idx === campingData.length - 1 ? loadMoreRef : undefined}
+                key={camp.contentId}
+                contentId={camp.contentId}
+                liked={camp.favorite}
+                imgSrc={camp.firstImageUrl}
+                name={camp.facltNm ? camp.facltNm : ''}
+                address={
+                  camp.addr1
+                    ? camp.addr2
+                      ? `${camp.addr1} ${camp.addr2}`
+                      : camp.addr1
+                    : ''
+                }
+                description={camp.lineIntro || ''}
+              />
+            ))
+          ) : (
+            <p>검색 결과가 없습니다</p>
+          )}
+        </div>
+
+        <ScrollToTop scrollRef={scrollRef} />
+      </div>
+    </>
   );
 };
 

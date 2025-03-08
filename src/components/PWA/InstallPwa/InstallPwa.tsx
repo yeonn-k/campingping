@@ -36,10 +36,15 @@ const InstallPrompt = () => {
     };
   }, []);
 
-  if (pathname === '/sign-in') return;
+  if (
+    pathname === '/sign-in' ||
+    pathname === '/sign-up' ||
+    pathname === '/search'
+  )
+    return;
   return (
     <div
-      className={`fixed ${pathname === '/community' ? 'bottom-[19rem]' : 'bottom-56'} right-0 translate-x-[-14px] z-[18] `}
+      className={`fixed ${pathname === '/community' ? 'bottom-[18.5rem]' : 'bottom-[14rem]'} right-0 translate-x-[-14px] z-[18] `}
     >
       <button
         className={`relative bg-lime-400 p-2 rounded-full shadow-shadowCustom w-14 h-14 z-[18] flex justify-center`}

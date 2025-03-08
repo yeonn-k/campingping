@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 import { ToastContainer } from 'react-toastify';
 
 import Nav from '@/components/Nav/Nav';
-import Header from '@/components/Header/Header';
 
 const ClientOnly = dynamic(() => import('@/components/ClientOnly/ClientOnly'), {
   ssr: false,
@@ -47,22 +46,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-w-sm max-w-7xl mx-auto ">
+      <body className="min-w-sm max-w-7xl mx-auto overflow-hidden">
         <Script
           strategy="beforeInteractive"
           src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false&libraries=clusterer`}
         />
 
-        <div className="relative flex flex-col w-full justify-center items-center min-h-screen">
+        <div className="relative flex flex-col w-full justify-center items-center ">
           <ToastContainer
             position="top-center"
             draggable
-            className="fixed left-1/2 -translate-x-1/2 mt-16 z-50 max-w-[90%] z-[100]"
+            className="fixed left-1/2 -translate-x-1/2 z-50 max-w-[90%] z-[100]"
           />
 
-          <Header />
-
-          <div className="flex flex-col  justify-center items-center w-full md:pt-16 pb-16">
+          <div className="flex flex-col justify-center items-center w-full pb-16 ">
             {children}
             <ClientOnly />
             <Nav />

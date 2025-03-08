@@ -17,6 +17,7 @@ import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 import { userStore } from '@/stores/userState';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import Header from '@/components/Header/Header';
 
 interface P {
   id: string;
@@ -276,13 +277,10 @@ const CommunityPage = () => {
   );
 
   return (
-    <div
-      className="min-h-screen bg-white overflow-y-scroll h-full w-full"
-      ref={ref}
-    >
+    <div className="bg-white h-full w-full" ref={ref}>
       <div className="sticky top-0 bg-white shadow-md">
-        <div className="flex justify-center mt-4 gap-1">
-          <Image src={logo1} alt="로고 이미지" width={100} height={100} />
+        <div className="flex justify-center mt-14 gap-1">
+          <Header />
         </div>
         <div className="flex justify-center border-b border-gray-200">
           <button
@@ -308,21 +306,21 @@ const CommunityPage = () => {
         </div>
       </div>
 
-      <div className={`min-h-[calc(100vh-4rem)] `}>
+      <div className="flex-1 overflow-y-auto h-screen pb-24">
         {activeTab === 'myPosts' ? (
           myPosts.length > 0 ? (
-            <div className="flex flex-col space-y-4 mb-14">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-2 pb-20">
               {myPosts.map((post, index) => (
                 <div
                   key={index}
-                  className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
+                  className="relative mt-6 mx-6 bg-white rounded-lg border border-Green cursor-pointer pt-2 pb-6"
                   onClick={() => openDetailModal(post)}
                   ref={index === myPosts.length - 1 ? lastItemRef : null}
                 >
-                  <p className="ml-2 mt-2 flex justify-between">
-                    제목 : {post.title}
+                  <p className="ml-2 mt-2 flex justify-center">
+                    <span className="font-semibold">{post.title}</span>
                     <button
-                      className="justify-end text-red-500 hover:text-red-700 whitespace-nowrap min-w-[50px]"
+                      className="absolute right-1 text-red-500 hover:text-red-700 whitespace-nowrap min-w-[50px]"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeletePost(post.id!);
@@ -354,18 +352,18 @@ const CommunityPage = () => {
           )
         ) : activeTab === 'allPosts' ? (
           allPosts.length > 0 ? (
-            <div className="flex flex-col space-y-4 mb-14">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 pb-20 overflow-auto">
               {allPosts.map((post, index) => (
                 <div
                   key={index}
-                  className="mt-6 ml-6 mr-6 mb-2 bg-white rounded-lg border border-Green cursor-pointer"
+                  className="relative mt-6 mx-6 bg-white rounded-lg border border-Green cursor-pointer pt-2 pb-6"
                   onClick={() => openDetailModal(post)}
                   ref={index === allPosts.length - 1 ? lastItemRef : null}
                 >
-                  <p className="ml-2 mt-2 flex justify-between">
-                    제목 : {post.title}
-                    <span className="mr-2 text-right">
-                      작성자 : {post.user.nickname}
+                  <p className="ml-2 mt-2 flex justify-center">
+                    <span className="font-semibold">{post.title}</span>
+                    <span className="absolute mr-2 text-right right-1 text-description">
+                      {post.user.nickname}
                     </span>
                   </p>
                   <hr className="my-2 border-t-1 border-Green" />
@@ -394,7 +392,7 @@ const CommunityPage = () => {
       <ScrollToTop scrollRef={ref} />
 
       <button
-        className="fixed bottom-56 right-0 translate-x-[-14px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
+        className="fixed bottom-[14rem] right-0 translate-x-[-14px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
         onClick={openWriteModal}
       >
         <Image src={write} alt="게시글 작성" width={24} />
