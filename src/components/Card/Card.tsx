@@ -41,7 +41,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
           ref={ref}
           className="min-w-[320px] w-10.5/12 rounded overflow-hidden"
         >
-          <div className="relative w-full h-56">
+          <div className="relative w-full h-56 sm:aspect-[1/2]">
             {imgSrc ? (
               <Image
                 src={imgSrc}

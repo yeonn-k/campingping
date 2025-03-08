@@ -276,6 +276,8 @@ const Map = () => {
     });
   }, [campList, kakaoMap]);
 
+  console.log(scrollRef.current);
+
   return (
     <>
       <Header />
