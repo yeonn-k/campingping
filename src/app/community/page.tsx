@@ -7,7 +7,6 @@ import WriteModal from './WriteModal';
 import PostDetailModal from './PostDetailModal';
 import write from '@icons/write.svg';
 import search from '@icons/nav/search_gray.png';
-import logo1 from '@images/campingping_orange.svg';
 
 import { getPosts, getMyPosts, deletePost } from '@utils/communitiesService';
 import { useLocationStore } from '@/stores/locationState';

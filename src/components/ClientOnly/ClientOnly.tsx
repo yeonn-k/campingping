@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useLocationStore } from '@/stores/locationState';
 import useGeoLocationPermission from '@/hooks/useGeoLocation';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import OpenTheChats from '../OpenTheChats/OpenTheChats';
 import { chattingStore } from '@/stores/chattingState';
 import Chat from '../Chat/Chat';
@@ -59,7 +59,6 @@ export default function ClientLayout() {
   const { denyPermission, askPushNotification, checkNotificationPermission } =
     usePushNotification();
 
-  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
