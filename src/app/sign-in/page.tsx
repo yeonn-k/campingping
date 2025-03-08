@@ -101,7 +101,7 @@ const SignIn = () => {
     router.push('/sign-up');
   };
   return (
-    <div className="relative flex justify-center items-center w-full h-screen">
+    <div className="relative flex flex-col justify-center items-center w-full h-screen">
       <Image
         src={RegisterBg}
         width={100}
@@ -110,17 +110,19 @@ const SignIn = () => {
         className="absolute inset-0 w-full h-full object-cover"
         quality={80}
       />
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm " />
-      <div className="absolute flex flex-col justify-center items-center">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+
+      <div className="relative flex flex-col items-center gap-6 z-10">
         <Image
           src={LogoWhite}
           width={200}
           height={50}
           alt="logo"
           priority
-          className="mb-8 w-72"
+          className="w-72"
         />
-        <div className=" bg-white w-[346px] h-[494px] rounded-lg flex justify-center items-center flex-col mb-10">
+
+        <div className="bg-white w-[346px] h-[494px] rounded-lg flex justify-center items-center flex-col">
           <Image
             src={SymbolImg}
             width={110}
@@ -150,6 +152,7 @@ const SignIn = () => {
             </div>
             <Button width={'w-10/12'}>로그인</Button>
           </form>
+
           <Button
             width={'w-10/12'}
             bgcolor={'bg-kakaoYellow'}

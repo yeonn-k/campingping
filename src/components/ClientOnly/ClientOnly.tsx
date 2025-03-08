@@ -27,6 +27,7 @@ import PwaModal from '@/components/PWA/PwaModal/PwaModal';
 import { socket } from '../../socket';
 import { ChatHistoryData, ChatMsgs } from '@/types/Chatting';
 import { CHAT } from '@/constants/chat/chatEvents';
+import ModalBox from '../ModalBox/ModalBox';
 
 export default function ClientLayout() {
   const [isPwaState, setIsPwaState] = useState<boolean | null>(null);
@@ -145,7 +146,7 @@ export default function ClientLayout() {
   }
 
   return (
-    <div className="w-full min-h-screen absolute inset-0 flex flex-col">
+    <div className="w-full flex flex-col">
       {!isPwaState && <InstallPrompt />}
       <OpenTheChats
         onClick={() => {
@@ -159,13 +160,17 @@ export default function ClientLayout() {
       />
 
       {isPwaOpen && clicked === 'install' && (
-        <PwaModal onClick={handleInstall} onClose={handleClose} />
+        <ModalBox>
+          <PwaModal onClick={handleInstall} onClose={handleClose} />
+        </ModalBox>
       )}
       {isPwaOpen && clicked === 'noti' && (
-        <PwaModal
-          onClick={checkNotificationPermission}
-          onClose={denyPermission}
-        />
+        <ModalBox>
+          <PwaModal
+            onClick={checkNotificationPermission}
+            onClose={denyPermission}
+          />
+        </ModalBox>
       )}
 
       {chatState && <Chat />}

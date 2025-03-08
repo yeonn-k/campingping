@@ -108,32 +108,36 @@ const SignUp = () => {
   };
 
   return (
-    <div className="relative flex justify-center items-center w-full h-screen">
+    <div className="relative flex flex-col justify-center items-center w-full h-screen">
       <Image
         src={RegisterBg}
         width={100}
         height={100}
         alt="배경이미지"
         className="absolute inset-0 w-full h-full object-cover"
+        quality={80}
       />
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm " />
-      <div className="absolute flex flex-col justify-center items-center">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+
+      <div className="relative flex flex-col items-center gap-6 z-10">
         <Image
           src={LogoWhite}
           width={200}
           height={50}
           alt="logo"
           priority
-          className="mb-8 w-72"
+          className="w-72"
         />
-        <div className=" bg-white w-[346px] h-[612px] rounded-lg flex justify-center items-center flex-col mb-10">
+
+        <div className="bg-white w-[346px] h-[612px] rounded-lg flex justify-center items-center flex-col px-6 py-8 shadow-lg">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="w-full flex flex-col items-center mb-3 gap-1"
+            className="w-full flex flex-col items-center gap-4"
           >
-            <h1 className="text-title">회원가입</h1>
-            <div className={`w-10/12 ${errors.email ? 'mb-2' : 'mb-6'}`}>
-              이메일
+            <h1 className="text-title text-xl font-semibold mb-2">회원가입</h1>
+
+            <div className="w-full">
+              <label className="block text-sm font-medium">이메일</label>
               <div className="flex gap-3">
                 <Input
                   placeholder="이메일을 입력해주세요"
@@ -157,12 +161,15 @@ const SignUp = () => {
                 </Button>
               </div>
             </div>
-            <div className={`w-10/12 ${errors.verification ? 'mb-2' : 'mb-6'}`}>
-              이메일 인증 코드 입력
+
+            <div className="w-full">
+              <label className="block text-sm font-medium">
+                이메일 인증 코드 입력
+              </label>
               <div className="flex gap-3">
                 <Input
                   placeholder="인증 코드를 입력해주세요"
-                  type="string"
+                  type="text"
                   {...register('verification', {
                     required: '인증 코드를 입력해주세요',
                   })}
@@ -178,8 +185,9 @@ const SignUp = () => {
                 </Button>
               </div>
             </div>
-            <div className={`w-10/12 ${errors.password ? 'mb-2' : 'mb-6'}`}>
-              비밀번호
+
+            <div className="w-full">
+              <label className="block text-sm font-medium">비밀번호</label>
               <Input
                 placeholder="비밀번호를 입력해주세요"
                 type="password"
@@ -196,10 +204,9 @@ const SignUp = () => {
                 errorMessage={errors.password?.message}
               />
             </div>
-            <div
-              className={`w-10/12 ${errors.passwordCheck ? 'mb-2' : 'mb-6'}`}
-            >
-              비밀번호 확인
+
+            <div className="w-full">
+              <label className="block text-sm font-medium">비밀번호 확인</label>
               <Input
                 placeholder="비밀번호를 확인해주세요"
                 type="password"
@@ -215,8 +222,9 @@ const SignUp = () => {
                 errorMessage={errors.passwordCheck?.message}
               />
             </div>
-            <div className={`w-10/12 ${errors.nickname ? 'mb-2' : 'mb-6'}`}>
-              닉네임
+
+            <div className="w-full">
+              <label className="block text-sm font-medium">닉네임</label>
               <Input
                 placeholder="닉네임을 입력해주세요"
                 type="text"
@@ -227,7 +235,8 @@ const SignUp = () => {
                 errorMessage={errors.nickname?.message}
               />
             </div>
-            <Button width={'w-10/12'}>가입하기</Button>
+
+            <Button width="w-full">가입하기</Button>
           </form>
         </div>
       </div>

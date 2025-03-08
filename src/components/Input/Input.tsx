@@ -14,7 +14,7 @@ const Input = forwardRef<HTMLInputElement, inputProps>(
     ref
   ) => {
     return (
-      <div>
+      <div className="w-full">
         <input
           ref={ref}
           placeholder={placeholder}
