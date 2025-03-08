@@ -2,15 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import logo1 from '@images/campingping_orange.svg';
+
 import profile from '@images/profile.svg';
 import { getProfile, updateProfileImage } from '../../utils/profileService';
 import useWishlistStore from '@/stores/wishlistState';
 import { WishlistCamp } from '@/types/Camp';
-import DefaultImg from '@/components/DefaultImg/DefaultImg';
+
 import useWishlist from '@hooks/useWishlist';
-import myWishIcon from '@icons/liked.svg';
-import notMyWishIcon from '@icons/not-liked.svg';
+
 import Card from '@/components/Card/Card';
 import Header from '@/components/Header/Header';
 
@@ -29,8 +28,8 @@ interface UserProfile {
 const MyPage = () => {
   const [profileImage, setProfileImage] = useState<string>(profile);
   const [response, setResponse] = useState<UserProfile | null>(null);
-  const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
-  const { getWishlist, addOrRemoveWishlist } = useWishlist();
+  const { wishlist } = useWishlistStore();
+  const { getWishlist } = useWishlist();
 
   useEffect(() => {
     getProfileImage();
@@ -44,31 +43,6 @@ const MyPage = () => {
       setProfileImage(data.data.user.image.url || profile);
     } catch (error) {
       console.error('프로필 이미지 조회 실패', error);
-    }
-  };
-
-  const handleToggleWishlist = async (
-    camp: WishlistCamp,
-    e: React.MouseEvent<HTMLImageElement>
-  ) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    const isLiked = wishlist.some((item) => item.contentid === camp.contentid);
-
-    try {
-      await addOrRemoveWishlist({
-        contentId: camp.contentid,
-        status: !isLiked,
-      });
-
-      if (isLiked) {
-        removeFromWishlist(camp.contentid);
-      } else {
-        addToWishlist(camp);
-      }
-    } catch (error) {
-      console.error('위시리스트 업데이트 실패', error);
     }
   };
 

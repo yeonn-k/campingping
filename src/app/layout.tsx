@@ -56,7 +56,7 @@ export default function RootLayout({
           <ToastContainer
             position="top-center"
             draggable
-            className="fixed left-1/2 -translate-x-1/2 z-50 max-w-[90%] z-[100]"
+            className="fixed top-16 left-1/2 -translate-x-1/2 z-50 max-w-[90%] z-[100]"
           />
 
           <div className="flex flex-col justify-center items-center w-full pb-16 ">
