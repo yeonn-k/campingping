@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Card from '@/components/Card/Card';
 import chevron from '@icons/chevron_gray.svg';
@@ -74,7 +74,7 @@ export const MapListWrap = ({ campList, scrollRef }: MapProps) => {
       </div>
 
       <div
-        className={`relative bg-white fixed top-0 left-0 ${isOpenList ? 'w-[22vh]' : 'w-12'} h-full flex flex-col shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out 
+        className={`relative bg-white fixed top-0 left-0 ${isOpenList ? 'w-[450px]' : 'w-12'} h-full flex flex-col shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out 
 hidden md:flex`}
       >
         <div className="absolute right-4 top-10 ">

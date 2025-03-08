@@ -47,21 +47,21 @@ const Search = () => {
   };
 
   return (
-    <div className=" w-full h-screen sm:flex sm:items-center sm:justify-center ">
-      <div className="relative sm:w-[60%] overflow-hidden flex flex-col items-center pb-14 sm:pb-14 sm:border sm:rounded-3xl sm:border-Green">
+    <div className=" w-full h-screen overflow-hidden sm:flex sm:items-center sm:justify-center ">
+      <div className="relative sm:w-[60%] sm:h-[80vh] flex flex-col items-center pb-14 sm:pb-14 sm:border sm:rounded-3xl sm:border-Gree overflow-hidden">
         <div
           className="absolute left-5 top-5 flex justify-center items-center w-8 h-8 sm:w-10 sm:h-10  sm:left-8 sm:top-8 shadow-iconShadow rounded-full "
           onClick={closeSearch}
         >
           <Image src={closeIcon} width={10} height={10} alt="닫기 아이콘" />
         </div>
-        <h1 className="mt-12 mb-4 sm:mt-24 sm:mb-10 text-title sm:text-[28px]">
+        <h1 className="mt-12 mb-4 sm:mt-24 sm:mb-9 text-title sm:text-[28px]">
           지역으로 검색해보세요
         </h1>
 
         <div className="bg-LightGray w-full h-[1px] " />
 
-        <div className="grid grid-cols-[1fr_2fr] px-4 h-[70%] w-full sm:h-[55%] min-w-[400px]">
+        <div className="grid grid-cols-[1fr_2fr] px-4 h-[65vh] w-full sm:h-[50vh] min-w-[400px]">
           <div className="w-full h-full gap-2 overflow-scroll scrollbar-hide py-3 grid grid-cols-1 pr-2 place-items-center border-r border-LightGray content-start ">
             {regions.map((regionName) => {
               return (
@@ -95,13 +95,15 @@ const Search = () => {
           </div>
         </div>
 
-        <div className="bg-LightGray w-full h-[1px] mb-3" />
-        <button
-          className="w-3/5 h-14 bg-Green rounded-full text-white mt-2"
-          onClick={handleSearch}
-        >
-          확인
-        </button>
+        <div className="bg-LightGray w-full h-[1px] mb-3 " />
+        <div className="flex justify-center items-center w-full h-full">
+          <button
+            className="w-3/5 h-14 bg-Green rounded-full text-white mt-2"
+            onClick={handleSearch}
+          >
+            확인
+          </button>
+        </div>
       </div>
     </div>
   );
