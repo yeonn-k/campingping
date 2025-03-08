@@ -98,7 +98,9 @@ const List = () => {
           className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 pb-20 overflow-auto"
           ref={scrollRef}
         >
-          {campingData?.length ? (
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : campingData?.length ? (
             campingData.map((camp, idx) => (
               <Card
                 ref={idx === campingData.length - 1 ? loadMoreRef : undefined}
@@ -121,7 +123,6 @@ const List = () => {
             <p>검색 결과가 없습니다</p>
           )}
         </div>
-        <div className="h-[100px]">{isLoading && <LoadingSpinner />}</div>
 
         <ScrollToTop scrollRef={scrollRef} />
       </div>

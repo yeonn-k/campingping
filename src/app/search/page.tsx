@@ -47,60 +47,62 @@ const Search = () => {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden flex flex-col items-center pb-14">
-      <div
-        className="absolute left-5 top-5 flex justify-center items-center w-8 h-8 shadow-iconShadow rounded-full"
-        onClick={closeSearch}
-      >
-        <Image src={closeIcon} width={10} height={10} alt="닫기 아이콘" />
-      </div>
-      <h1 className="mt-12 mb-4 text-title">지역으로 검색해보세요</h1>
+    <div className=" w-full h-screen sm:flex sm:items-center sm:justify-center ">
+      <div className="relative sm:w-[60%] overflow-hidden flex flex-col items-center pb-14 sm:pb-14 sm:border sm:rounded-3xl sm:border-Green">
+        <div
+          className="absolute left-5 top-5 flex justify-center items-center w-8 h-8 sm:w-10 sm:h-10  sm:left-8 sm:top-8 shadow-iconShadow rounded-full "
+          onClick={closeSearch}
+        >
+          <Image src={closeIcon} width={10} height={10} alt="닫기 아이콘" />
+        </div>
+        <h1 className="mt-12 mb-4 sm:mt-24 sm:mb-10 text-title sm:text-[28px]">
+          지역으로 검색해보세요
+        </h1>
 
-      <div className="bg-LightGray w-full h-[1px] " />
+        <div className="bg-LightGray w-full h-[1px] " />
 
-      <div className="flex space-around px-4  gap-2 h-[70%]">
-        <div className="w-[35%] h-full gap-2 flex flex-wrap overflow-scroll scrollbar-hide py-3">
-          {regions.map((regionName) => {
-            return (
-              <div
-                key={regionName}
-                className={`flex flex-col justify-center items-center border w-36 h-12 rounded-full ${coloredRegion === regionName ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
-                onClick={(e) => {
-                  updateRegion(e, 'region');
-                }}
-              >
-                {regionName}
-              </div>
-            );
-          })}
+        <div className="grid grid-cols-[1fr_2fr] px-4 h-[70%] w-full sm:h-[55%] min-w-[400px]">
+          <div className="w-full h-full gap-2 overflow-scroll scrollbar-hide py-3 grid grid-cols-1 pr-2 place-items-center border-r border-LightGray content-start ">
+            {regions.map((regionName) => {
+              return (
+                <div
+                  key={regionName}
+                  className={`flex flex-col justify-center items-center border w-full h-12 rounded-full ${coloredRegion === regionName ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
+                  onClick={(e) => {
+                    updateRegion(e, 'region');
+                  }}
+                >
+                  {regionName}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className=" overflow-scroll w-[65%] h-full w-full gap-2 grid grid-cols-2 content-start scrollbar-hide py-3 ml-4 pr-5">
+            {selectedRegion.map((city) => {
+              return (
+                <div
+                  key={city}
+                  className={`flex flex-col justify-center items-center border w-full h-12 rounded-full ${coloredCity === city ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
+                  onClick={(e) => {
+                    updateRegion(e, 'city');
+                  }}
+                >
+                  {city}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="h-full w-[1px] bg-LightGray" />
-
-        <div className="overflow-scroll w-[65%] h-full gap-2 flex flex-wrap content-start scrollbar-hide py-3 ml-4">
-          {selectedRegion.map((city) => {
-            return (
-              <div
-                key={city}
-                className={`flex flex-col justify-center items-center border w-[45%] h-12 rounded-full ${coloredCity === city ? 'border-Green text-Green' : 'border-LightGray text-Gray'}`}
-                onClick={(e) => {
-                  updateRegion(e, 'city');
-                }}
-              >
-                {city}
-              </div>
-            );
-          })}
-        </div>
+        <div className="bg-LightGray w-full h-[1px] mb-3" />
+        <button
+          className="w-3/5 h-14 bg-Green rounded-full text-white mt-2"
+          onClick={handleSearch}
+        >
+          확인
+        </button>
       </div>
-
-      <div className="bg-LightGray w-full h-[1px] mb-3" />
-      <button
-        className="w-3/5 h-12 bg-Green rounded-full text-white mt-2"
-        onClick={handleSearch}
-      >
-        확인
-      </button>
     </div>
   );
 };
