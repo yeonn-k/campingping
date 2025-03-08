@@ -23,6 +23,7 @@ import WeatherWithLatLon from '@/components/Weather/WeatherWithLatLon';
 import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import Move from './component/Move';
 import Header from '@/components/Header/Header';
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 const NoSSRCategory = dynamic(
   () => import('../../components/Category/Category'),
@@ -49,6 +50,7 @@ const Map = () => {
   const [, setKakaoMarker] = useState<kakao.maps.Marker | null>(null);
 
   const [campList, setCampList] = useState<CampMap[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -307,7 +309,8 @@ const Map = () => {
           ) : lat && lon ? (
             <div ref={mapRef} className="relative w-full flex-1 rounded-md">
               <Move region={regionQuery} />
-              <MapListWrap campList={campList} />
+              <MapListWrap campList={campList} scrollRef={scrollRef} />
+              <ScrollToTop scrollRef={scrollRef} />
             </div>
           ) : (
             <div className="h-5/6 flex flex-col flex-1 justify-center items-center">

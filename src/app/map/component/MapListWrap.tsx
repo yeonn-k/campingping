@@ -8,13 +8,13 @@ import chevron from '@icons/chevron_gray.svg';
 import chevron90 from '@icons/chevron90.svg';
 
 import { CampMap } from '@/types/Camp';
-import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 interface MapProps {
   campList: CampMap[];
+  scrollRef: React.RefObject<HTMLDivElement>;
 }
 
-export const MapListWrap = ({ campList }: MapProps) => {
+export const MapListWrap = ({ campList, scrollRef }: MapProps) => {
   const [isOpenList, setIsOpenList] = useState(false);
   const [localCampList, setLocalCampList] = useState<CampMap[]>(campList);
 
@@ -25,8 +25,6 @@ export const MapListWrap = ({ campList }: MapProps) => {
   const handleList = () => {
     setIsOpenList((prev) => !prev);
   };
-
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
@@ -73,7 +71,6 @@ export const MapListWrap = ({ campList }: MapProps) => {
             <p>검색 결과가 없습니다.</p>
           </div>
         )}
-        <ScrollToTop scrollRef={scrollRef} />
       </div>
 
       <div
@@ -101,7 +98,10 @@ hidden md:flex`}
           )}
         </div>
 
-        <div className=" overflow-x-hidden overflow-y-auto m-10 h-screen ">
+        <div
+          className=" overflow-x-hidden overflow-y-auto m-10 h-screen "
+          ref={scrollRef}
+        >
           {localCampList?.length > 0 ? (
             localCampList.map((camp) => {
               return (

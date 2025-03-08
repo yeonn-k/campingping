@@ -392,7 +392,7 @@ const CommunityPage = () => {
       <ScrollToTop scrollRef={ref} />
 
       <button
-        className="fixed bottom-56 right-0 translate-x-[-14px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
+        className="fixed bottom-[14rem] right-0 translate-x-[-14px] bg-white p-4 rounded-full shadow-shadowCustom w-14 h-14 z-[18]"
         onClick={openWriteModal}
       >
         <Image src={write} alt="게시글 작성" width={24} />

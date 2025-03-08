@@ -145,23 +145,19 @@ export default function ClientLayout() {
   }
 
   return (
-    <div
-      className={`relative w-full md:max-w-[450px] h-full flex justify-center ${chatState ? 'overflow-hidden' : 'overflow-auto'}`}
-    >
-      {pathname !== '/sign-in' && pathname !== '/search' && (
-        <OpenTheChats
-          onClick={() => {
-            if (userState) {
-              setChatState(true);
-            } else {
-              router.push('/sign-in');
-              toast.error('로그인이 필요한 기능이에요');
-            }
-          }}
-        />
-      )}
-
+    <div className="w-full min-h-screen absolute inset-0 flex flex-col">
       {!isPwaState && <InstallPrompt />}
+      <OpenTheChats
+        onClick={() => {
+          if (userState) {
+            setChatState(true);
+          } else {
+            router.push('/sign-in');
+            toast.error('로그인이 필요한 기능이에요');
+          }
+        }}
+      />
+
       {isPwaOpen && clicked === 'install' && (
         <PwaModal onClick={handleInstall} onClose={handleClose} />
       )}
@@ -171,6 +167,7 @@ export default function ClientLayout() {
           onClose={denyPermission}
         />
       )}
+
       {chatState && <Chat />}
     </div>
   );
