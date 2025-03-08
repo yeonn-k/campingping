@@ -40,7 +40,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
           {validImages.map((image, index) => (
             <div
               key={image.id || `default-${index}`}
-              className="relative w-full h-56 rounded-md"
+              className="relative aspect-[4/3] rounded-md"
             >
               {image.url ? (
                 <Image
