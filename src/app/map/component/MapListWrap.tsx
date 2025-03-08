@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Card from '@/components/Card/Card';
 import chevron from '@icons/chevron_gray.svg';
