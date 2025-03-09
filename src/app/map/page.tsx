@@ -201,10 +201,7 @@ const Map = () => {
 
     const markers = positions.map(function (position) {
       return new window.kakao.maps.Marker({
-        position: new window.kakao.maps.LatLng(
-          position.latlng[1],
-          position.latlng[0]
-        ),
+        position: position.latlng,
       });
     });
 
@@ -275,8 +272,6 @@ const Map = () => {
       setKakaoMarker(marker);
     });
   }, [campList, kakaoMap]);
-
-  console.log(scrollRef.current);
 
   return (
     <>

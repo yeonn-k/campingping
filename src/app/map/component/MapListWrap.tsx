@@ -27,7 +27,7 @@ export const MapListWrap = ({ campList, scrollRef }: MapProps) => {
 
   return (
     <div
-      className={`bg-white fixed bottom-0 md:top-12 md:left-0 md:h-full w-full ${isOpenList ? 'h-full h-[90vh] md:w-[450px] overflow-auto pt-20' : 'h-32 md:w-12 overflow-hidden'} rounded-t-2xl md:rounded-none pt-5 pb-20 md:pb-0 flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
+      className={`bg-white fixed bottom-0 md:top-12 md:left-0 md:h-full w-full ${isOpenList ? 'h-[90vh] md:w-[450px] overflow-auto pt-20' : 'h-32 md:w-12 overflow-hidden'} rounded-t-2xl md:rounded-none pt-5 pb-20 md:pb-0 flex flex-col items-center shadow-mapListShadow z-zMapModal transition-all duration-500 ease-in-out`}
     >
       <div className="absolute top-10 md:hidden">
         <Image
