@@ -25,6 +25,7 @@ const List = () => {
   const { selectedCategoryValue, selectedCategory, handleCategorySelected } =
     useCategory();
   const [regionQuery, setRegionQuery] = useState<string | null>(null);
+  const [cityQuery, setCityQuery] = useState<string | null>(null);
 
   const [campingData, setCampingData] = useState<Camp[]>([]);
 
@@ -33,9 +34,10 @@ const List = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (searchParams) {
-      setRegionQuery(searchParams.get('region'));
-    }
+    const currentRegionQuery = searchParams.get('region');
+    const currentCityQuery = searchParams.get('city');
+    setRegionQuery(currentRegionQuery);
+    setCityQuery(currentCityQuery);
   }, [searchParams]);
 
   const fetchCampingData = useCallback(async () => {
@@ -47,7 +49,6 @@ const List = () => {
         { name: 'limit', value: LIMIT },
         { name: 'cursor', value: nextCursor },
         { name: 'category', value: selectedCategoryValue },
-        { name: 'region', value: regionQuery },
       ]);
 
       const response = await api.get(apiUrl);
@@ -70,7 +71,7 @@ const List = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [LIMIT, nextCursor, selectedCategoryValue, regionQuery]);
+  }, [LIMIT, nextCursor, selectedCategoryValue, regionQuery, cityQuery]);
 
   const lastItemRef = useCallback(
     (node: HTMLDivElement) => {
@@ -95,23 +96,18 @@ const List = () => {
   );
 
   useEffect(() => {
-    fetchCampingData();
-  }, []);
+    const refreshData = async () => {
+      setCampingData([]);
+      await fetchCampingData();
+    };
 
-  useEffect(() => {
-    setCampingData([]);
-    fetchCampingData();
-  }, [selectedCategoryValue, regionQuery]);
-
+    refreshData();
+  }, [selectedCategoryValue, regionQuery, cityQuery]);
   return (
     <>
       <Header />
       <div className="w-full flex flex-col pb-20 h-screen pt-11 sm:pt-14">
-        <SearchBar
-          origin="list"
-          category={selectedCategoryValue}
-          region={regionQuery}
-        />
+        <SearchBar category={selectedCategoryValue} region={regionQuery} />
 
         <Category
           selectedCategory={selectedCategory}

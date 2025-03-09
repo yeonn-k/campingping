@@ -4,14 +4,13 @@ import Link from 'next/link';
 import Magnifier from '@icons/search_gray.svg';
 
 interface SearchBarProps {
-  origin: string;
   category: string | null;
   region: string | null;
   city?: string | null;
 }
 
-const SearchBar = ({ origin, category, region, city }: SearchBarProps) => {
-  const query: Record<string, string> = { origin };
+const SearchBar = ({ category, region, city }: SearchBarProps) => {
+  const query: Record<string, string> = {};
   if (category) {
     query['category'] = category;
   }
