@@ -67,18 +67,6 @@ const CommunityPage = () => {
   }, []);
 
   const handleGetPosts = async () => {
-    // if (activeTab === 'myPosts' && userState) {
-    //   const data = await getMyPosts();
-    //   if (data) {
-    //     const postsWithDates = data.map((post: P) => ({
-    //       ...post,
-    //       startDate: new Date(post.startDate),
-    //       endDate: new Date(post.endDate),
-    //     }));
-    //     setMyPosts(postsWithDates);
-    //   }
-    // }
-
     const data = await getPosts(userLat, userLon);
 
     if (data) {
@@ -147,22 +135,6 @@ const CommunityPage = () => {
   };
 
   const ref = useRef<HTMLDivElement>(null);
-  // useEffect(() => {
-  //   const renderPosts = async () => {
-  //     if (isDetailModalOpen === false) {
-  //       const data = await getMyPosts();
-  //       if (data) {
-  //         const postsWithDates = data.map((post: P) => ({
-  //           ...post,
-  //           startDate: new Date(post.startDate),
-  //           endDate: new Date(post.endDate),
-  //         }));
-  //         setMyPosts(postsWithDates);
-  //       }
-  //     }
-  //   };
-  //   renderPosts();
-  // }, [isDetailModalOpen]);
 
   useEffect(() => {
     if (!selectedPost) {
@@ -170,22 +142,6 @@ const CommunityPage = () => {
     }
   }, [selectedPost]);
 
-  // useEffect(() => {
-  //   const fetchInitialPosts = async () => {
-  //     const data = await getMyPosts();
-
-  //     if (data) {
-  //       const postsWithDates = data.map((post: P) => ({
-  //         ...post,
-  //         startDate: new Date(post.startDate),
-  //         endDate: new Date(post.endDate),
-  //       }));
-  //       setMyPosts(postsWithDates);
-  //     }
-  //   };
-
-  //   fetchInitialPosts();
-  // }, []);
   const handleDeletePost = async (postId: string) => {
     if (confirm('정말 이 게시글을 삭제하시겠습니까?')) {
       try {

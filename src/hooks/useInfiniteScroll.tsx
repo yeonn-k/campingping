@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-const LIMIT = 18;
+const LIMIT = 21;
 
 const useInfiniteScroll = ({
   loadMoreElementRef,
