@@ -214,7 +214,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
             history.back();
           }}
         />
-        <SearchBar origin="detail" category={null} region={null} />
+        <SearchBar category={null} region={null} />
         <div className="flex justify-center">
           <WeatherWithLatLon lat={location.lat} lon={location.lon} />
         </div>
