@@ -226,6 +226,7 @@ const ListDetail = ({ params }: { params: { contentId: string } }) => {
                 alt="캠핑장 이미지"
                 fill
                 className="rounded object-cover"
+                quality={100}
                 priority
               />
             </div>

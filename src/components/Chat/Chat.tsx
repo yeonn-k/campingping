@@ -18,6 +18,7 @@ import { userStore } from '@/stores/userState';
 import { onConnect, onDisconnect } from '@/utils/chat/handleSocket';
 import useChat from '@/hooks/chat/useChat';
 import { ChatRooms } from '@/types/Chatting';
+import ModalBox from '../ModalBox/ModalBox';
 
 const Chat = () => {
   const [, setIsConnected] = useState(false);
@@ -89,74 +90,78 @@ const Chat = () => {
   }, [getChatRooms]);
 
   return (
-    <div
-      className={`bg-white fixed bottom-0 w-full max-w-[450px] ${chatState ? 'h-5/6' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
-    >
-      <div className="relative flex justify-center ">
-        <Image
-          src={chevron}
-          alt="화살표 아이콘"
-          width={16}
-          quality={10}
-          className="pb-2 mb-4 mt-3 origin-center rotate-180 "
-          onClick={closeChats}
-        />
+    <ModalBox>
+      <div className="absolute inset-0 h-full w-full">
+        <div
+          className={`bg-white absolute w-full ${chatState ? 'h-5/6 w-full right-0 bottom-0 md:h-1/2 md:w-1/3 md:rounded-3xl md:bottom-20 md:right-24' : 'h-0'} rounded-t-2xl overflow-hidden flex flex-col shadow-mapListShadow transition-all duration-500 ease-in-out z-zChat`}
+        >
+          <div className="relative flex justify-center ">
+            <Image
+              src={chevron}
+              alt="화살표 아이콘"
+              width={16}
+              quality={10}
+              className="pb-2 mb-4 mt-3 origin-center rotate-180 "
+              onClick={closeChats}
+            />
 
-        {chatRoomId && (
-          <Image
-            src={goToBack}
-            width={16}
-            alt="뒤로가기 버튼"
-            quality={10}
-            className="absolute left-5 top-6"
-            onClick={() => {
-              setChatRoomId(null);
-              getChatRooms();
-            }}
-          />
-        )}
-      </div>
-
-      {chatRoomId === null ? (
-        <div>
-          <div className="text-title p-6">주변 사람들과 대화해보세요</div>
-          <div className="flex flex-wrap flex-col items-center gap-4 w-full pb-12">
-            {chats.length > 0 ? (
-              chats.map((chat) => {
-                return (
-                  <div
-                    key={chat.roomId}
-                    className="w-full flex justify-center"
-                    onClick={() => {
-                      setChatRoomId(chat.roomId);
-                      setChatNick(chat.users[0].nickname);
-                    }}
-                  >
-                    <ChatBox
-                      roomId={chat.roomId}
-                      nickname={chat.users[0].nickname}
-                      lastMsg={chat.lastMessage}
-                      lastMsgTime={chat.lastMessageTime}
-                      unreadCount={chat.unreadCount}
-                    />
-                  </div>
-                );
-              })
-            ) : (
-              <div className="h-full items-center">
-                참여 중인 채팅이 없어요 !
-              </div>
+            {chatRoomId && (
+              <Image
+                src={goToBack}
+                width={16}
+                alt="뒤로가기 버튼"
+                quality={10}
+                className="absolute left-5 top-6"
+                onClick={() => {
+                  setChatRoomId(null);
+                  getChatRooms();
+                }}
+              />
             )}
           </div>
+
+          {chatRoomId === null ? (
+            <div>
+              <div className="text-title p-6">주변 사람들과 대화해보세요</div>
+              <div className="flex flex-wrap items-center justify-center w-full h-full pb-12">
+                {chats.length > 0 ? (
+                  chats.map((chat) => {
+                    return (
+                      <div
+                        key={chat.roomId}
+                        className="w-full flex justify-center"
+                        onClick={() => {
+                          setChatRoomId(chat.roomId);
+                          setChatNick(chat.users[0].nickname);
+                        }}
+                      >
+                        <ChatBox
+                          roomId={chat.roomId}
+                          nickname={chat.users[0].nickname}
+                          lastMsg={chat.lastMessage}
+                          lastMsgTime={chat.lastMessageTime}
+                          unreadCount={chat.unreadCount}
+                        />
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="h-full flex items-center">
+                    참여 중인 채팅이 없어요 !
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <ChatRoom
+              roomId={chatRoomId}
+              setChatRoomId={setChatRoomId}
+              nickname={chatNick}
+            />
+          )}
         </div>
-      ) : (
-        <ChatRoom
-          roomId={chatRoomId}
-          setChatRoomId={setChatRoomId}
-          nickname={chatNick}
-        />
-      )}
-    </div>
+      </div>
+    </ModalBox>
   );
 };
 
