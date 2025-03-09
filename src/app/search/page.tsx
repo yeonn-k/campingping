@@ -11,12 +11,14 @@ import { useEffect, useState } from 'react';
 
 import { regions, regionsWithDistricts } from 'public/data/region';
 
+const originPath = 'map';
+
 const Search = () => {
   const router = useRouter();
   const { updateRegion } = useRegionSearch();
 
   const { coloredRegion, coloredCity } = regionStore();
-  const [originPath, setOriginPath] = useState<string | null>('map');
+
   const [query, setQuery] = useState<string | null>(null);
   const selectedRegion: string[] = coloredRegion
     ? regionsWithDistricts[coloredRegion]
@@ -28,11 +30,6 @@ const Search = () => {
 
   useEffect(() => {
     const currentQuery = new URLSearchParams(window.location.search);
-    const origin = currentQuery.get('origin');
-    if (origin && origin !== 'detail') {
-      setOriginPath(origin);
-    }
-    currentQuery.delete('origin');
 
     const updatedQuery = currentQuery.toString();
     setQuery(updatedQuery);

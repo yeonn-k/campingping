@@ -70,7 +70,7 @@ const Map = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (regionQuery && location) {
+    if (cityQuery && location) {
       setLat(location.lat);
       setLon(location.lon);
     } else if (!regionQuery && userLat && userLon) {
@@ -148,7 +148,7 @@ const Map = () => {
 
   useEffect(() => {
     setCampList([]);
-  }, [selectedCategoryValue, regionQuery]);
+  }, [selectedCategoryValue, regionQuery, cityQuery]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -278,7 +278,6 @@ const Map = () => {
       <Header />
       <div className="h-screen flex flex-col w-full pt-11 sm:pt-14">
         <SearchBar
-          origin="map"
           category={selectedCategoryValue}
           region={regionQuery}
           city={cityQuery}
