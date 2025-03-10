@@ -70,7 +70,7 @@ const Map = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (cityQuery && location) {
+    if (regionQuery && location) {
       setLat(location.lat);
       setLon(location.lon);
     } else if (!regionQuery && userLat && userLon) {
@@ -135,7 +135,7 @@ const Map = () => {
       console.error('Error fetching campings:', error);
     } finally {
     }
-  }, [selectedCategoryValue, regionQuery, cityQuery]);
+  }, [selectedCategoryValue, regionQuery]);
 
   useEffect(() => {
     if (regionQuery === null) {
@@ -144,7 +144,7 @@ const Map = () => {
     } else {
       getCampingsByDoNm();
     }
-  }, [lat, lon, selectedCategoryValue]);
+  }, [lat, lon, selectedCategoryValue, regionQuery, cityQuery]);
 
   useEffect(() => {
     setCampList([]);
@@ -163,11 +163,11 @@ const Map = () => {
 
         const map = new window.kakao.maps.Map(mapRef.current, options);
 
-        // if (regionQuery) {
-        //   map.setZoomable(true);
-        // } else {
-        //   map.setZoomable(false);
-        // }
+        if (regionQuery) {
+          map.setZoomable(true);
+        } else {
+          map.setZoomable(false);
+        }
 
         setKakaoMap(map);
 
@@ -183,7 +183,7 @@ const Map = () => {
         getCampingsByDoNm();
       });
     }
-  }, [lat, lon, regionQuery, , cityQuery, selectedCategoryValue]);
+  }, [lat, lon, regionQuery, cityQuery, selectedCategoryValue]);
 
   useEffect(() => {
     if (!kakaoMap || campList?.length === 0) return;
