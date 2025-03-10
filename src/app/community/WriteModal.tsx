@@ -75,7 +75,7 @@ const WriteModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-[90%] h-auto sm:w-[40%] ">
+      <div className="bg-white p-6 rounded-lg min-w-[340px] w-[90%] h-auto sm:min-w-450px sm:w-[50%] ">
         <div className="flex items-center justify-between mb-6">
           <button onClick={onClose}>
             <Image

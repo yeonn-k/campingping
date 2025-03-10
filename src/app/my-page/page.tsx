@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 import profile from '@images/profile.svg';
@@ -12,6 +12,7 @@ import useWishlist from '@hooks/useWishlist';
 
 import Card from '@/components/Card/Card';
 import Header from '@/components/Header/Header';
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 interface UserProfile {
   user: {
@@ -30,6 +31,8 @@ const MyPage = () => {
   const [response, setResponse] = useState<UserProfile | null>(null);
   const { wishlist } = useWishlistStore();
   const { getWishlist } = useWishlist();
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getProfileImage();
@@ -102,7 +105,10 @@ const MyPage = () => {
           <h2 className="text-lg font-bold mb-4">위시리스트</h2>
 
           {wishlist.length > 0 ? (
-            <ul className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 pb-20 overflow-auto h-screen pb-96">
+            <div
+              className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 pb-20 overflow-auto h-screen pb-96"
+              ref={scrollRef}
+            >
               {wishlist.map((camp: WishlistCamp) => (
                 <Card
                   //  ref={idx === campingData.length - 1 ? loadMoreRef : undefined}
@@ -121,11 +127,12 @@ const MyPage = () => {
                   description={camp.lineintro || ''}
                 />
               ))}
-            </ul>
+            </div>
           ) : (
             <p className="text-gray-500">위시리스트가 없습니다.</p>
           )}
         </div>
+        <ScrollToTop scrollRef={scrollRef} />
       </main>
     </div>
   );

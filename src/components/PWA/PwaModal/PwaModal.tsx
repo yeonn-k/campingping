@@ -28,7 +28,7 @@ const PwaModal = ({ onClick, onClose }: ModalProps) => {
 
   return (
     <div className="fixed pt-14 top-0 sm:inset-0 w-full h-screen bg-black bg-opacity-50 z-zModal sm:flex sm:justify-center sm:items-center ">
-      <div className="bg-white p-6 rounded-b-3xl sm:rounded-3xl w-full h-48 flex flex-col justify-center items-center transition-all duration-500 ease-in-out sm:w-[42%] sm:h-[20%] z-zModal">
+      <div className="bg-white p-6 rounded-b-3xl sm:rounded-3xl w-full h-48 flex flex-col justify-center items-center transition-all duration-500 ease-in-out sm:w-[42%] sm:max-w-[600px] sm:h-[20%] z-zModal">
         <Image
           src={logo}
           alt="로고이미지"
