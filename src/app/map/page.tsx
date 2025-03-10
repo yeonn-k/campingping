@@ -60,7 +60,7 @@ const Map = () => {
     }
   }, []);
 
-  const location = useLocation(regionQuery, cityQuery);
+  const location = useLocation(regionQuery);
 
   useEffect(() => {
     const currentRegionQuery = searchParams.get('region');
