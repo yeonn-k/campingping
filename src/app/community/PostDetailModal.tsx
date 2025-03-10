@@ -235,7 +235,7 @@ const PostDetailModal: React.FC<PostDetailModalProps> = ({ post, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[19]">
-      <div className="bg-white rounded-lg w-[90%] h-auto sm:w-[40%] overflow-auto sm:p-4">
+      <div className="bg-white rounded-lg h-auto overflow-auto sm:p-4  min-w-[340px] w-[90%] h-auto sm:min-w-450px sm:w-[50%] ">
         <div className="flex items-center justify-between mb-4">
           <button onClick={onClose}>
             <Image
