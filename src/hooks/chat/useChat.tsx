@@ -10,7 +10,6 @@ const useChat = () => {
   const { chatRoomId, setChatRoomId, setChatState } = chattingStore();
 
   const [nextCursor, setNextCursor] = useState<number | null | undefined>(null);
-  const [newChat] = useState<ChatMsgs>();
 
   // rooms
   const getChatRooms = useCallback(() => {
@@ -71,7 +70,7 @@ const useChat = () => {
 
     nextCursor,
     setNextCursor,
-    newChat,
+
     getChatHistory,
     sendChatMsg,
     updateRead,
