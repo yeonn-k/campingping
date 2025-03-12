@@ -13,7 +13,12 @@ import UrChatMsg from './UrChatMsg';
 
 import profileGreen from '@icons/profile_green.svg';
 
-import { ChatHistoryData, ChatMsgs, UpdateMsg } from '@/types/Chatting';
+import {
+  ChatHistoryData,
+  ChatMsgs,
+  newMessage,
+  UpdateMsg,
+} from '@/types/Chatting';
 
 import { userStore } from '@/stores/userState';
 import { chattingStore } from '@/stores/chattingState';
@@ -21,6 +26,7 @@ import useInputValue from '@/hooks/useInputValue';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 import useChat from '@/hooks/chat/useChat';
+import NewChatMsg from './NewChatMsg';
 
 interface ChatRoomProps {
   roomId: number;
@@ -44,15 +50,20 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   const isInitial = useRef<boolean>(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const firstObserverRef = useRef<IntersectionObserver | null>(null);
+  const lastObserverRef = useRef<IntersectionObserver | null>(null);
 
   const [chatMsgs, setChatMsgs] = useState<ChatMsgs[]>([]);
   const chatMsgsRef = useRef<ChatMsgs[]>([]);
-  const [, setIsNewMsg] = useState(false);
+  const [isNewMsg, setIsNewMsg] = useState(false);
+  const [newMsg, setNewMsg] = useState<string | null>(null);
 
   const [inputValue, handleInputChange, resetInput] = useInputValue();
 
   const [hasScrolled, setHasScrolled] = useState(false);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [isNearBottom, setIsNearBottom] = useState(false);
+  const [isNearTop, setIsNearTop] = useState(false);
 
   const [closed, setClosed] = useState(false);
 
@@ -62,12 +73,23 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   }, []);
 
   useEffect(() => {
-    setIsNewMsg(true);
-    socket.on(CHAT.HISTORY.NEW, getChatHistory);
+    socket.on(CHAT.HISTORY.NEW, (data: newMessage) => {
+      setIsNewMsg(true);
+      setNewMsg(data.message);
+
+      getChatHistory();
+    });
+
     socket.on(
       CHAT.HISTORY.FETCHED,
       ({ chatHistory, nextCursor }: ChatHistoryData) => {
-        setChatMsgs(chatHistory);
+        setChatMsgs((prevMsgs) => {
+          const existingMsgIds = new Set(prevMsgs.map((msg) => msg.id));
+          const filteredNewMsgs = chatHistory.filter(
+            (msg) => !existingMsgIds.has(msg.id)
+          );
+          return [...prevMsgs, ...filteredNewMsgs];
+        });
 
         if (typeof nextCursor === 'number') {
           setNextCursor(nextCursor);
@@ -79,9 +101,13 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       socket.off(CHAT.HISTORY.NEW, getChatHistory);
       socket.off(CHAT.HISTORY.FETCHED);
     };
-  }, []);
+  }, [isNewMsg, newMsg, isNearBottom]);
 
   useEffect(() => {
+    if (!isInitial.current) return;
+    if (!chatContainerRef.current) return;
+    if (chatMsgs.length === 0) return;
+
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
         top: chatContainerRef.current.scrollHeight,
@@ -90,14 +116,14 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
     }
 
     isInitial.current = false;
-  }, []);
+  }, [chatMsgs]);
 
   const handleSendMessage = async () => {
-    if (chatRoomId !== null) {
+    if (chatRoomId !== null && inputValue) {
       sendChatMsg(inputValue, chatRoomId);
       resetInput();
     } else {
-      console.error('Chat room ID is null.');
+      console.error('Chat room ID or msg is null.');
     }
   };
 
@@ -124,7 +150,8 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   }, [chatMsgs]);
 
   const handleGetChatting = ({ chatHistory, nextCursor }: ChatHistoryData) => {
-    if (isInitial) {
+    if (!isInitial.current) {
+      setIsNewMsg(false);
       setChatMsgs(() => {
         const currentMsgs = chatMsgsRef.current;
 
@@ -143,21 +170,57 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       if (chatContainerRef.current) {
         const currentScrollHeight = chatContainerRef.current.scrollHeight;
         chatContainerRef.current.scrollTo({
-          top: currentScrollHeight * 0.08,
+          top: currentScrollHeight * 0.057,
           // behavior: 'smooth',
         });
       }
     }
   };
 
+  const firstChatRef = useCallback((node: HTMLDivElement) => {
+    if (firstObserverRef.current) firstObserverRef.current.disconnect();
+
+    firstObserverRef.current = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsNearTop(entry.isIntersecting);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (node) {
+      firstObserverRef.current.observe(node);
+    }
+  }, []);
+
+  const lastChatRef = useCallback((node: HTMLDivElement) => {
+    if (lastObserverRef.current) lastObserverRef.current.disconnect();
+
+    lastObserverRef.current = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsNewMsg(false);
+        }
+        setIsNearBottom(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    if (node) {
+      lastObserverRef.current.observe(node);
+    }
+  }, []);
+
   useEffect(() => {
     if (!chatContainerRef.current) return;
 
-    const container = chatContainerRef.current;
-    container.scrollTo({
-      top: container.scrollHeight,
-      behavior: 'smooth',
-    });
+    if (isNearBottom && isNewMsg) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   }, [chatMsgs]);
 
   const handleScroll = useCallback(() => {
@@ -167,6 +230,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
     if (scrollTop === 0 && nextCursor) {
       if (debounceTimeout.current) return;
+
       debounceTimeout.current = setTimeout(() => {
         socket.emit(CHAT.HISTORY.FETCH, {
           roomId: chatRoomId,
@@ -199,7 +263,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   }, [handleScroll]);
 
   useEffect(() => {
-    if (chatContainerRef.current && hasScrolled && nextCursor) {
+    if (chatContainerRef.current && hasScrolled && isNearTop && nextCursor) {
       socket.emit(CHAT.HISTORY.FETCH, {
         roomId: chatRoomId,
         cursor: nextCursor,
@@ -216,12 +280,6 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
       return () => {
         socket.off(CHAT.HISTORY.FETCHED, handleChatHistory);
       };
-    }
-
-    if (!isInitial.current) {
-      setTimeout(() => {
-        isInitial.current = true;
-      }, 1000);
     }
   }, [hasScrolled, nextCursor, chatRoomId, handleGetChatting]);
 
@@ -270,16 +328,23 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         </div>
       </div>
       <div
-        className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'} `}
+        className={`overflow-auto ${isMobile ? 'h-3/5' : 'h-5/6'} relative`}
         ref={chatContainerRef}
       >
-        {chatMsgs?.map((chat) => {
+        {chatMsgs?.map((chat, idx) => {
           return chat.author.email === userEmail ? (
             <MyChatMsg
               key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
               isRead={chat.isRead}
+              ref={
+                idx === chatMsgs.length - 1
+                  ? lastChatRef
+                  : idx === 1
+                    ? firstChatRef
+                    : null
+              }
             />
           ) : (
             <UrChatMsg
@@ -287,9 +352,24 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
               message={chat.message}
               createdAt={chat.createdAt}
               nickname={chat.author.nickname}
+              ref={
+                idx === chatMsgs.length - 1
+                  ? lastChatRef
+                  : idx === 1
+                    ? firstChatRef
+                    : null
+              }
             />
           );
         })}
+        {!isNearBottom && newMsg && isNewMsg && (
+          <NewChatMsg
+            nickname={nickname}
+            message={newMsg}
+            chatContainerRef={chatContainerRef}
+            setNewMsg={setNewMsg}
+          />
+        )}
 
         {closed && (
           <div className="flex justify-center">

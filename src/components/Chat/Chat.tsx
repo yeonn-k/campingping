@@ -123,13 +123,13 @@ const Chat = () => {
           {chatRoomId === null ? (
             <div>
               <div className="text-title p-6">주변 사람들과 대화해보세요</div>
-              <div className="flex flex-wrap items-center justify-center w-full h-full pb-12">
+              <div className="flex flex-wrap items-center justify-center w-full h-auto pb-12">
                 {chats.length > 0 ? (
                   chats.map((chat) => {
                     return (
                       <div
                         key={chat.roomId}
-                        className="w-full flex justify-center"
+                        className="w-full flex justify-center mb-4"
                         onClick={() => {
                           setChatRoomId(chat.roomId);
                           setChatNick(chat.users[0].nickname);

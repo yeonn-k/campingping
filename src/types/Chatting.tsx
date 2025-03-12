@@ -22,6 +22,12 @@ export interface sendMessage {
   };
 }
 
+export interface newMessage {
+  roomId: number;
+
+  message: string;
+}
+
 export interface ChatHistoryData {
   chatHistory: ChatMsgs[];
   nextCursor: number | null | undefined;
