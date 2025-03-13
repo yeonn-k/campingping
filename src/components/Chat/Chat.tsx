@@ -56,7 +56,15 @@ const Chat = () => {
     if (!socket) return;
 
     getChatRooms();
-  }, [socket]);
+
+    if (!socket.connected) {
+      socket.on('connect', getChatRooms);
+    }
+
+    return () => {
+      socket.off('connect', getChatRooms);
+    };
+  }, []);
 
   useEffect(() => {
     const handleUserLeftRoom = () => {
@@ -126,14 +134,20 @@ const Chat = () => {
               <div className="flex flex-wrap items-center justify-center w-full h-auto pb-12">
                 {chats.length > 0 ? (
                   chats.map((chat) => {
+                    const handleChatRoomClick = () => {
+                      if (chatRoomId !== chat.roomId) {
+                        setChatRoomId(chat.roomId);
+                      }
+                      if (chatNick !== chat.users[0].nickname) {
+                        setChatNick(chat.users[0].nickname);
+                      }
+                    };
+
                     return (
                       <div
                         key={chat.roomId}
                         className="w-full flex justify-center mb-4"
-                        onClick={() => {
-                          setChatRoomId(chat.roomId);
-                          setChatNick(chat.users[0].nickname);
-                        }}
+                        onClick={handleChatRoomClick}
                       >
                         <ChatBox
                           roomId={chat.roomId}

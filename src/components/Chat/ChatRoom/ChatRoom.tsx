@@ -42,6 +42,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
   const {
     setNextCursor,
     nextCursor,
+    handleUserRead,
     getChatHistory,
     sendChatMsg,
     updateRead,
@@ -69,10 +70,13 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
 
   useEffect(() => {
     if (!chatRoomId) return;
+
     getChatHistory();
-  }, []);
+    handleUserRead();
+  }, [chatRoomId]);
 
   useEffect(() => {
+    socket.off(CHAT.HISTORY.NEW);
     socket.on(CHAT.HISTORY.NEW, (data: newMessage) => {
       setIsNewMsg(true);
       setNewMsg(data.message);
@@ -289,12 +293,13 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
         updateRead(data, chatMsgs, setChatMsgs);
       }
     };
+    socket.off(CHAT.HISTORY.UPDATE, handleUpdateRead);
     socket.on(CHAT.HISTORY.UPDATE, handleUpdateRead);
 
     return () => {
       socket.off(CHAT.HISTORY.UPDATE, handleUpdateRead);
     };
-  }, [chatRoomId]);
+  }, [chatRoomId, chatMsgs, setChatMsgs]);
 
   const userLeft = () => {
     setClosed(true);
