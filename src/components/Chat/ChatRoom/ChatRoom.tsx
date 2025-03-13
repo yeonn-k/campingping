@@ -342,7 +342,7 @@ const ChatRoom = ({ nickname, setChatRoomId }: ChatRoomProps) => {
               key={chat.id}
               message={chat.message}
               createdAt={chat.createdAt}
-              isRead={chat.isRead}
+              // isRead={chat.isRead}
               ref={
                 idx === chatMsgs.length - 1
                   ? lastChatRef
