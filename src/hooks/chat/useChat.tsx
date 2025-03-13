@@ -28,6 +28,9 @@ const useChat = () => {
     socket.emit(CHAT.HISTORY.FETCH, {
       roomId: chatRoomId,
     });
+  }, [chatRoomId]);
+
+  const handleUserRead = useCallback(() => {
     socket.emit(CHAT.USER.READ, { roomId: chatRoomId });
   }, [chatRoomId]);
 
@@ -73,6 +76,8 @@ const useChat = () => {
 
     getChatHistory,
     sendChatMsg,
+
+    handleUserRead,
     updateRead,
     getOutFromRoom,
   };
