@@ -18,9 +18,9 @@ const MyChatMsg = forwardRef<HTMLDivElement, MyChatMsgProps>(
           <p className="w-full">{message}</p>
         </div>
         <div className="flex justify-between w-9/12 mr-3 px-3">
-          <p className="text-description text-Gray">
+          {/* <p className="text-description text-Gray">
             {isRead ? '' : '읽지 않음'}
-          </p>
+          </p> */}
           <p className="text-description text-Gray">{timeFormat(createdAt)}</p>
         </div>
       </div>
