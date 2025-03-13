@@ -197,11 +197,6 @@ const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 };
 ```
 
-### 읽지 않은 메세지
-
-- 채팅방 안에서 읽지 않은 메세지에는 '읽지 않음' 표시
-- socket 이벤트 `updateRead` 수신 시, chatMsgs 의 모든 isRead 상태를 true로 변환
-
 ### 채팅 시간 관리( day.js )
 
 - day.js를 활용한 util 함수 `timeFormat.ts`
