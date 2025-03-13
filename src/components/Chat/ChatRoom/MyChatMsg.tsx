@@ -6,11 +6,11 @@ import { timeFormat } from '@/utils/timeFormat';
 interface MyChatMsgProps {
   message: string;
   createdAt: string;
-  isRead: boolean;
+  // isRead: boolean;
 }
 
 const MyChatMsg = forwardRef<HTMLDivElement, MyChatMsgProps>(
-  ({ message, createdAt, isRead }, ref) => {
+  ({ message, createdAt }, ref) => {
     return (
       <div className="flex flex-wrap justify-end " ref={ref}>
         <div className="w-9/12 mr-3 mt-3 bg-Green text-white p-3 rounded-2xl flex flex-wrap">
