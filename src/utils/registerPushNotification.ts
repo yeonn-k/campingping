@@ -1,10 +1,13 @@
+import { userStore } from '@/stores/userState';
 import { api } from '@utils/axios';
 
 const registerPushNotification = async () => {
+  // console.log('registerPushNotification 실행');
   if ('Notification' in window && 'serviceWorker' in navigator) {
     const permission = await Notification.requestPermission();
 
     if (permission === 'granted') {
+      // console.log('알림 권한 허용, 푸시 구독 요청 시작');
       const registration = await navigator.serviceWorker.ready;
       const pushSubscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
