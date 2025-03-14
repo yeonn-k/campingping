@@ -40,7 +40,13 @@ const Chat = () => {
     }
 
     socket.on('connect', () => onConnect(setIsConnected, setTransport));
-    socket.on('disconnect', () => onDisconnect(setIsConnected, setTransport));
+    socket.on('disconnect', (reason) => {
+      console.warn('Socket 연결 해제:', reason);
+      if (reason === 'ping timeout') {
+        console.warn('아이폰에서 소켓 연결이 끊어짐. 재연결 시도 중...');
+        socket.connect();
+      }
+    });
 
     return () => {
       socket.off('connect');
