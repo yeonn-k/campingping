@@ -6,7 +6,9 @@ import { CHAT_URL } from './config/config';
 
 export const socket = io(CHAT_URL, {
   withCredentials: true,
-  // extraHeaders: {
-  // Authorization: `Bearer ${token}`,
-  // },
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 2000,
+  timeout: 5000,
+  transports: ['websocket', 'polling'],
 });
