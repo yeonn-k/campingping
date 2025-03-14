@@ -15,7 +15,7 @@ import goToBack from '@icons/goToBack.svg';
 import { chattingStore } from '@/stores/chattingState';
 import { userStore } from '@/stores/userState';
 
-import { onConnect, onDisconnect } from '@/utils/chat/handleSocket';
+import { onConnect } from '@/utils/chat/handleSocket';
 import useChat from '@/hooks/chat/useChat';
 import { ChatRooms } from '@/types/Chatting';
 import ModalBox from '../ModalBox/ModalBox';
