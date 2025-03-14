@@ -1,8 +1,14 @@
 import { userStore } from '@/stores/userState';
 import { api } from '@utils/axios';
+import { toast } from 'react-toastify';
 
 const registerPushNotification = async () => {
   // console.log('registerPushNotification 실행');
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    toast.warn('🔔 푸시 알림이 지원되지 않는 환경입니다');
+    return;
+  }
+
   if ('Notification' in window && 'serviceWorker' in navigator) {
     const permission = await Notification.requestPermission();
 
