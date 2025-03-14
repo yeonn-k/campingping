@@ -9,6 +9,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('push', (event) => {
   const data = JSON.parse(event.data.text());
+  console.log(data);
 
   const title = data.title;
   const options = {

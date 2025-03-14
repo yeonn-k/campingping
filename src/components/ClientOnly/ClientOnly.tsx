@@ -45,8 +45,9 @@ export default function ClientLayout() {
   const { isPwaOpen, clicked } = usePwaStore();
   const registerServiceWorker = async () => {
     try {
-      await navigator.serviceWorker.register('/service-worker.js');
-      // console.log('서비스 워커 등록 성공:', registration);
+      const registration =
+        await navigator.serviceWorker.register('/service-worker.js');
+      console.log('서비스 워커 등록 성공:', registration);
     } catch (error) {
       console.error('서비스 워커 등록 실패:', error);
     }
@@ -86,12 +87,30 @@ export default function ClientLayout() {
   }, []);
 
   useEffect(() => {
+    if (!userState) return;
+
+    const MAX_RETRIES = 3;
+    let attempt = 0;
+
     const initPushNotification = async () => {
-      if (!userState) return;
-      try {
-        await registerPushNotification();
-      } catch (error) {
-        console.error('Push Notification 등록 실패:', error);
+      while (attempt < MAX_RETRIES) {
+        try {
+          await registerPushNotification();
+          console.log(`Push Notification 등록 성공 (시도 ${attempt + 1})`);
+          return;
+        } catch (error) {
+          attempt += 1;
+          console.error(
+            `Push Notification 등록 실패 (시도 ${attempt}):`,
+            error
+          );
+
+          if (attempt >= MAX_RETRIES) {
+            toast.error('푸시 알림 등록에 실패했습니다.');
+          } else {
+            await new Promise((resolve) => setTimeout(resolve, 3000 * attempt));
+          }
+        }
       }
     };
 

@@ -1,6 +1,7 @@
 import { usePwaStore } from '@/stores/pwaState';
 import { userStore } from '@/stores/userState';
 import { isPwa } from '@/utils/isPwa';
+import { useCallback } from 'react';
 
 export const usePushNotification = () => {
   const { isVisited } = userStore();
@@ -9,15 +10,15 @@ export const usePushNotification = () => {
     setIsPwaOpen(false);
   };
 
-  const askPushNotification = async () => {
+  const askPushNotification = useCallback(async () => {
     setClicked('noti');
 
     if (isPwa() && !isVisited) {
       setIsPwaOpen(true, 'noti-default');
     }
-  };
+  }, [isVisited]);
 
-  const checkNotificationPermission = async () => {
+  const checkNotificationPermission = useCallback(async () => {
     setClicked('noti');
 
     if (Notification.permission === 'default') {
@@ -30,7 +31,7 @@ export const usePushNotification = () => {
       setIsPwaOpen(false);
       setIsPwaOpen(true, 'noti-unsupported');
     }
-  };
+  }, [isVisited]);
 
   return {
     denyPermission,
