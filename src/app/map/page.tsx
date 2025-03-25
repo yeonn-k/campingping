@@ -25,6 +25,7 @@ import Move from './component/Move';
 import Header from '@/components/Header/Header';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 import { useCampingsByLocation } from '@/hooks/queries/useCampingsByLocation';
+import { useCampingsByDoNm } from '@/hooks/queries/useCampingsByDoNm';
 
 const NoSSRCategory = dynamic(
   () => import('../../components/Category/Category'),
@@ -52,15 +53,22 @@ const Map = () => {
 
   const [campList, setCampList] = useState<CampMap[] | undefined>([]);
   const { data: campingsByLocation } = useCampingsByLocation(userLat, userLon);
-  const { data: nearbyCampings, refetch: refetchNearbyCampings } =
-    useCampingsByLocation(lat, lon);
+  const { data: campingsByDoNm } = useCampingsByDoNm(
+    selectedCategoryValue,
+    regionQuery,
+    cityQuery
+  );
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!regionQuery && campingsByLocation) {
       setCampList(campingsByLocation);
     }
-  }, [campingsByLocation, regionQuery]);
+    if (regionQuery && campingsByDoNm) {
+      setCampList(campingsByDoNm);
+    }
+  }, [campingsByLocation, campingsByDoNm, regionQuery]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -127,32 +135,12 @@ const Map = () => {
     }
   };
 
-  const getCampingsByDoNm = useCallback(async () => {
-    if (!regionQuery) return;
-
-    try {
-      const apiUrl = createApiUrl('/campings/lists', [
-        { name: 'category', value: selectedCategoryValue },
-        { name: 'region', value: regionQuery },
-        { name: 'city', value: cityQuery },
-      ]);
-
-      const res = await api.get(apiUrl);
-      const data = res.data.data.result || [];
-
-      setCampList(data);
-    } catch (error) {
-      console.error('Error fetching campings:', error);
-    } finally {
-    }
-  }, [selectedCategoryValue, regionQuery]);
-
   useEffect(() => {
     if (regionQuery === null) {
       if (typeof lat === 'number' && typeof lon === 'number')
         setCampList(campingsByLocation);
     } else {
-      getCampingsByDoNm();
+      setCampList(campingsByDoNm);
     }
   }, [lat, lon, selectedCategoryValue, regionQuery, cityQuery]);
 
@@ -190,7 +178,7 @@ const Map = () => {
             setCampList(campingsByLocation);
         }
 
-        getCampingsByDoNm();
+        setCampList(campingsByDoNm);
       });
     }
   }, [lat, lon, regionQuery, cityQuery, selectedCategoryValue]);
