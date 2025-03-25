@@ -24,6 +24,7 @@ import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import Move from './component/Move';
 import Header from '@/components/Header/Header';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
+import { useCampingsByLocation } from '@/hooks/queries/useCampingsByLocation';
 
 const NoSSRCategory = dynamic(
   () => import('../../components/Category/Category'),
@@ -49,8 +50,17 @@ const Map = () => {
   const [kakaoMap, setKakaoMap] = useState<kakao.maps.Map | null>(null);
   const [, setKakaoMarker] = useState<kakao.maps.Marker | null>(null);
 
-  const [campList, setCampList] = useState<CampMap[]>([]);
+  const [campList, setCampList] = useState<CampMap[] | undefined>([]);
+  const { data: campingsByLocation } = useCampingsByLocation(userLat, userLon);
+  const { data: nearbyCampings, refetch: refetchNearbyCampings } =
+    useCampingsByLocation(lat, lon);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!regionQuery && campingsByLocation) {
+      setCampList(campingsByLocation);
+    }
+  }, [campingsByLocation, regionQuery]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -140,7 +150,7 @@ const Map = () => {
   useEffect(() => {
     if (regionQuery === null) {
       if (typeof lat === 'number' && typeof lon === 'number')
-        getNearByCampings(lat, lon);
+        setCampList(campingsByLocation);
     } else {
       getCampingsByDoNm();
     }
@@ -177,7 +187,7 @@ const Map = () => {
 
         if (!regionQuery) {
           if (typeof lat === 'number' && typeof lon === 'number')
-            getNearByCampings(lat, lon);
+            setCampList(campingsByLocation);
         }
 
         getCampingsByDoNm();
@@ -199,7 +209,7 @@ const Map = () => {
       imgSrc: camp.firstImageUrl,
     }));
 
-    const markers = positions.map(function (position) {
+    const markers = positions?.map(function (position) {
       return new window.kakao.maps.Marker({
         position: position.latlng,
       });
@@ -212,7 +222,7 @@ const Map = () => {
       markers: markers,
     });
 
-    markers.forEach((marker) => marker.setMap(null));
+    markers?.forEach((marker) => marker.setMap(null));
 
     clusterer.clear();
     setTimeout(() => clusterer.redraw(), 100);
