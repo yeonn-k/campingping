@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 
 import { createRoot } from 'react-dom/client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import SearchBar from '@/components/SearchBar/SearchBar';
 
