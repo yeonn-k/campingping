@@ -10,12 +10,14 @@ import chevron90 from '@icons/chevron90.svg';
 import { CampMap } from '@/types/Camp';
 
 interface MapProps {
-  campList: CampMap[];
+  campList: CampMap[] | undefined;
   scrollRef: React.RefObject<HTMLDivElement>;
 }
 export const MapListWrap = ({ campList, scrollRef }: MapProps) => {
   const [isOpenList, setIsOpenList] = useState(false);
-  const [localCampList, setLocalCampList] = useState<CampMap[]>(campList);
+  const [localCampList, setLocalCampList] = useState<CampMap[] | undefined>(
+    campList
+  );
 
   useEffect(() => {
     setLocalCampList(campList);
@@ -57,7 +59,7 @@ export const MapListWrap = ({ campList, scrollRef }: MapProps) => {
         }
         ref={scrollRef}
       >
-        {localCampList?.length > 0 ? (
+        {localCampList && localCampList?.length > 0 ? (
           localCampList.map((camp) => (
             <div className="w-full flex justify-center" key={camp.contentId}>
               <Card

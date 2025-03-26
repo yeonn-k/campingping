@@ -24,6 +24,8 @@ import LoadingSpinner from '@/components/Button/LoadingSpinner';
 import Move from './component/Move';
 import Header from '@/components/Header/Header';
 import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
+import { useCampingsByLocation } from '@/hooks/queries/useCampingsByLocation';
+import { useCampingsByDoNm } from '@/hooks/queries/useCampingsByDoNm';
 
 const NoSSRCategory = dynamic(
   () => import('../../components/Category/Category'),
@@ -49,8 +51,24 @@ const Map = () => {
   const [kakaoMap, setKakaoMap] = useState<kakao.maps.Map | null>(null);
   const [, setKakaoMarker] = useState<kakao.maps.Marker | null>(null);
 
-  const [campList, setCampList] = useState<CampMap[]>([]);
+  const [campList, setCampList] = useState<CampMap[] | undefined>([]);
+  const { data: campingsByLocation } = useCampingsByLocation(userLat, userLon);
+  const { data: campingsByDoNm } = useCampingsByDoNm(
+    selectedCategoryValue,
+    regionQuery,
+    cityQuery
+  );
+
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!regionQuery && campingsByLocation) {
+      setCampList(campingsByLocation);
+    }
+    if (regionQuery && campingsByDoNm) {
+      setCampList(campingsByDoNm);
+    }
+  }, [campingsByLocation, campingsByDoNm, regionQuery]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -117,32 +135,12 @@ const Map = () => {
     }
   };
 
-  const getCampingsByDoNm = useCallback(async () => {
-    if (!regionQuery) return;
-
-    try {
-      const apiUrl = createApiUrl('/campings/lists', [
-        { name: 'category', value: selectedCategoryValue },
-        { name: 'region', value: regionQuery },
-        { name: 'city', value: cityQuery },
-      ]);
-
-      const res = await api.get(apiUrl);
-      const data = res.data.data.result || [];
-
-      setCampList(data);
-    } catch (error) {
-      console.error('Error fetching campings:', error);
-    } finally {
-    }
-  }, [selectedCategoryValue, regionQuery]);
-
   useEffect(() => {
     if (regionQuery === null) {
       if (typeof lat === 'number' && typeof lon === 'number')
-        getNearByCampings(lat, lon);
+        setCampList(campingsByLocation);
     } else {
-      getCampingsByDoNm();
+      setCampList(campingsByDoNm);
     }
   }, [lat, lon, selectedCategoryValue, regionQuery, cityQuery]);
 
@@ -177,10 +175,10 @@ const Map = () => {
 
         if (!regionQuery) {
           if (typeof lat === 'number' && typeof lon === 'number')
-            getNearByCampings(lat, lon);
+            setCampList(campingsByLocation);
         }
 
-        getCampingsByDoNm();
+        setCampList(campingsByDoNm);
       });
     }
   }, [lat, lon, regionQuery, cityQuery, selectedCategoryValue]);
@@ -199,7 +197,7 @@ const Map = () => {
       imgSrc: camp.firstImageUrl,
     }));
 
-    const markers = positions.map(function (position) {
+    const markers = positions?.map(function (position) {
       return new window.kakao.maps.Marker({
         position: position.latlng,
       });
@@ -212,7 +210,7 @@ const Map = () => {
       markers: markers,
     });
 
-    markers.forEach((marker) => marker.setMap(null));
+    markers?.forEach((marker) => marker.setMap(null));
 
     clusterer.clear();
     setTimeout(() => clusterer.redraw(), 100);
