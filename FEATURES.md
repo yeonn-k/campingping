@@ -1,6 +1,25 @@
 ![waving](https://capsule-render.vercel.app/api?type=waving&height=200&fontAlignY=40&text=campingping&color=gradient)
 
-# ✨ 김지연: 추가 구현 기능
+# ✨ 추가 구현 기능
+
+## 📑 목차
+
+- [📲 PWA (Progressive Web App)](#-pwa-progressive-web-app)
+- [🔔 Push Notification](#-push-notification)
+- [💬 Chat](#-chat)
+  - [새 메시지 수신 시 사용자 스크롤 상태에 따른 분기 처리](#새-메시지-수신-시-사용자-스크롤-상태에-따른-분기-처리)
+  - [이전 메세지 불러오기 (무한 스크롤)](#이전-메세지-불러오기-무한-스크롤)
+  - [Enter 입력 채팅 / 한글 입력 중복 방지](#enter-입력-채팅--한글-입력-중복-방지)
+  - [채팅 시간 관리 (day.js)](#채팅-시간-관리-dayjs)
+  - [채팅방 나가기 기능 구현](#채팅방-나가기-기능-구현)
+- [🗺️ Map](#️-map)
+  - [지도 클러스터러 적용](#지도-클러스터러-적용)
+  - [지도의 주변 캠핑장 검색 (mouseup 이벤트)](#지도의-주변-캠핑장-검색-mouseup-이벤트)
+  - [지도 움직임 안내 문구 추가](#지도-움직임-안내-문구-추가)
+  - [오버레이에서 상세보기 페이지로 이동](#오버레이에서-상세보기-페이지로-이동)
+- [📍 Not Found 페이지 작성](#-not-found-페이지-작성)
+
+---
 
 ## 📲 PWA( Progressive Web App )
 
@@ -12,7 +31,7 @@
 - display: `standalone` 옵션을 통해 브라우저 없이 독립 실행 가능하도록 설정
 - 설치 프로세스 구현
 
-  - 유저가 웹 앱을 설치할 수 있도록 `beforeinstallprompt` 이벤트 활용
+  - 사용자가 웹 앱을 설치할 수 있도록 `beforeinstallprompt` 이벤트 활용
   - usePwaPrompt 커스텀 훅을 통해 PWA 설치 프롬프트 상태를 전역에서 관리
   - 설치/실패에 대해 toast 알림으로 UX 향상
 
@@ -112,7 +131,7 @@ const checkNotificationPermission = async () => {
   };
   ```
 
-- Service Worker.js
+- Service Worker
   - 푸시 알림 수신 및 알림 클릭 시 리스트 페이지에서 채팅 화면화면을 자동으로 활성화
 
 ```typescript
@@ -165,7 +184,33 @@ self.addEventListener('notificationclick', (event) => {
 
 ## 💬 Chat
 
-### 이전 메세지 불러오기( 무한 스크롤 )
+### 새 메시지 수신 시 사용자 스크롤 상태에 따른 분기 처리
+
+- 채팅 도중 새 메시지가 도착했을 때, 사용자가 이전 메시지를 보고 있는 경우 자동 스크롤을 막고 알림 컴포넌트를 표시
+- 사용자가 스크롤을 맨 아래까지 내리지 않았는지는 `ref`와 `IntersectionObserver`를 활용하여 감지
+- 알림 클릭 시 자동 스크롤을 실행하여 맨 아래로 이동하고, 알림 컴포넌트는 사라짐
+
+```tsx
+const lastChatRef = useCallback((node: HTMLDivElement) => {
+  if (lastObserverRef.current) lastObserverRef.current.disconnect();
+
+  lastObserverRef.current = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        setIsNewMsg(false);
+      }
+      setIsNearBottom(entry.isIntersecting);
+    },
+    { threshold: 0.1 }
+  );
+
+  if (node) {
+    lastObserverRef.current.observe(node);
+  }
+}, []);
+```
+
+### 이전 메세지 불러오기 (무한 스크롤)
 
 - 채팅방 최상단으로 스크롤 시 디바운싱을 통해 이전 채팅 요청
 - `scrollTop === 0` 조건을 만족할 경우 서버에 `nextCursor`를 포함해 이전 메세지 요청
@@ -197,7 +242,7 @@ const handleEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 };
 ```
 
-### 채팅 시간 관리( day.js )
+### 채팅 시간 관리 (day.js)
 
 - day.js를 활용한 util 함수 `timeFormat.ts`
 - utc 시간으로 받아서 사용하고자 하는 형태로 변환
@@ -233,9 +278,9 @@ clusterer.clear();
 setTimeout(() => clusterer.redraw(), 100);
 ```
 
-### 지도의 주변 캠핑장 검색 mouseup 이벤트로 유저의 지도 움직임에 따른 api 호출 기능 추가
+### 지도의 주변 캠핑장 검색 (mouseup 이벤트)
 
-- 유저가 지도를 옮기면서 자신의 주변에서 원하는 위치의 캠핑장을 검색할 수 있도록 구현
+- 사용자가 지도를 옮기면서 자신의 주변에서 원하는 위치의 캠핑장을 검색할 수 있도록 구현
 
   - `onMapCenterChanged`: 지도의 center로 부터 `Lat`과 `Lon`을 추출하는 함수
   - `mouseup` 이벤트 발생 시 해당 함수 발생
@@ -245,7 +290,7 @@ setTimeout(() => clusterer.redraw(), 100);
 
 ### 지도 움직임 안내 문구 추가
 
-- 지도 페이지에서 '지도를 움직여보세요' 라는 문구와 아이콘이 나타남으로써 유저의 행동을 유도
+- 지도 페이지에서 '지도를 움직여보세요' 라는 문구와 아이콘이 나타남으로써 사용자의 행동을 유도
 - 해당 아이콘과 문구는 일정 시간이 지나면 사라지게 하여 UX를 해치지 않도록 함
 
 ```typescript
@@ -279,7 +324,7 @@ useEffect(() => {
 </div>
 ```
 
-### 🌠 오버레이에서 상세보기 페이지로 이동
+### 오버레이에서 상세보기 페이지로 이동
 
 - e.stopPropagation() 및 e.preventDefault() 를 사용해 닫기 버튼 클릭 시 상세 페이지로 이동하지 않도록 구현
 - 오버레이 전체를 <Link> 컴포넌트로 감싸서, 오버레이를 클릭하면 상세 페이지로 이동하도록 구현
@@ -292,6 +337,6 @@ const handleCloseClick = (e: React.MouseEvent<HTMLImageElement>) => {
 };
 ```
 
-## 📍 not-found.tsx
+## 📍 Not Found 페이지 작성
 
 - 일치하는 경로가 없을 경우 보여줄 페이지 작성
